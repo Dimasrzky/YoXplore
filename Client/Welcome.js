@@ -13,3 +13,27 @@ window.addEventListener('scroll', () => {
     welcome2.style.left = value * -1.5 + 'px';
     welcome3.style.top = vluue * -1.5 + 'px';
 })
+
+window.addEventListener('scroll', function() {
+    let helloHeading = document.querySelector('.sec h2');
+    let paragraphs = document.querySelectorAll('.sec p'); 
+
+    let helloHeadingPosition = helloHeading.getBoundingClientRect().top;
+    let screenPosition = window.innerHeight / 1.2;
+
+    if (helloHeadingPosition < screenPosition && helloHeadingPosition > 0) {
+        helloHeading.classList.add('show-animate');
+    } else {
+        helloHeading.classList.remove('show-animate');
+    }
+
+    paragraphs.forEach(paragraph => {
+        let paragraphPosition = paragraph.getBoundingClientRect().top;
+
+        if (paragraphPosition < screenPosition && paragraphPosition > 0) {
+            paragraph.classList.add('show-animate');
+        } else {
+            paragraph.classList.remove('show-animate');
+        }
+    });
+});
