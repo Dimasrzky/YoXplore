@@ -3,6 +3,7 @@
     <title>Welcome To Yoxplore!</title>
     <link rel="icon" href="Tittle Logo Yoxplore.png" type="image/png">
     <link rel="stylesheet" href="Login.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="container">
@@ -26,6 +27,21 @@
                 <a href="Fpassword.html" class="forgot-password">forgot password?</a>
 
                 <button type="submit">Login</button>
+
+                <div id="g_id_onload"
+                    data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                    data-login_uri="YOUR_BACKEND_LOGIN_URI"
+                    data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-shape="rectangular"
+                    data-theme="outline"
+                    data-text="sign_in_with"
+                    data-size="large"
+                    data-logo_alignment="left">
+                </div>
+
                 <a href="Register.html" class="create-account">Create Account</a>
             </form>
         </div>
@@ -33,5 +49,22 @@
     <div class="footer">
         <p>&copy;Copyright Kartana</p>
     </div>
+    <script>
+        function handleCredentialResponse(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
+        }
+        window.onload = function () {
+          google.accounts.id.initialize({
+            client_id: "YOUR_GOOGLE_CLIENT_ID",
+            callback: handleCredentialResponse
+          });
+          google.accounts.id.renderButton(
+            document.querySelector(".g_id_signin"),
+            { theme: "outline", size: "large" }  
+          );
+          google.accounts.id.prompt(); 
+        };
+      </script>
+      
 </body>
 </html>
