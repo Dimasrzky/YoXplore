@@ -30,16 +30,17 @@ header{
 .navigation a{
     text-decoration: none;
     padding: 6px 15px;
-    color: #b1734c;
+    color: #ffffff;
     border-radius: 20px;
     margin: 0px 10px;
     font-weight: 600;
     font-size: 20px;
+    background-color: #b1734c;
 }
 
 .navigation a:hover, .navigation a.active{
-    background: #b1734c;
-    color: #ffffff;
+    background: #ffffff;
+    color: #b1734c;
 }
 
 #welcome1 {
