@@ -1,0 +1,97 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body{
+    background-color: #f0d8a5;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+header{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.logo{
+    width: 180px;
+}
+
+.navigation a{
+    text-decoration: none;
+    padding: 6px 15px;
+    color: #b1734c;
+    border-radius: 20px;
+    margin: 0px 10px;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.navigation a:hover, .navigation a.active{
+    background: #b1734c;
+    color: #ffffff;
+}
+
+#welcome1 {
+    z-index: 2; 
+    position: absolute;
+}
+
+#welcome2 {
+    z-index: 1; 
+    position: absolute;
+}
+
+
+.parallax{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#text{
+    position: absolute;
+    z-index: 3;
+    font-size: 5em;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
+}
+
+.parallax img{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+.sec{
+    position: relative;
+    background: #f0d8a5;
+    padding: 100px;
+    z-index: 4;
+}
+
+.sec h2{
+    font-size: 3em;
+    color:#b1734c;
+    margin-bottom: 10px;
+}
+
+.sec p{
+    font-size: 1em;
+    color: #b1734c;
+    font-weight: 300;
+}
