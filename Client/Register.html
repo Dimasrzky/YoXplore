@@ -1,44 +1,61 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Create Your Account</title>
-    <link rel="icon" href="Tittle Logo Yoxplore.png" type="image/png">
-    <link rel="stylesheet" href="Register.css">
+  <meta charset="UTF-8">
+  <title>Create Your Account</title>
+  <link rel="icon" href="Tittle Logo Yoxplore.png" type="image/png">
+  <link rel="stylesheet" href="Register.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
 </head>
 <body>
-    <div class="container">
-        <div class="image-section">
-            <div class="logo">
-                <img src="Logo Yoxplore.png" alt="Yoxplore Logo">
-            </div>
-            <div class="image-content">
-                <p>Best Place To Explore Yogyakarta!</p>
-            </div>
-        </div>
-        <div class="register-section">
-            <h2>Create your account</h2>
-            <form method="post">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-
-                <label for="email">Email</label>
-                <input type="text" id="email" name="email" required>
-
-                <label for="phone">Phone Number</label>
-                <input type="text" id="phone" name="phone" required>
-
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-
-                <label for="Cpassword">Confirm Password</label>
-                <input type="password" id="Cpassword" name="Cpassword" required>
-
-                <button type="submit">Create Account</button>
-                <a href="Login.html" class="back-login">← Back To Login Page</a>
-            </form>
-        </div>
+  <div class="container">
+    <div class="image-section">
+      <div class="logo">
+        <img src="Logo Yoxplore.png" alt="Yoxplore Logo">
+      </div>
+      <div class="image-content">
+        <p>Best Place To Explore Yogyakarta!</p>
+      </div>
     </div>
-    <div class="footer">
-        <p>&copy;Copyright Kartana</p>
+    <div class="register-section">
+      <h2>Create your account</h2>
+      <form method="post">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required><br>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="Cpassword">Confirm Password</label>
+        <input type="password" id="Cpassword" name="Cpassword" required>
+
+        <button type="submit">Create Account</button>
+        <a href="Login.html" class="back-login">← Back To Login Page</a>
+      </form>
     </div>
+  </div>
+  <div class="footer">
+    <p>&copy;Copyright Kartana</p>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+  <script>
+    var input = document.querySelector("#phone");
+    window.intlTelInput(input, {
+      initialCountry: "auto",
+      geoIpLookup: function(success, failure) {
+        fetch('https://ipinfo.io?token=YOUR_API_KEY')
+          .then(response => response.json())
+          .then(data => success(data.country))
+          .catch(() => success('+62'));
+      },
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+    });
+  </script>
 </body>
 </html>
