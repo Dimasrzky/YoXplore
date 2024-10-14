@@ -11,7 +11,7 @@ window.addEventListener('scroll', () => {
     welcome1.style.left = value * 1 + 'px';
     welcome2.style.top = value * -1.5 + 'px';
     welcome2.style.left = value * -1.5 + 'px';
-    welcome3.style.top = vluue * -1.5 + 'px';
+    welcome3.style.top = value * -1.5 + 'px';
 })
 
 window.addEventListener('scroll', function() {
