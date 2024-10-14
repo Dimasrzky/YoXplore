@@ -86,18 +86,23 @@ input[type="text"], input[type="password"], input[type="tel"] {
     box-sizing: border-box;
 }
 
-.iti {
-    width: 100%;
+.iti__country-list {
+    width: 770% !important;
 }
 
-.iti__flag {
-    margin-right: 10px;
+.iti__dropdown {
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+.iti__flag-container {
+    height: 100%;
+    box-sizing: border-box;
 }
 
 .iti__input {
+    width: 100%; 
     padding-left: 50px; 
-    width: 100%;
-    border-radius: 5px;
     box-sizing: border-box;
 }
 

@@ -52,7 +52,7 @@
         fetch('https://ipinfo.io?token=YOUR_API_KEY')
           .then(response => response.json())
           .then(data => success(data.country))
-          .catch(() => success('+62'));
+          .catch(() => success('ID'));
       },
       utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
     });
