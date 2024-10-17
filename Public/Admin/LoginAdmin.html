@@ -1,11 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login Your Account</title>
+    <link rel="icon" href="/Public/Client/Tittle Logo Yoxplore.png" type="image/png">
+    <link rel="stylesheet" href="LoginAdmin.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    LOGIN ADMIN 
+    <div class="container">
+        <div class="image-section">
+            <div class="logo">
+                <img src="/Public/Client/Logo Yoxplore.png" alt="Yoxplore Logo">
+            </div>
+            <div class="image-content">
+                <p>Best Place To Explore Yogyakarta!</p>
+            </div>
+        </div>
+        <div class="login-section">
+            <h2>Login As Admin</h2>
+            <form method="post">
+                <label for="username">Username or Email</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required><br>
+
+                <button type="submit">Login</button><br>
+
+                <div id="g_id_onload"
+                    data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                    data-login_uri="YOUR_BACKEND_LOGIN_URI"
+                    data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-shape="rectangular"
+                    data-theme="outline"
+                    data-text="sign_in_with"
+                    data-size="large"
+                    data-logo_alignment="left">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy;Copyright Kartana</p>
+    </div>
+    <script>
+        function handleCredentialResponse(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
+        }
+        window.onload = function () {
+          google.accounts.id.initialize({
+            client_id: "YOUR_GOOGLE_CLIENT_ID",
+            callback: handleCredentialResponse
+          });
+          google.accounts.id.renderButton(
+            document.querySelector(".g_id_signin"),
+            { theme: "outline", size: "large" }  
+          );
+          google.accounts.id.prompt(); 
+        };
+      </script>
 </body>
 </html>
