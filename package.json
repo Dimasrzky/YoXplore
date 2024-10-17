@@ -1,0 +1,16 @@
+{
+  "name": "yoxplore",
+  "version": "1.0.0",
+  "description": "Develop a web-based system for the recommendation of various tourism that can be explored in the Special Region of Yogyakarta by tourists by providing several choices of activities in the culinary field, concert info, places to stay and places of interest.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1",
+    "yoxplore": "file:"
+  }
+}
