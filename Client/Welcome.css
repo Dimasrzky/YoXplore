@@ -40,13 +40,12 @@ header{
 @keyframes show-right{
     100%{
         width: 0;
-
     }
 }
 
 .navigation a{
     text-decoration: none;
-    padding: 6px 15px;
+    padding: 8px 17px;
     color: #ffffff;
     border-radius: 10px;
     margin: 0px 10px;
@@ -82,9 +81,10 @@ header{
 #text{
     position: relative;
     z-index: 3;
-    font-size: 5em;
+    font-size: 4.2em;
+    font-weight:bold;
     color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.185);
+    text-shadow: 3px 3px 3px #b1734c7d;
 }
 
 .parallax img{
@@ -98,7 +98,9 @@ header{
 .sec{
     position: relative;
     background: #f0d8a5;
-    padding: 100px;
+    padding: 90px;
+    padding-bottom: 40px;
+    padding-top: 40px;
     z-index: 4;
 }
 
@@ -142,3 +144,10 @@ header{
     transform: translateY(0);
 }
 
+.footer {
+    background-color: #925e3e;
+    text-align: center;
+    font-size: 10px;
+    color: #ffffff;
+    padding: 10px;
+}
