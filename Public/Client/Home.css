@@ -125,3 +125,50 @@ button {
 button:hover {
     background-color: #654321;
 }
+
+.sec{
+    position: relative;
+    background: #f0d8a5;
+    padding: 70px;
+    z-index: 4;
+}
+
+.sec h2{
+    position: relative;
+    font-size: 3em;
+    color:#b1734c;
+    margin-bottom: 10px;
+}
+
+.sec h2 .showRight-animate{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: #f0d8a5;
+    transition: 2s;
+}
+
+.sec h2.show-animate .showRight-animate{
+    width: 0;
+}
+
+.sec p{
+    position: relative;
+    font-size: 1.2em;
+    color: #b1734c;
+    font-weight: 300;
+}
+
+
+.sec p {
+    opacity: 0;
+    transform: translateY(20px); 
+    transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+.sec p.show-animate {
+    opacity: 1;
+    transform: translateY(0);
+}
