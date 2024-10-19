@@ -7,7 +7,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('/Public/Client/img/bg.jpg') no-repeat center center fixed;
+    background: url('../img/bg.jpg') no-repeat center center fixed;
     background-size: cover;
 }
 
@@ -52,7 +52,7 @@ body, html {
     font-size: 14px;
 }
 
-.register-section {
+.login-section {
     width: 50%;
     background-color: #fff;
     padding: 40px;
@@ -61,7 +61,7 @@ body, html {
     justify-content: center;
 }
 
-.register-section h2 {
+.login-section h2 {
     margin: 0 0 20px 0;
     color: #b1734c;
 }
@@ -76,34 +76,19 @@ label {
     color: #666;
 }
 
-input[type="text"], input[type="password"], input[type="tel"] {
+input[type="text"], input[type="password"] {
     margin-bottom: 15px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
 }
 
-.iti__country-list {
-    width: 770% !important;
-}
-
-.iti__dropdown {
-    width: 100%; 
-    box-sizing: border-box; 
-}
-
-.iti__flag-container {
-    height: 100%;
-    box-sizing: border-box;
-}
-
-.iti__input {
-    width: 100%; 
-    padding-left: 50px; 
-    box-sizing: border-box;
+.forgot-password {
+    color: #b1734c;
+    text-decoration: none;
+    font-size: 12px;
+    margin-bottom: 20px;
+    text-align: right;
 }
 
 button {
@@ -115,15 +100,14 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 5px;
-    margin-top: 25px;
+    margin-bottom: 10px;
 }
 
 button:hover {
     background-color: #925e3e;
 }
 
-.back-login {
+.create-account {
     text-align: center;
     color: #b1734c;
     text-decoration: underline;
@@ -138,4 +122,19 @@ button:hover {
     text-align: center;
     color: #ffffff;
     font-size: 10px;
+}
+
+.create-account:hover {
+    color: #925e3e;
+}
+
+.forgot-password:hover{
+    color: #925e3e;
+}
+
+.g_id_signin {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
 }

@@ -7,7 +7,11 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
+<<<<<<< HEAD:Public/Client/page/Register.css
+    background: url('../img/bg.jpg') no-repeat center center fixed;
+=======
     background: url('/Public/Client/img/bg.jpg') no-repeat center center fixed;
+>>>>>>> 7f981f9cfb6832b749ec40c6d87e978c32bb00b5:Public/Client/styles/Register.css
     background-size: cover;
 }
 
@@ -52,7 +56,7 @@ body, html {
     font-size: 14px;
 }
 
-.fpassword-section {
+.register-section {
     width: 50%;
     background-color: #fff;
     padding: 40px;
@@ -61,7 +65,7 @@ body, html {
     justify-content: center;
 }
 
-.fpassword-section h2 {
+.register-section h2 {
     margin: 0 0 20px 0;
     color: #b1734c;
 }
@@ -76,13 +80,35 @@ label {
     color: #666;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], input[type="tel"] {
     margin-bottom: 15px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
+.iti__country-list {
+    width: 770% !important;
+}
+
+.iti__dropdown {
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+.iti__flag-container {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.iti__input {
+    width: 100%; 
+    padding-left: 50px; 
+    box-sizing: border-box;
+}
 
 button {
     background-color: #b1734c;
