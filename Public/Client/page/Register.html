@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Create Your Account</title>
-  <link rel="icon" href="/Public/Client/img/Tittle Logo Yoxplore.png" type="image/png">
+  <link rel="icon" href="../img/Tittle Logo Yoxplore.png" type="image/png">
   <link rel="stylesheet" href="Register.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
 </head>
@@ -11,7 +11,7 @@
   <div class="container">
     <div class="image-section">
       <div class="logo">
-        <img src="/Public/Client/img/Logo Yoxplore.png" alt="Yoxplore Logo">
+        <img src="../img/Logo Yoxplore.png" alt="Yoxplore Logo">
       </div>
       <div class="image-content">
         <p>Best Place To Explore Yogyakarta!</p>
@@ -19,12 +19,12 @@
     </div>
     <div class="register-section">
       <h2>Create your account</h2>
-      <form method="post">
+      <form action="../php/register_process.php" method="POST">
         <label for="fname">First Name</label>
-        <input type="text" id="fname" name="fname" required>
+        <input type="text" id="first_name" name="first_name" required>
 
         <label for="lname">Last Name</label>
-        <input type="text" id="lname" name="lname" required>
+        <input type="text" id="last_name" name="last_name" required>
 
         <label for="email">Email</label>
         <input type="text" id="email" name="email" required>
@@ -35,7 +35,7 @@
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required>
 
-        <button type="submit" href="Home.html">Create Account</button>
+        <button type="submit">Create Account</button>
         <a href="Login.html" class="back-login">← Back To Login Page</a>
       </form>
     </div>

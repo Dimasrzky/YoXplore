@@ -1,7 +1,7 @@
 <html>
 <head>
     <title>Login Your Account</title>
-    <link rel="icon" href="/Public/Client/img/Tittle Logo Yoxplore.png" type="image/png">
+    <link rel="icon" href="../img/Tittle Logo Yoxplore.png" type="image/png">
     <link rel="stylesheet" href="Login.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -9,7 +9,7 @@
     <div class="container">
         <div class="image-section">
             <div class="logo">
-                <img src="/Public/Client/img/Logo Yoxplore.png" alt="Yoxplore Logo">
+                <img src="../img/Logo Yoxplore.png" alt="Yoxplore Logo">
             </div>
             <div class="image-content">
                 <p>Best Place To Explore Yogyakarta!</p>
@@ -17,7 +17,7 @@
         </div>
         <div class="login-section">
             <h2>Login your account</h2>
-            <form method="post">
+            <form action="../php/login_process.php" method="post">
                 <label for="username">Username or Email</label>
                 <input type="text" id="username" name="username" required>
 
@@ -26,7 +26,7 @@
 
                 <a href="Fpassword.html" class="forgot-password">forgot password?</a>
 
-                <button type="submit" href="Home.html">Login</button><br>
+                <button type="submit">Login</button><br>
 
                 <div id="g_id_onload"
                     data-client_id="YOUR_GOOGLE_CLIENT_ID"

@@ -1,18 +1,28 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: Login.html");
+    exit();
+}
+$userName = $_SESSION['user_name'];
+?>
+
+
 <html>
 <head>
     <title>Yoxplore - Explore Yogyakarta</title>
-    <link rel="stylesheet" href="/Client/Home.css">
+    <link rel="stylesheet" href="../styles/Home.css">
 </head>
 <body>
     <header>
         <nav class="container">
-            <img class="logo" src="/Public/Client/img/Yoxplore text.png" alt="Yoxplore Logo">
+            <img class="logo" src="../img/Yoxplore text.png" alt="Yoxplore Logo">
             <div class="nav-links">
-                <a href="#" class="active"><img src="/Public/Client/img/home.png" alt="Home Icon"> Home</a>
-                <a href="#"><img src="/Public/Client/img/yotrip.png" alt="Trip Icon"> YoTrip</a>
-                <a href="#"><img src="/Public/Client/img/yoconcert.png" alt="Concert Icon"> YoConcert</a>
-                <a href="#"><img src="/Public/Client/img/yotaste.png" alt="Taste Icon"> YoTaste</a>
-                <a href="#"><img src="/Public/Client/img/yostay.png" alt="Stay Icon"> YoStay</a>
+                <a href="#" class="active"><img src="../img/home.png" alt="Home Icon"> Home</a>
+                <a href="#"><img src="../img/yotrip.png" alt="Trip Icon"> YoTrip</a>
+                <a href="#"><img src="../img/yoconcert.png" alt="Concert Icon"> YoConcert</a>
+                <a href="#"><img src="../img/yotaste.png" alt="Taste Icon"> YoTaste</a>
+                <a href="#"><img src="../img/yostay.png" alt="Stay Icon"> YoStay</a>
             </div>
             <div class="profile-pic"></div>
         </nav>
@@ -20,6 +30,7 @@
 
     <main class="container">
         <section class="hero">
+            <p>Hello, <?php echo htmlspecialchars($userName); ?></p>
             <h1>Let's Explore Yogyakarta!</h1>
             <div class="search-box">
                 <input type="text" placeholder="Where you wanna go?">
