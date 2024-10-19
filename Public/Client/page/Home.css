@@ -98,11 +98,7 @@ nav {
 }
 
 .hero {
-<<<<<<< HEAD:Public/Client/page/Home.css
     background: url('../img/bg2.jpg') no-repeat center center / cover;
-=======
-    background: url('/Public/Client/img/bg2.jpg') no-repeat center center / cover;
->>>>>>> 7f981f9cfb6832b749ec40c6d87e978c32bb00b5:Public/Client/styles/Home.css
     width: 100vw;
     height: 100vh; 
     text-align: center;

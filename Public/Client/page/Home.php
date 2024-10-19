@@ -11,12 +11,7 @@ $userName = $_SESSION['user_name'];
 <html>
 <head>
     <title>Yoxplore - Explore Yogyakarta</title>
-<<<<<<< HEAD:Public/Client/page/Home.php
     <link rel="stylesheet" href="../styles/Home.css">
-=======
-    <link rel="icon" href="/Public/Client/img/Tittle Logo Yoxplore.png" type="image/png">
-    <link rel="stylesheet" href="/Public/Client/styles/Home.css">
->>>>>>> 7f981f9cfb6832b749ec40c6d87e978c32bb00b5:Public/Client/page/Home.html
 </head>
 <body>
     <header>
