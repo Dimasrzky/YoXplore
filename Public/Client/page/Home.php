@@ -11,7 +11,12 @@ $userName = $_SESSION['user_name'];
 <html>
 <head>
     <title>Yoxplore - Explore Yogyakarta</title>
+<<<<<<< HEAD:Public/Client/page/Home.php
     <link rel="stylesheet" href="../styles/Home.css">
+=======
+    <link rel="icon" href="/Public/Client/img/Tittle Logo Yoxplore.png" type="image/png">
+    <link rel="stylesheet" href="/Public/Client/styles/Home.css">
+>>>>>>> 7f981f9cfb6832b749ec40c6d87e978c32bb00b5:Public/Client/page/Home.html
 </head>
 <body>
     <header>
@@ -90,8 +95,54 @@ $userName = $_SESSION['user_name'];
             </div>
         </div>
     </section>
+
+    <section class="carousel-container">
+        <div class="carousel-slide">
+            <div class="carousel-item">
+                <img src="https://via.placeholder.com/300x150" alt="Image 1">
+            </div>
+            <div class="carousel-item">
+                <img src="https://via.placeholder.com/300x150" alt="Image 2">
+            </div>
+            <div class="carousel-item">
+                <img src="https://via.placeholder.com/300x150" alt="Image 3">
+            </div>
+        </div>
+        <div class="carousel-indicators">
+            <span class="indicator active"></span>
+            <span class="indicator"></span>
+            <span class="indicator"></span>
+        </div>
+    </section>       
+
     <footer>
         <p>&copy; 2024 Yoxplore. All rights reserved.</p>
     </footer>
+
+    <script>
+        const slides = document.querySelector('.carousel-slide');
+        const indicators = document.querySelectorAll('.indicator');
+        let currentIndex = 0;
+    
+        function updateCarousel() {
+            slides.style.transform = `translateX(${-currentIndex * 100}%)`;
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentIndex);
+            });
+        }
+    
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentIndex = index;
+                updateCarousel();
+            });
+        });
+    
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % indicators.length;
+            updateCarousel();
+        }, 3000);
+    </script>    
+    
 </body>
 </html>

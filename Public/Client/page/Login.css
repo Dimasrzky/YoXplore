@@ -7,7 +7,11 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
+<<<<<<< HEAD:Public/Client/page/Login.css
     background: url('../img/bg.jpg') no-repeat center center fixed;
+=======
+    background: url('/Public/Client/img/bg.jpg') no-repeat center center fixed;
+>>>>>>> 7f981f9cfb6832b749ec40c6d87e978c32bb00b5:Public/Client/styles/Login.css
     background-size: cover;
 }
 
