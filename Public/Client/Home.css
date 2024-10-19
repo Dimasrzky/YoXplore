@@ -201,7 +201,6 @@ h2 {
     font-weight: bold;
 }
 
-
 .explore-item:hover {
     transform: translateY(-10px);
     background-color: #fff6e5;
@@ -210,6 +209,63 @@ h2 {
 .explore-item:hover img {
     border: 2px solid #8b4513;
 }
+
+.carousel-container {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    background-color: #754c24; 
+    padding: 10px; 
+    height: 350px;
+}
+
+.carousel-slide {
+    display: flex;
+    transition: transform 0.4s ease-in-out;
+    width: 300%;
+}
+
+.carousel-item {
+    min-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent; 
+}
+
+.carousel-item img {
+    border-radius: 10px;
+    width: 550px;
+    height: auto;
+    object-fit: contain;
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.indicator.active {
+    background-color: #ffffff;
+}
+
 
 footer {
     background-color: #8b4513;
