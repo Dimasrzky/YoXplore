@@ -8,11 +8,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     $email = $_POST['email'];
-    $number_phone = $_POST['phone'];
+    $number_phone = $_POST['number_phone'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     try {
-        $stmt = $conn->prepare("INSERT INTO users (First_name, Last_name, Email, phone, Password) VALUES (:first_name, :last_name, :email, :phone, :password)");
+        $stmt = $conn->prepare("INSERT INTO users (First_name, Last_name, Email, phone, Password) VALUES (:first_name, :last_name, :email, :number_phone, :password)");
         $stmt->bindParam(':first_name', $first_name);
         $stmt->bindParam(':last_name', $last_name);
         $stmt->bindParam(':email', $email);
