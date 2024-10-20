@@ -1,15 +1,13 @@
 <?php
-$host = 'localhost';  // Biasanya 'localhost' untuk pengembangan lokal
+$host = 'localhost';
 $dbname = 'yoxplore';
-$username = 'root';   // Ganti dengan username database Anda
-$password = '';       // Ganti dengan password database Anda
+$username = 'root';
+$password = ''; // Sesuaikan dengan password database Anda jika ada
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    // Set mode error PDO ke exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
-    echo "Koneksi gagal: " . $e->getMessage();
-    die();
+    die("Koneksi database gagal: " . $e->getMessage());
 }
 ?>
