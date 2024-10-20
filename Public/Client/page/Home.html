@@ -7,11 +7,11 @@ if (!isset($_SESSION['user_id'])) {
 $userName = $_SESSION['user_name'];
 ?>
 
-
 <html>
 <head>
     <title>Yoxplore - Explore Yogyakarta</title>
-    <link rel="stylesheet" href="../styles/Home.css">
+    <link rel="icon" href="../img/Tittle Logo Yoxplore.png" type="image/png">
+    <link rel="stylesheet" href="/Public/Client/page/Home.css">
 </head>
 <body>
     <header>
@@ -30,7 +30,6 @@ $userName = $_SESSION['user_name'];
 
     <main class="container">
         <section class="hero">
-            <p>Hello, <?php echo htmlspecialchars($userName); ?></p>
             <h1>Let's Explore Yogyakarta!</h1>
             <div class="search-box">
                 <input type="text" placeholder="Where you wanna go?">
@@ -38,8 +37,6 @@ $userName = $_SESSION['user_name'];
             </div>
         </section>
     </main>
-
-    <br>
 
     <section class="sec">
         <h2>RECOMMENDED PLACES</h2>

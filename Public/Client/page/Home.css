@@ -16,7 +16,7 @@ body, html {
 }
 
 header {
-    background-color: #8b4513;
+    background-color: #b1734c;  
     color: white;
     position: fixed;
     width: 100%;
@@ -145,7 +145,7 @@ input[type="text"] {
 button {
     padding: 12px 20px;
     font-size: 17px;
-    background-color: #8b4513;
+    background-color: #b1734c;
     color: white;
     border: none;
     border-radius: 0 15px 15px 0;
@@ -154,18 +154,18 @@ button {
 }   
 
 button:hover {
-    background-color: #654321;
+    background-color: #925e3e;
 }
 
 .sec {
-    background-color: #ffffff;
+    background-color: #f0d8a5;
     padding: 20px 0;
 }
 
 h2 {
-    color: #654321;
+    color: #925e3e;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     font-size: 1.5em;
 }
 
@@ -177,7 +177,7 @@ h2 {
 }
 
 .explore-item {
-    background-color: #654321;
+    background-color: #b1734c;
     border-radius: 10px;
     text-align: center;
     padding: 12px;
@@ -195,7 +195,7 @@ h2 {
 }
 
 .explore-item p {
-    margin-top: 10px;
+    margin-top: 20px;
     font-size: 1em; 
     color: #ffffff;
     font-weight: bold;
@@ -203,7 +203,7 @@ h2 {
 
 .explore-item:hover {
     transform: translateY(-10px);
-    background-color: #a85e29;
+    background-color: #925e3e;
 }
 
 .explore-item:hover img {
@@ -217,7 +217,7 @@ h2 {
     display: flex; 
     justify-content: center;
     align-items: center;
-    background-color: #ffffff; 
+    background-color: #f0d8a5; 
     padding: 10px; 
     height: 350px;
 }
@@ -256,14 +256,14 @@ h2 {
 .indicator {
     width: 10px;
     height: 10px;
-    background-color: rgb(218, 218, 218);
+    background-color: rgb(255, 255, 255);
     border-radius: 50%;
     margin: 10px 5px;
     cursor: pointer;
 }
 
 .indicator.active {
-    background-color: #654321;
+    background-color: #b1734c;
 }
 
 
