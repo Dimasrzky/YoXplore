@@ -7,7 +7,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('/Public/Client/img/bg.jpg') no-repeat center center fixed;
+    background: url('../img/bg.jpg') no-repeat center center fixed;
     background-size: cover;
 }
 
