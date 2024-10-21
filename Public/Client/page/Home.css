@@ -211,62 +211,91 @@ h2 {
     border: 2px solid #8b4513;
 }
 
-.carousel-container {
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-    display: flex; 
-    justify-content: center;
-    align-items: center;
-    background-color: #f0d8a5; 
-    padding: 10px; 
-    height: 350px;
-}
-
-.carousel-slide {
-    display: flex;
-    transition: transform 0.4s ease-in-out;
-    width: 300%;
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #f0d8a5;
 }
 
 .carousel-item {
-    min-width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent; 
+    position: absolute;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    width: 500px;
+    height: 250px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    opacity: 0;
+    margin: 0 10px;
 }
 
 .carousel-item img {
+    width: 100%;
+    height: 250px; 
+    object-fit: cover;
     border-radius: 10px;
-    width: 500px;
-    height: auto;
-    object-fit: contain;
 }
 
-.carousel-indicators {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    justify-content: center;
+.carousel-item.active {
+  z-index: 2;
+  opacity: 1;
+  transform: translateX(0) scale(1.2);
+}
+
+.carousel-item.prev, .carousel-item.next {
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.carousel-item.prev {
+  transform: translateX(-90%) scale(0.8);
+}
+
+.carousel-item.next {
+  transform: translateX(90%) scale(0.8);
+}
+
+.nav-left, .nav-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.nav-left {
+  left: 30px;
+}
+
+.nav-right {
+  right: 30px;
 }
 
 .indicator {
-    width: 10px;
-    height: 10px;
-    background-color: rgb(255, 255, 255);
-    border-radius: 50%;
-    margin: 10px 5px;
-    cursor: pointer;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 5px;
+  background-color: #aaa;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .indicator.active {
-    background-color: #b1734c;
+  background-color: #333;
 }
-
 
 footer {
     background-color: #8b4513;

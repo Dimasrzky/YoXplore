@@ -90,53 +90,76 @@ $userName = $_SESSION['user_name'];
         </div>
     </section>
 
-    <section class="carousel-container">
-        <div class="carousel-slide">
-            <div class="carousel-item">
-                <img src="https://via.placeholder.com/300x150" alt="Image 1">
-            </div>
-            <div class="carousel-item">
-                <img src="https://via.placeholder.com/300x150" alt="Image 2">
-            </div>
-            <div class="carousel-item">
-                <img src="https://via.placeholder.com/300x150" alt="Image 3">
-            </div>
+    <div class="carousel">
+        <button class="nav-left">&lt;</button>
+        <button class="nav-right">&gt;</button>
+      
+        <div class="carousel-item active">
+            <img src="https://sewamobiljogja.id/wp-content/uploads/2019/09/paket-liburan-ke-jogja.jpg" alt="Image 1">
         </div>
-        <div class="carousel-indicators">
-            <span class="indicator active"></span>
-            <span class="indicator"></span>
-            <span class="indicator"></span>
+        <div class="carousel-item next">
+            <img src="https://www.mygetplus.id/wp-content/uploads/2024/05/Visual-Blog-School-Holiyay-Travel-General.png" alt="Image 2">
         </div>
-    </section>       
+        <div class="carousel-item prev">
+            <img src="https://larintatourjogja.com/images/slider/slider-1-82.png" alt="Image 3">
+        </div>
+      
+        <div class="indicators">
+          <div class="indicator active"></div>
+          <div class="indicator"></div>
+          <div class="indicator"></div>
+        </div>
+      </div>                 
 
     <footer>
         <p>&copy; 2024 Yoxplore. All rights reserved.</p>
     </footer>
 
     <script>
-        const slides = document.querySelector('.carousel-slide');
+        const items = document.querySelectorAll('.carousel-item');
         const indicators = document.querySelectorAll('.indicator');
         let currentIndex = 0;
-    
+
         function updateCarousel() {
-            slides.style.transform = `translateX(${-currentIndex * 100}%)`;
-            indicators.forEach((indicator, index) => {
-                indicator.classList.toggle('active', index === currentIndex);
-            });
-        }
+        items.forEach((item, index) => {
+            item.classList.remove('prev', 'next', 'active');
     
-        indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => {
-                currentIndex = index;
-                updateCarousel();
-            });
+            if (index === currentIndex) {
+            item.classList.add('active');
+            } else if (index === (currentIndex - 1 + items.length) % items.length) {
+            item.classList.add('prev');
+            } else if (index === (currentIndex + 1) % items.length) {
+            item.classList.add('next');
+            }
         });
-    
-        setInterval(() => {
-            currentIndex = (currentIndex + 1) % indicators.length;
+
+        indicators.forEach((indicator, index) => {
+            indicator.classList.remove('active');
+            if (index === currentIndex) {
+            indicator.classList.add('active');
+            }
+        });
+        }
+
+        document.querySelector('.nav-left').addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + items.length) % items.length;
+        updateCarousel();
+        });
+
+        document.querySelector('.nav-right').addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % items.length;
+        updateCarousel();
+        });
+
+        indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            currentIndex = index;
             updateCarousel();
-        }, 3000);
-    </script>    
+        });
+        });
+
+        updateCarousel();
+    </script> 
     
 </body>
 </html>
