@@ -18,7 +18,7 @@ body, html {
 header {
     background-color: #b1734c;  
     color: white;
-    position: fixed;
+    position: relative;
     width: 100%;
     top: 0;
     z-index: 1;
@@ -107,21 +107,12 @@ nav {
     justify-content: center;
     align-items: center;
     color: #ffffff;
-    margin: 0;
-    padding: 0;
+    margin-top: -200px;
     position: relative;
 }
 
 main.container {
     padding: 0;
-}
-
-h1 {
-    font-size: 50px;
-    color: #ffffff;
-    margin-bottom: 20px;
-    margin-top: -380px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.185);
 }
 
 .search-box {
@@ -130,8 +121,10 @@ h1 {
     margin-bottom: 30px;
     width: 90%;
     height: 50px;
+    margin-top: 500px;
     margin-left: auto;
     margin-right: auto;
+    margin-top: -200px;
 }
 
 input[type="text"] {
@@ -159,7 +152,7 @@ button:hover {
 
 .sec {
     background-color: #f0d8a5;
-    padding: 10px 0;
+    padding: 5px 0;
 }
 
 h2 {
@@ -184,7 +177,6 @@ h2 {
     width: 220px;
     margin: 20px; 
     transition: transform 0.3s ease, background-color 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .explore-item img {

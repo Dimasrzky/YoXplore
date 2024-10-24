@@ -30,7 +30,6 @@ $userName = $_SESSION['user_name'];
 
     <main class="container">
         <section class="hero">
-            <h1>Let's Explore Yogyakarta!</h1>
             <div class="search-box">
                 <input type="text" placeholder="Where you wanna go?">
                 <button>Search</button>
@@ -39,7 +38,21 @@ $userName = $_SESSION['user_name'];
     </main>
 
     <section class="sec">
-        <h2>RECOMMENDED PLACES</h2>
+        <section class="sec">
+            <div class="section-header">
+                <h2>RECOMMENDED PLACES</h2>
+                <div class="sort-options">
+                    <label for="sort">Sorted by: </label>
+                    <select id="sort">
+                        <option value="popular">Popular</option>
+                        <option value="rating">Rating</option>
+                        <option value="newest">Newest</option>
+                        <option value="price">Price</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+        <!--h2>RECOMMENDED PLACES</h2-->
         <div class="explore-items">
             <div class="explore-item">
                 <img src="https://gudegyudjumpusat.com/wp-content/uploads/2016/01/Paket-Gudeg-Nasi.jpg" alt="Recommended 1">

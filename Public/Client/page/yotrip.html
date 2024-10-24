@@ -30,7 +30,6 @@ $userName = $_SESSION['user_name'];
 
     <main class="container">
         <section class="hero">
-            <h1>Let's Explore Yogyakarta!</h1>
             <div class="search-box">
                 <input type="text" placeholder="Where you wanna go?">
                 <button>Search</button>
@@ -39,7 +38,22 @@ $userName = $_SESSION['user_name'];
     </main>
 
     <section class="sec">
-        <h2>RECOMMENDED PLACES</h2>
+        <section class="sec">
+            <div class="section-header">
+                <h2>RECOMMENDED PLACES</h2>
+                <div class="sort-options">
+                    <label for="sort">Sorted by: </label>
+                    <select id="sort">
+                        <option value="popular">Popular</option>
+                        <option value="rating">Rating</option>
+                        <option value="newest">Newest</option>
+                        <option value="price">Price</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+        
+        <!--h2>RECOMMENDED PLACES</h2-->
         <div class="explore-items">
             <div class="explore-item">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Prambanan_Temple_Yogyakarta_Indonesia.jpg/1280px-Prambanan_Temple_Yogyakarta_Indonesia.jpg" alt="Recommended 1">
