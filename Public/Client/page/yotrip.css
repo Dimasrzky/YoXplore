@@ -18,7 +18,7 @@ body, html {
 header {
     background-color: #b1734c;  
     color: white;
-    position: fixed;
+    position: relative;
     width: 100%;
     top: 0;
     z-index: 1;
@@ -30,6 +30,7 @@ nav {
     justify-content: space-between;
     align-items: center;
     height: 55px;
+    position: relative;
 }
 
 .logo {
@@ -101,27 +102,17 @@ nav {
     background: url('/Public/Client/img/yotrip-bg.jpg') no-repeat center center / cover;
     width: 100vw;
     height: 100vh; 
-    text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     color: #ffffff;
-    margin: 0;
-    padding: 0;
+    margin-top: -200px;
     position: relative;
 }
 
 main.container {
     padding: 0;
-}
-
-h1 {
-    font-size: 50px;
-    color: #ffffff;
-    margin-bottom: 20px;
-    margin-top: -380px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.185);
 }
 
 .search-box {
@@ -132,6 +123,7 @@ h1 {
     height: 50px;
     margin-left: auto;
     margin-right: auto;
+    margin-top: -200px;
 }
 
 input[type="text"] {
@@ -159,13 +151,47 @@ button:hover {
 
 .sec {
     background-color: #f0d8a5;
-    padding: 20px 0;
+    padding: 10px 0;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0px;
+}
+
+.sort-options {
+    display: flex;
+    align-items: center;
+    margin-right: 50px;
+}
+
+.sort-options label {
+    font-size: 1em;
+    color: #b1734c;
+    margin-right: 5px;
+}
+
+.sort-options select {
+    padding: 5px;
+    border: 1px;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #b1734c;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.sort-options select:hover {
+    background-color: #eeeeee;
 }
 
 h2 {
     color: #b1734c;
-    text-align: center;
+    text-align: left;
     margin-bottom: 0px;
+    margin-left: 55px;
     font-size: 1.5em;
 }
 
@@ -184,7 +210,6 @@ h2 {
     width: 220px;
     margin: 20px; 
     transition: transform 0.3s ease, background-color 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .explore-item img {
