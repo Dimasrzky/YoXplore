@@ -18,7 +18,7 @@ body, html {
 header {
     background-color: #b1734c;  
     color: white;
-    position: relative;
+    position: sticky;
     width: 100%;
     top: 0;
     z-index: 1;
@@ -150,7 +150,7 @@ button:hover {
 }
 
 .sec {
-    background-color: #f0d8a5;
+    background-color: #6e4c1a;
     padding: 10px 0;
 }
 
@@ -169,7 +169,7 @@ button:hover {
 
 .sort-options label {
     font-size: 1em;
-    color: #b1734c;
+    color: #ffffff;
     margin-right: 5px;
 }
 
@@ -188,7 +188,7 @@ button:hover {
 }
 
 h2 {
-    color: #b1734c;
+    color: #ffffff;
     text-align: left;
     margin-bottom: 0px;
     margin-left: 55px;
@@ -204,7 +204,7 @@ h2 {
 
 .explore-item {
     background-color: #ffffff;
-    border-radius: 10px;
+    border-radius: 0px;
     text-align: center;
     padding: 12px;
     width: 220px;
@@ -216,7 +216,7 @@ h2 {
     width: 100%;
     height: 150px; 
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 0px;
 }
 
 .explore-item p {
