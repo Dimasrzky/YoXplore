@@ -1,12 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: Login.html");
-    exit();
-}
-$userName = $_SESSION['user_name'];
-?>
-
 <html>
 <head>
     <title>Yoxplore - Explore Yogyakarta</title>
