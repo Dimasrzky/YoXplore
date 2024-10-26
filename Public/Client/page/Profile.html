@@ -1,0 +1,92 @@
+<html>
+<head>
+    <title>Yoxplore - Explore Yogyakarta</title>
+    <link rel="icon" href="../img/Tittle Logo Yoxplore.png" type="image/png">
+    <link rel="stylesheet" href="/Public/Client/page/Profile.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <img class="logo" src="../img/Yoxplore text.png" alt="Yoxplore Logo">
+            <div class="nav-links">
+                <a href="Home.html"><img src="../img/home.png" alt="Home Icon"> Home</a>
+                <a href="yotrip.html"><img src="../img/yotrip.png" alt="Trip Icon"> YoTrip</a>
+                <a href="yoconcert.html"><img src="../img/yoconcert.png" alt="Concert Icon"> YoConcert</a>
+                <a href="yotaste.html"><img src="../img/yotaste.png" alt="Taste Icon"> YoTaste</a>
+                <a href="yostay.html"><img src="../img/yostay.png" alt="Stay Icon"> YoStay</a>
+            </div>
+            <a href="profile.html">
+                <div class="profile-pic">
+                    <img src="#">
+                </div>
+            </a>
+        </nav>
+    </header>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Edit Profile</h1>
+            <div class="profile-pic-container">
+                <div class="profile-pic-main">
+                    <img src="https://placehold.co/500x500" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="edit-icon">
+                    <label for="profile-upload">
+                        <img src="../img/camera.png" alt="Upload Photo">
+                        <input 
+                            type="file" 
+                            id="profile-upload" 
+                            class="file-input" 
+                            accept="image/*"
+                            onchange="previewImage(event)">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <form>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" value="Thomas" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" value="Hardison" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" value="thomasdhardison@dayrep.com" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" value="********">
+                </div>
+                <div class="form-group full-width">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" value="661-724-7734">
+                </div>
+            </div>
+            <button type="submit" class="save-btn">Save Changes</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Yoxplore. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-preview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+
+</body>
+</html>
