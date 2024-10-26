@@ -28,7 +28,7 @@ nav {
 
 .logo {
     width: 120px;
-    margin-left: 20px;
+    margin-left: 40px;
 }
 
 .nav-links {
@@ -87,7 +87,7 @@ nav {
     background-color: #ffffff;
     background-size: cover;
     background-position: center;
-    margin-right: 20px;
+    margin-right: 40px;
 }
 
 .profile-container {
@@ -217,6 +217,13 @@ nav {
 
 .save-btn:hover {
     background-color: #925e3e;
+}
+
+.logout {
+    text-align: center;
+    color: #b1734c;
+    text-decoration: underline;
+    font-size: 16px;
 }
 
 footer {

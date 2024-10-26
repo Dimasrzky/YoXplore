@@ -48,7 +48,7 @@ header{
     text-decoration: none;
     padding: 6px 15px;
     color: #ffffff;
-    border-radius: 10px;
+    border-radius: 5px;
     margin: 0px 10px;
     font-weight: 600;
     font-size: 20px;
@@ -56,8 +56,8 @@ header{
 }
 
 .navigation a:hover, .navigation a.active{
-    background: #ffffff;
-    color: #b1734c;
+    background: #925e3e;
+    color: #ffffff;
 }
 
 #welcome1 {
@@ -69,7 +69,6 @@ header{
     z-index: 1; 
     position: absolute;
 }
-
 
 .parallax{
     position: relative;
@@ -129,7 +128,6 @@ header{
     color: #b1734c;
     font-weight: 300;
 }
-
 
 .sec p {
     opacity: 0;

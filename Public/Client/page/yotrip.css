@@ -175,8 +175,8 @@ button:hover {
 
 .sort-options select {
     padding: 5px;
-    border: 1px;
-    border-radius: 5px;
+    border: 0px;
+    border-radius: 0px;
     background-color: #ffffff;
     color: #b1734c;
     cursor: pointer;
