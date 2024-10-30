@@ -1,11 +1,11 @@
-import '@/styles/globals.css'
+import './globals.css'  // Gunakan relative import
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'YoXplore',
-  description: 'Your ultimate tourism platform',
+  title: 'YoXplore Admin',
+  description: 'YoXplore Admin Dashboard',
 }
 
 export default function RootLayout({
