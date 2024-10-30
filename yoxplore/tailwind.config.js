@@ -20,6 +20,11 @@ module.exports = {
           800: '#1e40af',
           900: '#1e3a8a',
         },
+        brown: {
+          500: '#8b4513',
+          600: '#6b3d1a',
+          700: '#5a3216',
+        },
       },
       transitionProperty: {
         'colors': 'background-color, border-color, color, fill, stroke',
