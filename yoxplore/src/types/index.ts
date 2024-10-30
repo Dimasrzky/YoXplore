@@ -1,3 +1,4 @@
 export * from './hotel';
 export * from './review';
-export * from './menuItem';
+export * from './menuitem';
+export * from './restaurant';   
