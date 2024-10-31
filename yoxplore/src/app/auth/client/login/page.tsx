@@ -156,7 +156,7 @@ export default function ClientRegisterPage() {
 
           <div className="mt-4 text-right">
             <p className="text-sm text-gray-600">
-              <a href="./login" className="text-brown-600 hover:text-brown-700 font-medium">
+              <a href="./forgotPass" className="text-brown-600 hover:text-brown-700 font-medium">
                 Forgot Password
               </a>
             </p>
