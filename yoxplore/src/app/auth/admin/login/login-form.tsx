@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
-import { motion } from 'framer-motion'; // Tambahkan framer-motion untuk animasi
+import { motion } from 'framer-motion';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
@@ -17,21 +18,24 @@ export default function LoginForm() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
+  // Menambahkan tipe untuk 'field' agar hanya menerima 'email' atau 'password'
   const handleFocus = (field: 'email' | 'password') => {
-    setFocused(prev => ({ ...prev, [field]: true }));
+    setFocused((prev) => ({ ...prev, [field]: true }));
   };
 
   const handleBlur = (field: 'email' | 'password') => {
-    setFocused(prev => ({ ...prev, [field]: formData[field].length > 0 }));
+    setFocused((prev) => ({ ...prev, [field]: formData[field].length > 0 }));
   };
 
+  // Menambahkan tipe event untuk perubahan input
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -60,21 +64,6 @@ export default function LoginForm() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setLoading(true);
-      await signIn('google', {
-        callbackUrl: '/client/dashboard',
-        redirect: true
-      });
-    } catch (error) {
-      setError('Failed to sign in with Google');
-      setLoading(false);
-    }
-  };
-
-  // ... rest of your handleSubmit and handleGoogleSignIn functions
-
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -83,7 +72,6 @@ export default function LoginForm() {
       className="w-screen h-screen flex items-center justify-center bg-gray-50"
     >
       <div className="flex w-full h-full overflow-hidden">
-        {/* Bagian Kiri: Gambar Latar dengan animasi fade in */}
         <motion.div 
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -96,7 +84,6 @@ export default function LoginForm() {
             className="object-cover h-full w-full transition-transform duration-700"
           />
         </motion.div>
-        {/* Bagian Kanan: Form Login dengan animasi slide in */}
         <motion.div 
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -111,6 +98,7 @@ export default function LoginForm() {
           >
             <h1 className="text-2xl font-semibold text-brown-500">Login As Admin</h1>
           </motion.div>
+
           <br></br>
 
           {error && (
@@ -124,7 +112,7 @@ export default function LoginForm() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field dengan Floating Label */}
+            {/* Email Field */}
             <div className="relative">
               <input
                 id="email"
@@ -153,18 +141,18 @@ export default function LoginForm() {
 
             <br></br>
 
-            {/* Password Field dengan Floating Label */}
+            {/* Password Field dengan Ikon Mata */}
             <div className="relative">
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={formData.password}
                 onFocus={() => handleFocus('password')}
                 onBlur={() => handleBlur('password')}
                 onChange={handleChange}
-                className="peer w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brown-500 focus:border-brown-500 placeholder-transparent"
+                className="peer w-full px-4 py-3 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brown-500 focus:border-brown-500 placeholder-transparent"
                 placeholder="Password"
               />
               <label
@@ -178,9 +166,17 @@ export default function LoginForm() {
               >
                 Password
               </label>
+
+              {/* Ikon Mata untuk toggle password */}
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </div>
             </div>
 
-            {/* Submit Button dengan animasi */}
+            {/* Submit Button */}
             <motion.div
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}

@@ -5,6 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
 import { motion } from 'framer-motion'; // Tambahkan framer-motion untuk animasi
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
@@ -72,6 +73,8 @@ export default function LoginForm() {
       setLoading(false);
     }
   };
+
+  const [showPassword, setShowPassword] = useState(false);
 
   // ... rest of your handleSubmit and handleGoogleSignIn functions
 
@@ -153,18 +156,18 @@ export default function LoginForm() {
 
             <br></br>
 
-            {/* Password Field dengan Floating Label */}
+            {/* Password Field dengan Ikon Mata */}
             <div className="relative">
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={formData.password}
                 onFocus={() => handleFocus('password')}
                 onBlur={() => handleBlur('password')}
                 onChange={handleChange}
-                className="peer w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brown-500 focus:border-brown-500 placeholder-transparent"
+                className="peer w-full px-4 py-3 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brown-500 focus:border-brown-500 placeholder-transparent"
                 placeholder="Password"
               />
               <label
@@ -178,6 +181,14 @@ export default function LoginForm() {
               >
                 Password
               </label>
+
+              {/* Ikon Mata untuk toggle password */}
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </div>
             </div>
 
             {/* Submit Button dengan animasi */}
