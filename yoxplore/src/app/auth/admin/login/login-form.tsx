@@ -3,19 +3,29 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { AiFillEye, AiFillEyeInvisible, AiOutlineUser, AiOutlineLock, AiOutlineRedEnvelope } from 'react-icons/ai';
+import { FcGoogle } from 'react-icons/fc';
+import { motion } from 'framer-motion'; // Tambahkan framer-motion untuk animasi
 
-export default function AdminLoginPage() {
+export default function LoginForm() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [focused, setFocused] = useState({
+    email: false,
+    password: false,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  const handleFocus = (field: 'email' | 'password') => {
+    setFocused(prev => ({ ...prev, [field]: true }));
+  };
+
+  const handleBlur = (field: 'email' | 'password') => {
+    setFocused(prev => ({ ...prev, [field]: formData[field].length > 0 }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,15 +35,15 @@ export default function AdminLoginPage() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => { 
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
       const result = await signIn('credentials', {
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
         redirect: false,
       });
 
@@ -42,7 +52,7 @@ export default function AdminLoginPage() {
         return;
       }
 
-      router.push('/admin/dashboard');
+      router.push('/client/dashboard');
     } catch (err) {
       setError('An unexpected error occurred');
     } finally {
@@ -50,90 +60,152 @@ export default function AdminLoginPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      await signIn('google', {
+        callbackUrl: '/client/dashboard',
+        redirect: true
+      });
+    } catch (error) {
+      setError('Failed to sign in with Google');
+      setLoading(false);
+    }
+  };
+
+  // ... rest of your handleSubmit and handleGoogleSignIn functions
+
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
-      <div className="flex w-full h-full shadow-lg overflow-hidden">
-        {/* Bagian Kiri: Gambar */}
-        <div className="hidden md:flex md:w-full">
-          <img src="/images/logo/bg login 2.jpeg" alt="bg-login" className="object-cover h-full w-full" />
-        </div>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="w-screen h-screen flex items-center justify-center bg-gray-50"
+    >
+      <div className="flex w-full h-full overflow-hidden">
+        {/* Bagian Kiri: Gambar Latar dengan animasi fade in */}
+        <motion.div 
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.7 }}
+          className="hidden md:flex w-full"
+        >
+          <img 
+            src="/images/logo/bg login 2.jpeg" 
+            alt="bg-login" 
+            className="object-cover h-full w-full transition-transform duration-700"
+          />
+        </motion.div>
+        {/* Bagian Kanan: Form Login dengan animasi slide in */}
+        <motion.div 
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.7 }}
+          className="flex flex-col justify-center p-10 w-2/3 bg-white"
+        >
+          <motion.div 
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="flex justify-center mb-6"
+          >
+            <h1 className="text-2xl font-semibold text-brown-500">Login As Admin</h1>
+          </motion.div>
+          <br></br>
 
-        {/* Bagian Kanan: Form Login */}
-        <div className="flex flex-col justify-center p-10 w-2/3 bg-white">
-          <div className="flex justify-center mb-4">
-            <h1 className="text-3xl py-10 font-semibold text-brown-700">Login as Admin</h1>
-          </div>
-
-          {/* Pesan Error */}
           {error && (
-            <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-4 rounded">
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 bg-red-50 border-l-4 border-red-400 p-4 rounded"
+            >
               <p className="text-sm text-red-700">{error}</p>
-            </div>
+            </motion.div>
           )}
 
-          {/* Form Login */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Field Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-brown-500">
+            {/* Email Field dengan Floating Label */}
+            <div className="relative">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={formData.email}
+                onFocus={() => handleFocus('email')}
+                onBlur={() => handleBlur('email')}
+                onChange={handleChange}
+                className="peer w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brown-500 focus:border-brown-500 placeholder-transparent"
+                placeholder="Email"
+              />
+              <label
+                htmlFor="email"
+                className={`absolute left-4 transition-all duration-200 
+                  ${focused.email || formData.email 
+                    ? '-top-6 text-sm text-brown-500'
+                    : 'top-3 text-gray-400'
+                  } 
+                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500`}
+              >
                 Email
               </label>
-              <div className="mt-1 relative flex items-center border-b border-gray-300 focus-within:border-brown-500">
-              <AiOutlineRedEnvelope className="text-brown-500 mr-3" size={30} />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full py-3 focus:outline-none sm:text-sm placeholder-gray-400"
-                  placeholder="example@gmail.com"
-                />
-              </div>
             </div>
 
-            {/* Field Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-brown-500">
+            <br></br>
+
+            {/* Password Field dengan Floating Label */}
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={formData.password}
+                onFocus={() => handleFocus('password')}
+                onBlur={() => handleBlur('password')}
+                onChange={handleChange}
+                className="peer w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brown-500 focus:border-brown-500 placeholder-transparent"
+                placeholder="Password"
+              />
+              <label
+                htmlFor="password"
+                className={`absolute left-4 transition-all duration-200 
+                  ${focused.password || formData.password 
+                    ? '-top-6 text-sm text-brown-500'
+                    : 'top-3 text-gray-400'
+                  } 
+                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500`}
+              >
                 Password
               </label>
-              <div className="mt-1 relative flex items-center border-b border-gray-300 focus-within:border-brown-500">
-                <AiOutlineLock className="text-brown-500 mr-3" size={30} />
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full py-3 focus:outline-none sm:text-sm placeholder-gray-400"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-brown-500 ml-3"
-                >
-                  {showPassword ? <AiFillEyeInvisible size={24} /> : <AiFillEye size={24} />}
-                </button>
-              </div>
             </div>
-            {/* Tombol Submit */}
-            <div>
+
+            {/* Submit Button dengan animasi */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-brown-600 hover:bg-brown-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 ${
-                  loading ? 'opacity-50 cursor-not-allowed' : ''
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-brown-600 hover:bg-brown-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transform transition-all duration-200 ${
+                  loading ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-0.5'
                 }`}
               >
-                {loading ? 'Loading...' : 'Login'}
+                {loading ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
+                  />
+                ) : (
+                  'Login'
+                )}
               </button>
-            </div>
+            </motion.div>
           </form>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
