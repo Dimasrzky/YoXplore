@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { MicrophoneIcon } from '@heroicons/react/24/outline';
+import { FaCoffee, FaBed } from 'react-icons/fa';
 
 export default function WelcomePage() {
   const [loading, setLoading] = useState(false);
@@ -50,6 +52,17 @@ export default function WelcomePage() {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
   };
+
+  const featureVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 1, ease: 'easeOut' } },
+  };
+
+  const CoffeeIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      {/* SVG path dari ikon */}
+    </svg>
+  );
 
   return (
     <div>
@@ -104,19 +117,11 @@ export default function WelcomePage() {
         variants={aboutUsVariants}
         initial="hidden"
         animate={controls}
-        className="bg-white p-8 text-center text-gray-800"
+        className="bg-white p-8 text-gray-800 text-left"
       >
-        <h2 className="text-3xl font-semibold mb-4 text-brown-500">About Us</h2>
-        <p className="text-lg leading-relaxed">
-          YoXplore adalah sebuah website rekomendasi wisata di Kota Yogyakarta yang terkenal dengan kekayaan
-          budaya, sejarah, dan keindahan alamnya. Website ini didesain untuk membantu wisatawan, baik lokal
-          maupun mancanegara, dalam merencanakan kunjungan mereka dengan lebih mudah, efisien, dan
-          informatif. YoTrip akan membantu pengguna dapat menemukan berbagai destinasi wisata mulai dari yang
-          sudah populer hingga lokasi-lokasi tersembunyi yang jarang diketahui banyak orang. YoTaste menyediakan
-          rekomendasi tempat makan terbaik mulai dari restoran berbintang hingga warung lokal yang menyajikan
-          makanan tradisional khas Yogyakarta. YoStay yang memberikan rekomendasi hotel, penginapan, homestay,
-          hingga villa di berbagai lokasi di Yogyakarta. YoConcert memberikan informasi terkini tentang konser,
-          festival musik, pertunjukan teater, dan acara seni lainnya yang diadakan di Yogyakarta.
+        <h2 className="text-3xl font-semibold mb-4 text-brown-500 text-center">About Us</h2>
+        <p className="text-lg leading-relaxed"> 
+        YoXplore is a travel recommendation website in the city of Yogyakarta which is famous for its rich culture, history, and natural beauty. This website is designed to help tourists, both local and foreign, in planning their visits more easily, efficiently, and informatively. YoTrip will help users find various tourist destinations ranging from those that are already popular to hidden locations that are rarely known to many people. YoTaste provides recommendations for the best places to eat ranging from starred restaurants to local stalls serving traditional Yogyakarta food. YoStay provides recommendations for hotels, lodgings, homestays, and villas in various locations in Yogyakarta. YoConcert provides the latest information on concerts, music festivals, theater performances, and other art events held in Yogyakarta.
         </p>
       </motion.div>
     </div>
