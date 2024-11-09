@@ -24,6 +24,7 @@ module.exports = {
           500: '#8b4513',
           600: '#6b3d1a',
           700: '#5a3216',
+          900: '#482E1D',
         },
       },
       transitionProperty: {
