@@ -106,7 +106,7 @@ export default function WelcomePage() {
         <motion.h2 className="text-3xl font-semibold mb-4 text-brown-500 text-center" variants={scrollVariants}>
           About Us
         </motion.h2>
-        <motion.p className="text-lg leading-relaxed px-12 text-brown-600 text-center" variants={scrollVariants}>
+        <motion.p className="text-lg leading-relaxed px-12 text-brown-600 text-justify" variants={scrollVariants}>
           YoXplore adalah sebuah website rekomendasi wisata di Kota Yogyakarta yang terkenal dengan kekayaan budaya, sejarah, dan keindahan alamnya. Website ini didesain untuk membantu wisatawan, baik lokal maupun mancanegara, dalam merencanakan kunjungan mereka dengan lebih mudah, efisien, dan informatif. YoTrip akan membantu pengguna dapat menemukan berbagai destinasi wisata mulai dari yang sudah populer hingga lokasi-lokasi tersembunyi yang jarang diketahui banyak orang. YoTaste menyediakan rekomendasi tempat makan terbaik mulai dari restoran berbintang hingga warung lokal yang menyajikan makanan tradisional khas Yogyakarta. YoStay yang memberikan rekomendasi hotel, penginapan, homestay, hingga villa di berbagai lokasi di Yogyakarta. YoConcert memberikan informasi terkini tentang konser, festival musik, pertunjukan teater, dan acara seni lainnya yang diadakan di Yogyakarta.
         </motion.p>
       </motion.div>
