@@ -166,6 +166,22 @@ export default function WelcomePage() {
         </div>
       </motion.div>
 
+      <div
+        className="py-56 flex flex-col justify-center text-left text-white bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/banners/bg landing.jpg')" }}>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="text-7xl font-bold mb-4 flex space-x-1 pl-20 font-sans">
+          {Array.from("Explore the sight").map((char, index) => (
+            <motion.span key={index} variants={letterVariants}>
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          ))}
+        </motion.div>
+      </div>
+
 
       {/* Most Popular Places Section */}
       <motion.div
