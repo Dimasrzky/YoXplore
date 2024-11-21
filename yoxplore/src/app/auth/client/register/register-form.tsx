@@ -114,7 +114,7 @@ export default function LoginForm() {
             transition={{ delay: 0.3 }}
             className="flex justify-center mb-6"
           >
-            <h1 className="text-2xl font-semibold text-brown-500">Create YourAccount</h1>
+            <h1 className="text-2xl font-semibold text-brown-500 font-sans">Create YourAccount</h1>
           </motion.div>
           <br></br>
 
@@ -150,7 +150,7 @@ export default function LoginForm() {
                     ? '-top-6 text-sm text-brown-500'
                     : 'top-3 text-gray-400'
                   } 
-                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500`}
+                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500 font-sans`}
               >
                 Username
               </label>
@@ -179,7 +179,7 @@ export default function LoginForm() {
                     ? '-top-6 text-sm text-brown-500'
                     : 'top-3 text-gray-400'
                   } 
-                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500`}
+                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500 font-sans`}
               >
                 Email
               </label>
@@ -208,7 +208,7 @@ export default function LoginForm() {
                     ? '-top-6 text-sm text-brown-500'
                     : 'top-3 text-gray-400'
                   } 
-                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500`}
+                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500 font-sans`}
               >
                 Password
               </label>
@@ -230,7 +230,7 @@ export default function LoginForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-brown-600 hover:bg-brown-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transform transition-all duration-200 ${
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm font-sans text-lg font-medium text-white bg-brown-600 hover:bg-brown-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transform transition-all duration-200 ${
                   loading ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-0.5'
                 }`}
               >

@@ -96,7 +96,7 @@ export default function LoginForm() {
             transition={{ delay: 0.3 }}
             className="flex justify-center mb-6"
           >
-            <h1 className="text-2xl font-semibold text-brown-500">Login As Admin</h1>
+            <h1 className="text-2xl font-semibold text-brown-500 font-sans">Login As Admin</h1>
           </motion.div>
 
           <br></br>
@@ -133,7 +133,7 @@ export default function LoginForm() {
                     ? '-top-6 text-sm text-brown-500'
                     : 'top-3 text-gray-400'
                   } 
-                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500`}
+                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500 font-sans`}
               >
                 Email
               </label>
@@ -162,7 +162,7 @@ export default function LoginForm() {
                     ? '-top-6 text-sm text-brown-500'
                     : 'top-3 text-gray-400'
                   } 
-                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500`}
+                  peer-focus:-top-6 peer-focus:text-sm peer-focus:text-brown-500 font-sans`}
               >
                 Password
               </label>
@@ -192,7 +192,7 @@ export default function LoginForm() {
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-6 h-6 border-2 border-white border-t-transparent rounded-full"
+                    className="w-6 h-6 border-2 border-white border-t-transparent rounded-full font-sans"
                   />
                 ) : (
                   'Login'

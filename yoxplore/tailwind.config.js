@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Montserrat', 'sans-serif'],
+      },
       colors: {
         blue: {
           50: '#eff6ff',
@@ -25,7 +28,11 @@ module.exports = {
           600: '#6b3d1a',
           700: '#5a3216',
           900: '#482E1D',
+          400: '#91553D'
         },
+        grey: {
+          400: '#787878'
+        }
       },
       transitionProperty: {
         'colors': 'background-color, border-color, color, fill, stroke',

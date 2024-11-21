@@ -61,11 +61,11 @@ export default function WelcomePage() {
   return (
     <div>
       {/* Navbar */}
-      <div className="w-full flex justify-between items-center p-4 text-white bg-brown-500 sticky top-0 z-10">
+      <div className="w-full flex justify-between items-center p-4 text-white bg-brown-400 sticky top-0 z-10">
         <img src="/images/logo/logo.png" alt="YOXPLORE Logo" className="w-40 px-4" />
         <button
           onClick={handleLoginClick}
-          className="py-1 px-4 font-semibold text-white rounded hover:bg-white hover:text-brown-500"
+          className="py-1 px-4 font-semibold text-white rounded hover:text-brown-900 hover:font-semibold font-sans"
         >
           Login
         </button>
@@ -73,14 +73,26 @@ export default function WelcomePage() {
 
       {/* Hero Section */}
       <div
-        className="py-72 flex flex-col items-center justify-center text-center text-white bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/logo/welcome.jpg')" }}>
+        className="py-56 flex flex-col justify-center text-left text-white bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/banners/bg landing.jpg')" }}>
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="text-7xl font-bold mb-4 flex space-x-1">
-          {Array.from("WELCOME TO YOXPLORE").map((char, index) => (
+          className="text-7xl font-bold mb-4 flex space-x-1 pl-20 font-sans">
+          {Array.from("Explore the sight").map((char, index) => (
+            <motion.span key={index} variants={letterVariants}>
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          ))}
+        </motion.div>
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="text-7xl font-bold mb-4 flex space-x-1 pl-20 font-sans">
+          {Array.from("of the Yogyakarta").map((char, index) => (
             <motion.span key={index} variants={letterVariants}>
               {char === " " ? "\u00A0" : char}
             </motion.span>
@@ -91,25 +103,69 @@ export default function WelcomePage() {
           variants={scrollVariants}
           initial="hidden"
           animate="visible"
-          className="text-2xl font-medium">
+          className="text-2xl font-semibold pl-20 font-sans">
           Find, Taste, and Explore Yogyakarta.
         </motion.p>
       </div>
 
-      {/* About Us Section */}
+       {/* Search Bar Section */}
+       <div className="flex justify-center mt-[-30px] mb-1 px-4">
+        <div className="w-full max-w-5xl">
+          <form>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Where you want to go?"
+                className="w-full p-4 text-base border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-brown-400 focus:border-brown-400"
+              />
+              <button
+                type="submit"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 font-semibold text-brown-400 hover:text-brown-900 font-sans px-3"
+              >
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Our Features Section */}
       <motion.div
         ref={aboutRef}
         variants={containerVariants}
         initial="hidden"
         animate={aboutUsControls}
-        className="bg-white p-8 text-gray-800">
-        <motion.h2 className="text-3xl font-semibold mb-4 text-brown-500 text-center" variants={scrollVariants}>
-          About Us
+        className="bg-white p-8 text-gray-800"
+      >
+        <motion.h2 className="text-4xl font-bold font-sans mb-4 text-brown-500 text-center" variants={scrollVariants}>
+          Our Features
         </motion.h2>
-        <motion.p className="text-lg leading-relaxed px-12 text-brown-600 text-justify" variants={scrollVariants}>
-          YoXplore adalah sebuah website rekomendasi wisata di Kota Yogyakarta yang terkenal dengan kekayaan budaya, sejarah, dan keindahan alamnya. Website ini didesain untuk membantu wisatawan, baik lokal maupun mancanegara, dalam merencanakan kunjungan mereka dengan lebih mudah, efisien, dan informatif. YoTrip akan membantu pengguna dapat menemukan berbagai destinasi wisata mulai dari yang sudah populer hingga lokasi-lokasi tersembunyi yang jarang diketahui banyak orang. YoTaste menyediakan rekomendasi tempat makan terbaik mulai dari restoran berbintang hingga warung lokal yang menyajikan makanan tradisional khas Yogyakarta. YoStay yang memberikan rekomendasi hotel, penginapan, homestay, hingga villa di berbagai lokasi di Yogyakarta. YoConcert memberikan informasi terkini tentang konser, festival musik, pertunjukan teater, dan acara seni lainnya yang diadakan di Yogyakarta.
-        </motion.p>
+        <motion.h5 className="text-lg font-bold font-sans mb-4 text-gray-600 text-center" variants={scrollVariants}>
+          Try variety benefits when using our features
+        </motion.h5>
+
+        <div className="flex justify-center gap-10 mt-12 font-sans">
+          {[
+            { icon: "📍", title: "YoTrip", desc: "We provide the best places in Yogyakarta" },
+            { icon: "🍴", title: "YoTaste", desc: "We provide the best foods in Yogyakarta" },
+            { icon: "🛏️", title: "YoStay", desc: "We provide the best hotels in Yogyakarta" },
+            { icon: "🎤", title: "YoConcert", desc: "We provide the best show in Yogyakarta" },
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              className="flex flex-col items-center text-center"
+              variants={scrollVariants}
+            >
+              <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center text-2xl text-brown-500 mb-4">
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-semibold text-brown-500">{feature.title}</h3>
+              <p className="text-gray-600 mt-2">{feature.desc}</p>
+            </motion.div>
+          ))}
+        </div>
       </motion.div>
+
 
       {/* Most Popular Places Section */}
       <motion.div
