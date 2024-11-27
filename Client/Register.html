@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Your Account</title>
+  <link rel="icon" href="../img/Tittle Logo Yoxplore.png" type="image/png">
+  <link rel="stylesheet" href="/Style/Register.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+</head>
+<body>
+  <div class="container">
+    <div class="image-section">
+      <div class="logo">
+        <img src="../img/Logo Yoxplore.png" alt="Yoxplore Logo">
+      </div>
+      <div class="image-content">
+        <p>Best Place To Explore Yogyakarta!</p>
+      </div>
+    </div>
+    <div class="register-section">
+      <h2>Create your account</h2>
+      <form method="POST" action="../php/register_process.php"></form>
+        <label for="fname">First Name</label>
+        <input type="text" id="first_name" name="first_name" required>
+
+        <label for="lname">Last Name</label>
+        <input type="text" id="last_name" name="last_name" required>
+
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required><br>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Create Account</button>
+        <a href="Login.html" class="back-login">← Back To Login Page</a>
+      </form>
+    </div>
+  </div>
+  <div class="footer">
+    <p>&copy;Copyright Kartana</p>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+  <script>
+    var input = document.querySelector("#phone");
+    window.intlTelInput(input, {
+      initialCountry: "auto",
+      geoIpLookup: function(success, failure) {
+        fetch('https://ipinfo.io?token=YOUR_API_KEY')
+          .then(response => response.json())
+          .then(data => success(data.country))
+          .catch(() => success('ID'));
+      },
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+    });
+  </script>
+</body>
+</html>

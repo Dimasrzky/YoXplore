@@ -1,0 +1,268 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+    background-size: cover;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #b1734c;  
+    color: white;
+    position: sticky;
+    width: 100%;
+    top: 0;
+    z-index: 1;
+    padding: 5px 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 55px;
+}
+
+.logo {
+    width: 120px;
+    margin-left: 20px;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-links a {
+    display: flex;
+    font-weight: bold;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    margin: 0 30px;
+    font-size: 17px;
+    transition: color 0.3s ease;
+}
+
+.nav-links a img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px; 
+    transition: transform 0.3s ease;
+}
+
+.nav-links a.active {
+    color: #ffffff;
+    position: relative;
+}
+
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #ffffff;
+}
+
+.nav-links a:hover {
+    color: #ffffff;
+}
+
+.nav-links a:hover img {
+    transform: scale(1.3);
+}
+
+.profile-pic {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    background-image: url('../img/profile.jpg');
+    background-size: cover;
+    background-position: center;
+    margin-right: 20px;
+}
+
+.hero {
+    background: url('/Public/Client/img/yotaste-bg.jpg') no-repeat center center / cover;
+    width: 100vw;
+    height: 100vh; 
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    margin-top: -200px;
+    position: relative;
+}
+
+main.container {
+    padding: 0;
+}
+
+.search-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    width: 90%;
+    height: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -200px;
+}
+
+input[type="text"] {
+    width: 70%;
+    padding: 20px;
+    font-size: 15px;
+    border: none;
+    border-radius: 15px 0 0 15px;
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 17px;
+    background-color: #b1734c;
+    color: white;
+    border: none;
+    border-radius: 0 15px 15px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}   
+
+button:hover {
+    background-color: #925e3e;
+}
+
+.sec {
+    background-color: #6e4c1a;
+    padding: 10px 0;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0px;
+}
+
+.sort-options {
+    display: flex;
+    align-items: center;
+    margin-right: 50px;
+}
+
+.sort-options label {
+    font-size: 1em;
+    color: #ffffff;
+    margin-right: 5px;
+}
+
+.sort-options select {
+    padding: 5px;
+    border: 0px;
+    border-radius: 0px;
+    background-color: #ffffff;
+    color: #b1734c;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.sort-options select:hover {
+    background-color: #eeeeee;
+}
+
+h2 {
+    color: #ffffff;
+    text-align: left;
+    margin-left: 55px;
+    margin-bottom: 0px;
+    font-size: 1.5em;
+}
+
+.explore-items {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0 2%;
+}
+
+.explore-item {
+    background-color: #ffffff;
+    border-radius: 0px;
+    text-align: center;
+    padding: 12px;
+    width: 220px;
+    margin: 20px; 
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.explore-item img {
+    width: 100%;
+    height: 150px; 
+    object-fit: cover;
+    border-radius: 0px;
+}
+
+.explore-item p {
+    margin-bottom: 5px;
+    margin-top: 20px;
+    font-size: 1em; 
+    color: #b1734c;
+    font-weight: bold;
+}
+
+.explore-item:hover {
+    transform: translateY(-10px);
+    background-color: #fbf1db;
+}
+
+.explore-item:hover img {
+    border: 2px solid #8b4513;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 50%;
+    margin: 10px 5px;
+    cursor: pointer;
+}
+
+.indicator.active {
+    background-color: #b1734c;
+}
+
+
+footer {
+    background-color: #8b4513;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    margin: 0;
+    font-size: 14px;
+}
