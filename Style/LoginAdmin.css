@@ -17,8 +17,9 @@ body, html {
 }
 
 .background-section {
-    width: 125%;
-    background: url('/Image/yakult.png') no-repeat center center;
+    width: 120%;
+    margin-top: -150px;
+    background: url('/Image/bg\ login.jpeg') no-repeat center center;
     background-size: cover;
 }
 
