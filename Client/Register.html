@@ -1,52 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Create Your Account</title>
-  <link rel="icon" href="../img/Tittle Logo Yoxplore.png" type="image/png">
-  <link rel="stylesheet" href="/Style/Register.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+    <title>Login Your Account</title>
+    <link rel="icon" href="../img/Tittle Logo Yoxplore.png" type="image/png">
+    <link rel="stylesheet" href="/Style/Login.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-  <div class="container">
-    <div class="background-section"></div>
-    
-    <div class="register-section">
-      <h2>Create your account</h2>
-      <form method="POST" action="../php/register_process.php"></form>
-        <label for="fname">First Name</label>
-        <input type="text" id="first_name" name="first_name" required>
+    <div class="container"> 
+        <div class="background-section">
+            <img src="/Image/Yoxplore logo text.png">
+        </div>
 
-        <label for="lname">Last Name</label>
-        <input type="text" id="last_name" name="last_name" required>
+        <div class="login-section">
+            <h2>Craete your account</h2>
+            <form method="POST" action="#">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
 
-        <label for="email">Email</label>
-        <input type="text" id="email" name="email" required>
+                <label for="password">Email</label>
+                <input type="text" id="email" name="email" required>
 
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" name="phone" required><br>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+                <label for="password">Comfirm Password</label>
+                <input type="password" id="password" name="password" required>
 
-        <button type="submit">Create Account</button>
-        <a href="Login.html" class="back-login">← Back To Login Page</a>
-      </form>
+                <button type="submit">Create Account</button>
+
+                <div id="g_id_onload"
+                    data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                    data-login_uri="YOUR_BACKEND_LOGIN_URI"
+                    data-auto_prompt="false">
+                </div>
+                <a href="/Client/Login.html" class="create-account">Already Have An Account?</a>
+            </form>
+        </div>
     </div>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
-  <script>
-    var input = document.querySelector("#phone");
-    window.intlTelInput(input, {
-      initialCountry: "auto",
-      geoIpLookup: function(success, failure) {
-        fetch('https://ipinfo.io?token=YOUR_API_KEY')
-          .then(response => response.json())
-          .then(data => success(data.country))
-          .catch(() => success('ID'));
-      },
-      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
-    });
-  </script>
+    
+    <script>
+        function handleCredentialResponse(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
+        }
+        window.onload = function () {
+          google.accounts.id.initialize({
+            client_id: "YOUR_GOOGLE_CLIENT_ID",
+            callback: handleCredentialResponse
+          });
+          google.accounts.id.renderButton(
+            document.querySelector(".g_id_signin"),
+            { theme: "outline", size: "large" }  
+          );
+          google.accounts.id.prompt(); 
+        };
+      </script>
 </body>
 </html>
+
+    

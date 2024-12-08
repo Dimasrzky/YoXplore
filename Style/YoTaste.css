@@ -1,7 +1,7 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     height: 100%;
     background-size: cover;
     min-height: 100vh;
@@ -15,8 +15,18 @@ body, html {
     box-sizing: border-box;
 }
 
+.login a{
+    text-decoration: none;
+    margin-right: 30px;
+    color: #ffffff
+}
+
+.login a:hover{
+    text-decoration: underline;
+}
+
 header {
-    background-color: #b1734c;  
+    background-color: #91553D;  
     color: white;
     position: sticky;
     width: 100%;
@@ -26,15 +36,15 @@ header {
 }
 
 nav {
-    display: flex;
+    display:flex;
     justify-content: space-between;
     align-items: center;
-    height: 55px;
+    height: 50px;
 }
 
 .logo {
-    width: 120px;
-    margin-left: 20px;
+    width: 100px;
+    margin-left: 30px;
 }
 
 .nav-links {
@@ -47,12 +57,12 @@ nav {
 
 .nav-links a {
     display: flex;
-    font-weight: bold;
+    font-weight: 650;
     align-items: center;
     color: white;
     text-decoration: none;
     margin: 0 30px;
-    font-size: 17px;
+    font-size: 15px;
     transition: color 0.3s ease;
 }
 
@@ -78,191 +88,153 @@ nav {
     background-color: #ffffff;
 }
 
-.nav-links a:hover {
-    color: #ffffff;
-}
-
 .nav-links a:hover img {
     transform: scale(1.3);
 }
 
-.profile-pic {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background-color: #ffffff;
-    background-image: url('../img/profile.jpg');
-    background-size: cover;
-    background-position: center;
-    margin-right: 20px;
+.container{
+    padding: 0px;
 }
 
 .hero {
-    background: url('/Public/Client/img/yotaste-bg.jpg') no-repeat center center / cover;
+    background: url('/Image/yotaste.jpeg') no-repeat center center / cover;
     width: 100vw;
-    height: 100vh; 
+    height: 70vh;
     text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     color: #ffffff;
-    margin: 0;
-    padding: 0;
-    margin-top: -200px;
     position: relative;
 }
 
-main.container {
-    padding: 0;
+.hero .text {
+    width: 70%; 
+    text-align: center; 
+    margin-top: 190px;
 }
 
-.search-box {
+.hero .text h2 {
+    font-size: 4.5rem;
+    font-weight: 700;
+    margin: 0 0 10px 0; 
+    color: #ffffff; 
+}
+
+.hero .text p {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 10px;
+    color: #ffffff; 
+}
+
+.search-bar {
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
-    width: 90%;
-    height: 50px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: -200px;
+    align-items: center;
+    margin-top: 177px;
+    background: #ffffff;
+    width: 55%;
+    height: 60px;
+    border-radius: 10px;
+    box-shadow: 0px 7px rgba(0, 0, 0, 0.1);
 }
 
-input[type="text"] {
-    width: 70%;
-    padding: 20px;
+.search-bar img{
+    width: 15px;
+    padding: 0 10px;
+}
+
+.search-bar input {
+    width: 85%;
+    border: none;
+    padding: 15px 5px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.search-bar a {
     font-size: 15px;
+    border-radius: 0 10px 10px 0;
+    text-decoration: none;
+    background: #91553D;
     border: none;
-    border-radius: 15px 0 0 15px;
-}
-
-button {
-    padding: 12px 20px;
-    font-size: 17px;
-    background-color: #b1734c;
     color: white;
-    border: none;
-    border-radius: 0 15px 15px 0;
+    padding: 15px 10px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}   
-
-button:hover {
-    background-color: #925e3e;
-}
-
-.sec {
-    background-color: #6e4c1a;
-    padding: 10px 0;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 0px;
-}
-
-.sort-options {
     display: flex;
     align-items: center;
-    margin-right: 50px;
+    justify-content: center;
+    margin-right: -15px;
+    padding-right: 20px;
 }
 
-.sort-options label {
-    font-size: 1em;
-    color: #ffffff;
-    margin-right: 5px;
+.search-bar a:hover {
+    background-color: #a26449;
 }
 
-.sort-options select {
-    padding: 5px;
-    border: 0px;
-    border-radius: 0px;
-    background-color: #ffffff;
-    color: #b1734c;
-    cursor: pointer;
-    font-size: 1em;
+.most-popular {
+    margin-top: 60px;
+    text-align: center;
+    padding: 0 30px;
+    padding-bottom: 30px;
 }
 
-.sort-options select:hover {
-    background-color: #eeeeee;
-}
-
-h2 {
-    color: #ffffff;
+.most-popular h2 {
+    margin-left: 50px;
     text-align: left;
-    margin-left: 55px;
-    margin-bottom: 0px;
-    font-size: 1.5em;
+    font-size: 1.5rem;
+    color: #91553D;
+    margin-bottom: 30px;
 }
 
-.explore-items {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 0 2%;
+.popular-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 30px; 
+    justify-items: center;
+    align-items: center;
 }
 
-.explore-item {
+.popular-item {
+    text-align: center;
+    padding: 20px;
+    width: 100%; 
+    max-width: 200px; 
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
     background-color: #ffffff;
-    border-radius: 0px;
-    text-align: center;
-    padding: 12px;
-    width: 220px;
-    margin: 20px; 
-    transition: transform 0.3s ease, background-color 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.explore-item img {
+.popular-item img {
     width: 100%;
-    height: 150px; 
+    height: 150px;
     object-fit: cover;
-    border-radius: 0px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
 }
 
-.explore-item p {
-    margin-bottom: 5px;
-    margin-top: 20px;
-    font-size: 1em; 
-    color: #b1734c;
-    font-weight: bold;
+.popular-item h3 {
+    font-size: 1.1rem;
+    color: #91553D;
+    margin: 10px 0;
+    transition: color 0.3s ease;
 }
 
-.explore-item:hover {
-    transform: translateY(-10px);
-    background-color: #fbf1db;
+.popular-item:hover {
+    transform: scale(1.05); /* Membuat elemen sedikit membesar */
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); /* Menambahkan bayangan lebih besar */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease; /* Animasi yang halus */
 }
 
-.explore-item:hover img {
-    border: 2px solid #8b4513;
+.popular-item:hover h3 {
+    color: #a26449; /* Mengubah warna judul saat di-hover */
 }
 
-.indicator {
-    width: 10px;
-    height: 10px;
-    background-color: rgb(255, 255, 255);
-    border-radius: 50%;
-    margin: 10px 5px;
-    cursor: pointer;
+.popular-item:hover img {
+    transform: scale(1.1); /* Membuat gambar sedikit membesar */
+    transition: transform 0.3s ease; /* Menambahkan animasi pada gambar */
 }
 
-.indicator.active {
-    background-color: #b1734c;
-}
-
-
-footer {
-    background-color: #8b4513;
-    color: white;
-    text-align: center;
-    padding: 20px 0;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
-
-footer p {
-    margin: 0;
-    font-size: 14px;
-}
