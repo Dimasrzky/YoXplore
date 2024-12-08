@@ -99,7 +99,7 @@ nav {
 .hero {
     background: url('/Image/landing.jpg') no-repeat center center / cover;
     width: 100vw;
-    height: 70vh;
+    height: 60vh;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -133,7 +133,7 @@ nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 140px;
+    margin-top: 60px;
     background: #ffffff;
     width: 55%;
     height: 60px;
@@ -176,26 +176,26 @@ nav {
 
 .features {
     text-align: center;
-    margin-top: 60px;
+    margin-top: 45px;
     padding: 0 20px;
 }
 
 .features h2 {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: #91553D;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .features p {
     font-size: 1rem;
     color: #666666;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 5px;
+    gap: 0px;
     justify-items: center;
     align-items: center;
 }
@@ -218,7 +218,7 @@ nav {
 .feature-item h3 {
     font-size: 1.2rem;
     color: #91553D;
-    margin: 10px 0;
+    margin: 2px 0;
 }
 
 .feature-item p {
@@ -267,7 +267,7 @@ nav {
     text-align: right;
     font-size: 0.9rem;
     font-weight: 500;
-    margin: 120px 0px 10px 0;
+    margin: 180px 0px 10px 0;
     margin-left: 1210px;
     color: #ffffff; 
 }
