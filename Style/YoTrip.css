@@ -181,7 +181,7 @@ nav {
 }
 
 .most-popular h2 {
-    margin-left: 50px;
+    margin-left: 60px;
     text-align: left;
     font-size: 1.5rem;
     color: #91553D;
@@ -193,7 +193,6 @@ nav {
     grid-template-columns: repeat(4, 1fr); 
     gap: 30px; 
     justify-items: center;
-    align-items: center;
 }
 
 .popular-item {
