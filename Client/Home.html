@@ -25,7 +25,7 @@
             <section class="hero">
                 <div class="text">
                     <h2>Explore the sight</h2>
-                    <h2>of the Yogyakarta</h2>
+                    <h1>of the Yogyakarta</h1>
                     <p>Find, Taste, and Explore Yogyakarta.</p>
                 </div>
                 <div class="search-bar">
@@ -40,22 +40,22 @@
             <p>Try variety benefits when using our features</p>
             <div class="features-grid">
                 <div class="feature-item">
-                    <img src="/Image/yotrip.png" alt="YoTrip Icon">
+                    <a href="/Client/Yotrip.html"><img src="/Image/yotrip.png" alt="YoTrip Icon"></a>
                     <h3>YoTrip</h3>
                     <p>We provide the best places in Yogyakarta</p>
                 </div>
                 <div class="feature-item">
-                    <img src="/Image/yoconcert.png" alt="YoConcert Icon">
+                    <a href="/Client/Yoconcert.html"><img src="/Image/yoconcert.png" alt="YoConcert Icon"></a>
                     <h3>YoConcert</h3>
                     <p>We provide the best show in Yogyakarta</p>
                 </div>
                 <div class="feature-item">
-                    <img src="/Image/yotaste.png" alt="YoTaste Icon">
+                    <a href="/Client/Yotaste.html"><img src="/Image/yotaste.png" alt="YoTaste Icon"></a>    
                     <h3>YoTaste</h3>
                     <p>We provide the best foods in Yogyakarta</p>
                 </div>
                 <div class="feature-item">
-                    <img src="/Image/yostay.png" alt="YoStay Icon">
+                    <a href="/Client/Yostay.html"><img src="/Image/yostay.png" alt="YoStay Icon"></a>
                     <h3>YoStay</h3>
                     <p>We provide the best hotels in Yogyakarta</p>
                 </div>
@@ -108,6 +108,22 @@
                         <img src="/Image/kopi.jpg" alt="Kopi Klotok">
                         <h3>Kopi Klotok</h3>
                     </div>
+                    <div class="popular-item">
+                        <img src="/Image/kraton.jpg" alt="Kraton Yogyakarta">
+                        <h3>Kraton Yogyakarta</h3>
+                    </div>
+                    <div class="popular-item">
+                        <img src="/Image/taman-sari.jpg" alt="Taman Sari">
+                        <h3>Taman Sari</h3>
+                    </div>
+                    <div class="popular-item">
+                        <img src="/Image/gudeg.jpg" alt="Gudeg Yu Djum">
+                        <h3>Gudeg Yu Djum</h3>
+                    </div>
+                    <div class="popular-item">
+                        <img src="/Image/kopi.jpg" alt="Kopi Klotok">
+                        <h3>Kopi Klotok</h3>
+                    </div>
                 </div>
             </section>
         </div> 
@@ -130,10 +146,10 @@
             <div class="products">
                 <h3>Products</h3>
                 <ul>
-                    <li><a href="YoTrip.html">YoTrip</a></li>
-                    <li><a href="YoTaste.html">YoTaste</a></li>
-                    <li><a href="YoConcert.html">YoConcert</a></li>
-                    <li><a href="">YoStay</a></li>
+                    <li><a href="/Client/Yotrip.html">YoTrip</a></li>
+                    <li><a href="/Client/Yotaste.html">YoTaste</a></li>
+                    <li><a href="/Client/Yoconcert.html">YoConcert</a></li>
+                    <li><a href="/Client/Yostay.html">YoStay</a></li>
                 </ul>
             </div>
             <div class="social-media">
@@ -152,4 +168,29 @@
             </div>
         </footer>
     </body>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const popularGrid = document.querySelector('.popular-grid');
+        
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            };
+        
+            const observerCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        popularGrid.classList.add('items-visible');
+                        // Stop observing once animation is triggered
+                        observer.unobserve(entry.target);
+                    }
+                });
+            };
+        
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+            observer.observe(popularGrid);
+        });
+    </script>
 </html>
