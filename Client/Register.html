@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Login Your Account</title>
+    <title>Create Your Account</title>
     <link rel="icon" href="/Image/Logo Yoxplore.png" type="image/png">
     <link rel="stylesheet" href="/Style/Login.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -12,49 +12,70 @@
         </div>
 
         <div class="login-section">
-            <h2>Craete your account</h2>
-            <form method="POST" action="#">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-
-                <label for="password">Email</label>
-                <input type="text" id="email" name="email" required>
-
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-
-                <label for="password">Comfirm Password</label>
-                <input type="password" id="password" name="password" required>
-
-                <button type="submit">Create Account</button>
-
-                <div id="g_id_onload"
-                    data-client_id="YOUR_GOOGLE_CLIENT_ID"
-                    data-login_uri="YOUR_BACKEND_LOGIN_URI"
-                    data-auto_prompt="false">
+            <h2>Create your account</h2>
+            <form method="POST" action="/Client/Home.html">
+                <div class="input-group">
+                    <input type="text" id="username" name="username" placeholder=" " required>
+                    <label for="username">Username</label>
                 </div>
-                <a href="/Client/Login.html" class="create-account">Already Have An Account?</a>
-            </form>
+                <div class="input-group">
+                    <input type="text" id="email" name="email" placeholder=" " required>
+                    <label for="email">Email</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" placeholder=" " required>
+                    <label for="password">Password</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="com_password" name="com_password" placeholder=" " required>
+                    <label for="com_password">Confirm Password</label>
+                </div>
+            </form>    
+            <button type="submit">Create Account</button>
+            <a href="/Client/Login.html" class="create-account">Back to login page</a>        
         </div>
     </div>
-    
-    <script>
-        function handleCredentialResponse(response) {
-            console.log("Encoded JWT ID token: " + response.credential);
-        }
-        window.onload = function () {
-          google.accounts.id.initialize({
-            client_id: "YOUR_GOOGLE_CLIENT_ID",
-            callback: handleCredentialResponse
-          });
-          google.accounts.id.renderButton(
-            document.querySelector(".g_id_signin"),
-            { theme: "outline", size: "large" }  
-          );
-          google.accounts.id.prompt(); 
-        };
-      </script>
 </body>
+<script>
+    document.querySelector("form").addEventListener("submit", function (event) {
+        event.preventDefault(); // Mencegah pengiriman form secara default
+    
+        // Ambil nilai dari input
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("com_password").value;
+    
+        // Validasi input
+        if (!username || !email || !password || !confirmPassword) {
+            alert("Semua bidang harus diisi!");
+            return;
+        }
+    
+        // Validasi email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert("Format email tidak valid!");
+            return;
+        }
+    
+        // Validasi password dan konfirmasi password
+        if (password !== confirmPassword) {
+            alert("Password dan konfirmasi password tidak sesuai!");
+            return;
+        }
+    
+        // Validasi panjang password
+        if (password.length < 6) {
+            alert("Password harus memiliki panjang minimal 6 karakter!");
+            return;
+        }
+    
+        // Jika validasi berhasil, tampilkan pesan dan redirect
+        alert("Akun berhasil dibuat!");
+        window.location.href = "/Client/Home.html"; // Redirect ke halaman Home
+    });    
+</script>
 </html>
 
     
