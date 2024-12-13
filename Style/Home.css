@@ -111,6 +111,7 @@ nav {
     z-index: 2;
     margin-top: 8px;
     overflow: hidden;
+    transition: opacity 0.3s ease;
 }
 
 .profile-dropdown .menu-item {
@@ -574,3 +575,5 @@ nav {
         transform: translateY(0);
     }
 }
+
+
