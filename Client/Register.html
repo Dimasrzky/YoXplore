@@ -18,7 +18,7 @@
                 <?php if(isset($_GET['error'])) { echo htmlspecialchars($_GET['error']); } ?>
             </div>
 
-            <form id="loginForm" action="/Controller/Auth.php" method="POST">
+            <form id="loginForm" action="../Controller/Auth.php" method="POST">
                 <input type="hidden" name="action" value="login">
                 <div class="input-group">
                     <input type="email" id="email" name="email" required>
