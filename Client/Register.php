@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '/Client/connect.php';
+require_once 'connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
