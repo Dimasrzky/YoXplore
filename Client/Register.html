@@ -15,9 +15,11 @@
         <div class="login-section">
             <h2>Create your account</h2>
                 <div class="error-message">
+                    <?php if(isset($_GET['error'])) { echo $_GET['error']; } ?>
                 </div>
 
-            <form method="POST">
+            <form action="/Controller/Auth.php" method="POST">
+                <input type="hidden" name="action" value="register">
                 <div class="input-group">
                     <input type="text" id="username" name="username" required>
                     <label for="username">Username</label>
@@ -41,7 +43,7 @@
                 <button type="submit">Create Account</button>
             </form>
             
-            <a href="/Client/Login.html" class="create-account">Back to login page</a>
+            <a href="../Client/Login.html" class="create-account">Back to login page</a>
         </div>
     </div>
 </body>

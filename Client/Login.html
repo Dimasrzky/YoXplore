@@ -2,21 +2,22 @@
 <head>
     <title>Login Your Account</title>
     <link rel="icon" href="/Image/Logo Yoxplore.png" type="image/png">
-    <link rel="stylesheet" href="/Style/Login.css">
+    <link rel="stylesheet" href="../Style/Login.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="container"> 
         <div class="background-section">
-            <img src="/Image/Yoxplore logo text.png">
+            <img src="../Image/Yoxplore logo text.png">
         </div>
 
         <div class="login-section">
             <h2>Login your account</h2>
-            <form method="POST" action="/Client/Home.html">
+            <form method="POST" action="/Controller/Auth.php">
+                <input type="hidden" name="action" value="login">
                 <div class="input-group">
-                    <input type="text" id="username" name="username" placeholder=" " required>
-                    <label for="username">Username</label>
+                    <input type="text" id="email" name="email" placeholder=" " required>
+                    <label for="email">Email</label>
                 </div>
                 <div class="input-group">
                     <input type="password" id="password" name="password" placeholder=" " required>
