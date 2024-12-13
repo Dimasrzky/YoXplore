@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Your Account</title>
+    <title>Login Your Account</title>
     <link rel="icon" href="../Image/Logo Yoxplore.png" type="image/png">
     <link rel="stylesheet" href="../Style/Login.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -9,24 +9,19 @@
 <body>
     <div class="container">
         <div class="background-section">
-            <img src="../Image/Yoxplore logo text.png">
+            <img src="../Image/Yoxplore logo text.png" alt="Yoxplore Logo">
         </div>
         
         <div class="login-section">
-            <h2>Create your account</h2>
-                <div class="error-message">
-                    <?php if(isset($_GET['error'])) { echo $_GET['error']; } ?>
-                </div>
+            <h2>Login your account</h2>
+            <div class="error-message">
+                <?php if(isset($_GET['error'])) { echo htmlspecialchars($_GET['error']); } ?>
+            </div>
 
-            <form action="/Controller/Auth.php" method="POST">
-                <input type="hidden" name="action" value="register">
+            <form id="loginForm" action="/Controller/Auth.php" method="POST">
+                <input type="hidden" name="action" value="login">
                 <div class="input-group">
-                    <input type="text" id="username" name="username" required>
-                    <label for="username">Username</label>
-                </div>
-                
-                <div class="input-group">
-                    <input type="text" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required>
                     <label for="email">Email</label>
                 </div>
                 
@@ -35,16 +30,70 @@
                     <label for="password">Password</label>
                 </div>
                 
-                <div class="input-group">
-                    <input type="password" id="com_password" name="com_password" required>
-                    <label for="com_password">Confirm Password</label>
-                </div>
-                
-                <button type="submit">Create Account</button>
+                <a href="Forgot_password.html" class="forgot-password">forgot password?</a>
+                <button type="submit">Login</button>
             </form>
-            
-            <a href="Login.html" class="create-account">Back to login page</a>
+
+            <div id="g_id_onload"
+                data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                data-login_uri="YOUR_BACKEND_LOGIN_URI"
+                data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                data-type="standard"
+                data-shape="rectangular"
+                data-theme="outline"
+                data-text="sign_in_with"
+                data-size="large"
+                data-logo_alignment="left">
+            </div>
+
+            <a href="Register.html" class="create-account">Create Account</a>
         </div>
     </div>
+
+    <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+
+        fetch('/Controller/Auth.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status) {
+                // Login berhasil
+                window.location.href = data.redirect;
+            } else {
+                // Login gagal
+                document.querySelector('.error-message').textContent = data.message;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.querySelector('.error-message').textContent = 'An error occurred. Please try again.';
+        });
+    });
+
+    function handleCredentialResponse(response) {
+        // Handle Google Sign-In response
+        console.log("Encoded JWT ID token: " + response.credential);
+        // Kirim token ke backend untuk verifikasi
+    }
+
+    window.onload = function () {
+        google.accounts.id.initialize({
+            client_id: "YOUR_GOOGLE_CLIENT_ID",
+            callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+            document.querySelector(".g_id_signin"),
+            { theme: "outline", size: "large" }
+        );
+    };
+    </script>
 </body>
 </html>
