@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Create Your Account</title>
@@ -6,76 +7,42 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    <div class="container"> 
+    <div class="container">
         <div class="background-section">
-            <img src="/Image/Yoxplore logo text.png">
+            <img src="../Image/Yoxplore logo text.png">
         </div>
-
+        
         <div class="login-section">
             <h2>Create your account</h2>
-            <form method="POST" action="/Client/Home.html">
+                <div class="error-message">
+                </div>
+
+            <form method="POST">
                 <div class="input-group">
-                    <input type="text" id="username" name="username" placeholder=" " required>
+                    <input type="text" id="username" name="username" required>
                     <label for="username">Username</label>
                 </div>
+                
                 <div class="input-group">
-                    <input type="text" id="email" name="email" placeholder=" " required>
+                    <input type="text" id="email" name="email" required>
                     <label for="email">Email</label>
                 </div>
+                
                 <div class="input-group">
-                    <input type="password" id="password" name="password" placeholder=" " required>
+                    <input type="password" id="password" name="password" required>
                     <label for="password">Password</label>
                 </div>
+                
                 <div class="input-group">
-                    <input type="password" id="com_password" name="com_password" placeholder=" " required>
+                    <input type="password" id="com_password" name="com_password" required>
                     <label for="com_password">Confirm Password</label>
                 </div>
-            </form>    
-            <button type="submit">Create Account</button>
-            <a href="/Client/Login.html" class="create-account">Back to login page</a>        
+                
+                <button type="submit">Create Account</button>
+            </form>
+            
+            <a href="/Client/Login.html" class="create-account">Back to login page</a>
         </div>
     </div>
 </body>
-<script>
-    document.querySelector("form").addEventListener("submit", function (event) {
-        event.preventDefault(); // Mencegah pengiriman form secara default
-    
-        // Ambil nilai dari input
-        const username = document.getElementById("username").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-        const confirmPassword = document.getElementById("com_password").value;
-    
-        // Validasi input
-        if (!username || !email || !password || !confirmPassword) {
-            alert("Semua bidang harus diisi!");
-            return;
-        }
-    
-        // Validasi email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            alert("Format email tidak valid!");
-            return;
-        }
-    
-        // Validasi password dan konfirmasi password
-        if (password !== confirmPassword) {
-            alert("Password dan konfirmasi password tidak sesuai!");
-            return;
-        }
-    
-        // Validasi panjang password
-        if (password.length < 6) {
-            alert("Password harus memiliki panjang minimal 6 karakter!");
-            return;
-        }
-    
-        // Jika validasi berhasil, tampilkan pesan dan redirect
-        alert("Akun berhasil dibuat!");
-        window.location.href = "/Client/Home.html"; // Redirect ke halaman Home
-    });    
-</script>
 </html>
-
-    
