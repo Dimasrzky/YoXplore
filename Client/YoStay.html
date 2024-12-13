@@ -15,9 +15,21 @@
                     <a href="yotaste.html"><img src="/Image/yotaste.png" alt="Taste Icon"> YoTaste</a>
                     <a href="yostay.html" class="active"><img src="/Image/yostay.png" alt="Stay Icon"> YoStay</a>
                 </div>
-                <div class="login">
-                    <a href="/Client/Login.html">Login</a>
-                </div>
+                <div class="profile-dropdown">
+                    <div class="profile-icon" onclick="toggleDropdown()">
+                        <img src="/Image/profile.png" alt="Profile Icon">
+                    </div>
+                    <div id="dropdown-menu" class="dropdown-menu">
+                        <a href="/Client/Profile.html" class="menu-item">
+                            <img src="/Image/navbar/settings.png" alt="Settings Icon">
+                            Account 
+                        </a>
+                        <a href="/Client/Logout.html" class="menu-item logout">
+                            <img src="/Image/navbar/logout.png" alt="Logout Icon">
+                            Logout
+                        </a>
+                    </div>
+                </div>  
             </nav>
         </header>
 
@@ -171,4 +183,20 @@
             </div>
         </footer>
     </body>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown-menu');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+    
+        // Menutup dropdown jika klik di luar area
+        window.onclick = function (event) {
+            if (!event.target.closest('.profile-dropdown')) {
+                const dropdown = document.getElementById('dropdown-menu');
+                if (dropdown) {
+                    dropdown.style.display = 'none';
+                }
+            }
+        };
+    </script>
 </html>

@@ -15,16 +15,6 @@ body, html {
     box-sizing: border-box;
 }
 
-.login a{
-    text-decoration: none;
-    margin-right: 30px;
-    color: #ffffff
-}
-
-.login a:hover{
-    text-decoration: underline;
-}
-
 header {
     background-color: #91553D;  
     color: white;
@@ -102,16 +92,10 @@ nav {
     margin-right: 30px;
 }
 
-.profile-dropdown .profile-icon {
-    display: flex;
-    align-items: center;
-}
-
 .profile-dropdown .profile-icon img {
-    width: 30px;
-    height: 30px;
+    width:45px;
+    height: 45px;
     border-radius: 50%;
-    margin-right: 10px;
 }
 
 .profile-dropdown .dropdown-menu {
@@ -122,43 +106,35 @@ nav {
     background-color: white;
     color: black;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    width: 150px;
+    width: 180px;
     text-align: left;
     z-index: 2;
-    margin-top: 15px;
+    margin-top: 8px;
+    overflow: hidden;
 }
 
-.profile-dropdown .dropdown-menu img {
-    width: 20px;
-    position: absolute;
-}
-
-.profile-dropdown .dropdown-menu a {
-    display: block;
+.profile-dropdown .menu-item {
+    display: flex;
+    align-items: center;
     padding: 10px 15px;
     text-decoration: none;
     color: #000000;
+    font-size: 14px;
     transition: background-color 0.3s ease;
 }
 
-.profile-dropdown .dropdown-menu .logout {
-    display: block;
-    padding: 10px 15px;
-    text-decoration: none;
+.profile-dropdown .menu-item img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.profile-dropdown .menu-item.logout {
     color: #d41e1e;
-    transition: background-color 0.3s ease;
 }
 
-.profile-dropdown .dropdown-menu a:hover {
+.profile-dropdown .menu-item:hover {
     background-color: #f1f1f1;
-}
-
-.profile-dropdown .dropdown-menu .user-id {
-    font-size: 12px;
-    color: #777;
-    margin: 10px 15px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
 }
 
 .container{
