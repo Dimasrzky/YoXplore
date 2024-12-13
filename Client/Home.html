@@ -15,9 +15,17 @@
                     <a href="yotaste.html"><img src="/Image/yotaste.png" alt="Taste Icon"> YoTaste</a>
                     <a href="yostay.html"><img src="/Image/yostay.png" alt="Stay Icon"> YoStay</a>
                 </div>
-                <div class="login">
-                    <a href="/Client/Login.html">Login</a>
-                </div>
+                <div class="profile-dropdown">
+                    <div class="profile-icon" onclick="toggleDropdown()">
+                        <img src="/Image/profile-icon.png" alt="Profile Icon">
+                    </div>
+                    <div id="dropdown-menu" class="dropdown-menu">
+                        <img src="/Image/navbar/settings.png">
+                        <a href="/Client/Profile.html">Account Setting</a>
+                        <img src="/Image/navbar/logout.png">
+                        <a href="/Client/Logout.html" class="logout">Logout</a>
+                    </div>
+                </div>                
             </nav>
         </header>
 
@@ -124,6 +132,18 @@
                         <img src="/Image/kopi.jpg" alt="Kopi Klotok">
                         <h3>Kopi Klotok</h3>
                     </div>
+                    <div class="popular-item">
+                        <img src="/Image/kopi.jpg" alt="Kopi Klotok">
+                        <h3>Kopi Klotok</h3>
+                    </div>
+                    <div class="popular-item">
+                        <img src="/Image/kopi.jpg" alt="Kopi Klotok">
+                        <h3>Kopi Klotok</h3>
+                    </div>
+                    <div class="popular-item">
+                        <img src="/Image/kopi.jpg" alt="Kopi Klotok">
+                        <h3>Kopi Klotok</h3>
+                    </di>
                 </div>
             </section>
         </div> 
@@ -192,5 +212,20 @@
             const observer = new IntersectionObserver(observerCallback, observerOptions);
             observer.observe(popularGrid);
         });
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown-menu');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+    
+        // Menutup dropdown jika klik di luar area dropdown
+        window.onclick = function(event) {
+            if (!event.target.closest('.profile-dropdown')) {
+                const dropdown = document.getElementById('dropdown-menu');
+                if (dropdown) {
+                    dropdown.style.display = 'none';
+                }
+            }
+        };
     </script>
 </html>
