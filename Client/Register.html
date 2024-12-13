@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'connect.php';
+include 'connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
@@ -73,13 +73,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Create Your Account</title>
     <link rel="icon" href="/Image/Logo Yoxplore.png" type="image/png">
-    <link rel="stylesheet" href="/Style/Login.css">
+    <link rel="stylesheet" href="./Style/Login.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="container">
         <div class="background-section">
-            <img src="/Image/Yoxplore logo text.png">
+            <img src="../Image/Yoxplore logo text.png">
         </div>
         
         <div class="login-section">
