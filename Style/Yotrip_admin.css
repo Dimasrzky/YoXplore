@@ -93,8 +93,8 @@ nav {
 }
 
 .profile-dropdown .profile-icon img {
-    width: 45px;
-    height: 45px;
+    width:35px;
+    height: 35px;
     border-radius: 50%;
 }
 
@@ -109,8 +109,9 @@ nav {
     width: 180px;
     text-align: left;
     z-index: 2;
-    margin-top: 8px;
+    margin-top: 13px;
     overflow: hidden;
+    transition: opacity 0.3s ease;
 }
 
 .profile-dropdown .menu-item {
@@ -143,38 +144,12 @@ nav {
     padding: 20px;
 }
 
-.dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.stat-card h3 {
-    color: #91553D;
-    margin-bottom: 10px;
-}
-
-.stat-card .number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #482E1D;
-}
-
 .user-table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: 5px;
     overflow: hidden;
 }
 
@@ -183,11 +158,13 @@ nav {
     color: white;
     padding: 15px;
     text-align: center;
+    border-right: 1px solid #e0e0e0;
 }
 
 .user-table td {
     padding: 15px;
     border-bottom: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
 }
 
 .action-buttons {

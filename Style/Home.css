@@ -93,8 +93,8 @@ nav {
 }
 
 .profile-dropdown .profile-icon img {
-    width:45px;
-    height: 45px;
+    width:35px;
+    height: 35px;
     border-radius: 50%;
 }
 
@@ -109,7 +109,7 @@ nav {
     width: 180px;
     text-align: left;
     z-index: 2;
-    margin-top: 8px;
+    margin-top: 13px;
     overflow: hidden;
     transition: opacity 0.3s ease;
 }
