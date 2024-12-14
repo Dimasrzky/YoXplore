@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Yoxplore - Admin Dashboard</title>
+    <link rel="icon" href="/Image/Logo Yoxplore.png" type="image/png">
+    <link rel="stylesheet" href="/Style/user.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="/Client/Home.html"><img class="logo" src="/Image/Yoxplore logo text.png" alt="Yoxplore Logo"></a>
+            <div class="nav-links">
+                <a href="/Admin/user.html" class="active"><img src="/Image/home.png" alt="Home Icon"> User</a>
+                <a href="/Admin/YoTrip_admin.html"><img src="/Image/yotrip.png" alt="Trip Icon"> YoTrip</a>
+                <a href="/Admin/YoConcert_admin.html"><img src="/Image/yoconcert.png" alt="Concert Icon"> YoConcert</a>
+                <a href="/Admin/YoTaste_admin.html"><img src="/Image/yotaste.png" alt="Taste Icon"> YoTaste</a>
+                <a href="/Admin/YoStay_admin.html"><img src="/Image/yostay.png" alt="Stay Icon"> YoStay</a>
+            </div>
+            <div class="profile-dropdown">
+                <div class="profile-icon" onclick="toggleDropdown()">
+                    <img src="/Image/profile.png" alt="Profile Icon">
+                </div>
+                <div id="dropdown-menu" class="dropdown-menu">
+                    <a href="/Client/Profile.html" class="menu-item">
+                        <img src="/Image/navbar/settings.png" alt="Settings Icon">
+                        Account 
+                    </a>
+                    <a href="/Client/Logout.html" class="menu-item logout">
+                        <img src="/Image/navbar/logout.png" alt="Logout Icon">
+                        Logout
+                    </a>
+                </div>
+            </div>                                
+        </nav>
+    </header>
+
+    <div class="admin-container">
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="number">1,250</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Users</h3>
+                <div class="number">850</div>
+            </div>
+            <div class="stat-card">
+                <h3>New Users (30 Days)</h3>
+                <div class="number">125</div>
+            </div>
+        </div>
+
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>johndoe123</td>
+                    <td>john.doe@example.com</td>
+                    <td class="action-buttons">
+                        <a href="#" class="btn btn-edit">Edit</a>
+                        <a href="#" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>janedoe456</td>
+                    <td>jane.doe@example.com</td>
+                    <td class="action-buttons">
+                        <a href="#" class="btn btn-edit">Edit</a>
+                        <a href="#" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>mikebrown789</td>
+                    <td>mike.brown@example.com</td>
+                    <td class="action-buttons">
+                        <a href="#" class="btn btn-edit">Edit</a>
+                        <a href="#" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>sarahsmith101</td>
+                    <td>sarah.smith@example.com</td>
+                    <td class="action-buttons">
+                        <a href="#" class="btn btn-edit">Edit</a>
+                        <a href="#" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>alexwong222</td>
+                    <td>alex.wong@example.com</td>
+                    <td class="action-buttons">
+                        <a href="#" class="btn btn-edit">Edit</a>
+                        <a href="#" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="footer">
+        <div class="contact-info">
+            <h3>Contact us</h3>
+            <ul>
+                <li><img src="/Image/footer/clock.png" alt="Clock" class="icon"> Monday - Friday, 09:00 - 17:00</li>
+                <li><img src="/Image/footer/email.png" alt="Email" class="icon"> Email: <a href="mailto:yoxplore@gmail.com">yoxplore@gmail.com</a></li>
+                <li><img src="/Image/footer/phone-call.png" alt="Phone" class="icon"> Phone: 08123456789</li>
+                <li><img src="/Image/yotrip.png" alt="Location" class="icon"> Universitas Islam Indonesia,</li>
+                <div class="alamat">
+                    Gedung K.H. Mas Mansyur, <br>
+                    Daerah Istimewa Yogyakarta 55584
+                </div>
+            </ul>
+        </div>
+        
+        <div class="products">
+            <h3>Products</h3>
+            <ul>
+                <li><a href="/Client/Yotrip.html">YoTrip</a></li>
+                <li><a href="/Client/Yotaste.html">YoTaste</a></li>
+                <li><a href="/Client/Yoconcert.html">YoConcert</a></li>
+                <li><a href="/Client/Yostay.html">YoStay</a></li>
+            </ul>
+        </div>
+        <div class="social-media">
+            <h3>Follow us on</h3>
+            <ul>
+                <li class="icon"><img src="/Image/footer/sosmed/instagram.png" alt="Instagram">Instagram</li>
+                <li class="icon"><img src="/Image/footer/sosmed/tik-tok.png" alt="TikTok">TikTok</li>
+                <li class="icon"><img src="/Image/footer/sosmed/twitter.png" alt="Twitter">X</li>
+                <li class="icon"><img src="/Image/footer/sosmed/youtube.png" alt="YouTube">YouTube</li>
+                <li class="icon"><img src="/Image/footer/sosmed/facebook.png" alt="Facebook">Facebook</li>
+                <li class="icon"><img src="/Image/footer/sosmed/telegram.png" alt="Telegram">Telegram</li>
+            </ul>
+        </div>
+        <div class="copyright">
+            Copyright &copy; 2024 Yoxplore. All rights reserved
+        </div>
+    </footer>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown-menu');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }     
+    
+        // Close dropdown if clicked outside
+        window.onclick = function (event) {
+            if (!event.target.closest('.profile-dropdown')) {
+                const dropdown = document.getElementById('dropdown-menu');
+                if (dropdown) {
+                    dropdown.style.display = 'none';
+                }
+            }
+        };
+    </script>
+</body>
+</html>

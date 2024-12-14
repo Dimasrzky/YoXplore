@@ -93,7 +93,7 @@ nav {
 }
 
 .profile-dropdown .profile-icon img {
-    width: 45px;
+    width:45px;
     height: 45px;
     border-radius: 50%;
 }
@@ -111,6 +111,7 @@ nav {
     z-index: 2;
     margin-top: 8px;
     overflow: hidden;
+    transition: opacity 0.3s ease;
 }
 
 .profile-dropdown .menu-item {
@@ -137,193 +138,93 @@ nav {
     background-color: #f1f1f1;
 }
 
-.container{
-    padding: 0px;
-}
-
-.hero {
-    background: url('/Image/yotaste.jpeg') no-repeat center center / cover;
-    width: 100vw;
-    height: 60vh;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #ffffff;
-    position: relative;
-}
-
-.hero .text {
-    width: 70%; 
-    text-align: center; 
-    margin-top: 190px;
-}
-
-.hero .text h2 {
-    font-size: 4.5rem;
-    font-weight: 700;
-    margin: 0 0 10px 0; 
-    color: #ffffff; 
-}
-
-.hero .text p {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-top: 10px;
-    color: #ffffff; 
-}
-
-.search-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 97px;
-    background: #ffffff;
-    width: 55%;
-    height: 60px;
-    border-radius: 10px;
-    box-shadow: 0px 7px rgba(0, 0, 0, 0.1);
-}
-
-.search-bar img{
-    width: 15px;
-    padding: 0 10px;
-}
-
-.search-bar input {
-    width: 85%;
-    border: none;
-    padding: 15px 5px;
-    font-size: 1rem;
-    outline: none;
-}
-
-.search-bar a {
-    font-size: 15px;
-    border-radius: 0 10px 10px 0;
-    text-decoration: none;
-    background: #91553D;
-    border: none;
-    color: white;
-    padding: 15px 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: -15px;
-    padding-right: 20px;
-}
-
-.search-bar a:hover {
-    background-color: #a26449;
-}
-
-.header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: -25px 55px 30px 0px;
-}
-
-.header-section h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #91553D;
-}
-
-.shorted-by {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.shorted-by label {
-    font-size: 1rem;
-    color: #91553D;
-}
-
-.shorted-by select {
-    padding: 5px 10px;
-    font-size: 1rem;
-    color: #91553D;
-    border: 1px solid #91553D;
-    border-radius: 3px;
-    background-color: #ffffff;
-    cursor: pointer;
-    outline: none;
-}
-
-.shorted-by select:hover {
-    border-color: #a26449;
-    color: #a26449;
-}
-
-.most-popular {
-    margin-top: 80px;
-    text-align: center;
-    padding: 0 30px;
-    padding-bottom: 30px;
-}
-
-.most-popular h2 {
-    margin-left: 60px;
-    text-align: left;
-    font-size: 1.5rem;
-    color: #91553D;
-    margin-bottom: 0px;
-}
-
-.popular-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 30px; 
-    justify-items: center;
-    align-items: center;
-}
-
-.popular-item {
-    text-align: center;
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
-    width: 100%; 
-    max-width: 200px; 
-    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    background-color: #ffffff;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.popular-item img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 5x;
-    margin-bottom: 10px;
-    transition: transform 0.3s ease;
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-bottom: 30px;
 }
 
-.popular-item h3 {
-    font-size: 15px;
+.stat-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.stat-card h3 {
     color: #91553D;
-    margin: 10px 0;
-    transition: color 0.3s ease;
+    margin-bottom: 10px;
 }
 
-.popular-item:hover {
-    transform: scale(1.05); /* Membuat elemen sedikit membesar */
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); /* Menambahkan bayangan lebih besar */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease; /* Animasi yang halus */
+.stat-card .number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #482E1D;
 }
 
-.popular-item:hover h3 {
-    color: #a26449; /* Mengubah warna judul saat di-hover */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.popular-item:hover img {
-    transform: scale(1.1); /* Membuat gambar sedikit membesar */
-    transition: transform 0.3s ease; /* Menambahkan animasi pada gambar */
+.user-table th {
+    background-color: #91553D;
+    color: white;
+    padding: 15px;
+    text-align: center;
 }
 
-.footer {
+.user-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-edit {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #F44336;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #45a049;
+}
+
+.btn-delete:hover {
+    background-color: #d32f2f;
+}
+
+footer {
     background-color: #482E1D;
     color: white;
     padding: 20px 80px;
@@ -437,36 +338,4 @@ nav {
     width: 15px;
     height: 15px;
     margin-right: 8px;
-}
-
-@keyframes slideInFromLeft {
-    0% {
-        opacity: 0;
-        transform: translateX(-100%);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.hero .text h2 {
-    animation: slideInFromLeft 1s ease-out forwards;
-    opacity: 0;
-}
-
-.hero .text p {
-    animation: slideInFromLeft 1.6s ease-out forwards;
-    opacity: 0;
-}
-
-@keyframes fadeInItem {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
