@@ -4,279 +4,800 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .sidebar {
-            height: 100vh;
-            background-color: #212529;
-            color: white;
-            position: fixed;
-            width: 250px;
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+</head>
+   <style>
+        .btn-primary {
+            background-color: #91553D;
+            border-color: #91553D;
         }
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
+        .btn-primary:hover {
+            background-color: #7a4733;
+            border-color: #7a4733;
         }
-        .sidebar .nav-link {
-            color: white;
-            padding: 15px 20px;
+        .bg-primary {
+            background-color: #91553D !important;
         }
-        .sidebar .nav-link:hover {
-            background-color: #343a40;
+        .nav-pills .nav-link.active {
+            background-color: #91553D;
         }
-        .sidebar .nav-link.active {
-            background-color: #0d6efd;
-        }
-        .feature-section {
-            display: none;
-        }
-        .feature-section.active {
-            display: block;
-        }
-        .thumbnail-img {
-            width: 100px;
-            height: 60px;
-            object-fit: cover;
-        }
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-            .main-content {
-                margin-left: 0;
-            }
+        .btn-primary:not(:disabled):not(.disabled):active,
+        .btn-primary:not(:disabled):not(.disabled).active,
+        .btn-primary:focus {
+            background-color: #7a4733;
+            border-color: #7a4733;
+            box-shadow: 0 0 0 0.2rem rgba(145, 85, 61, 0.5);
         }
     </style>
-</head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar p-0">
-                <div class="d-flex flex-column">
-                    <div class="p-3 text-center">
-                        <h4>Admin Panel</h4>
-                    </div>
-                    <div class="nav flex-column">
-                        <a href="#" class="nav-link active" onclick="showSection('users')">
-                            <i class="fas fa-users me-2"></i> Users
-                        </a>
-                        <a href="#" class="nav-link" onclick="showSection('yotrip')">
-                            <i class="fas fa-plane me-2"></i> YoTrip
-                        </a>
-                        <a href="#" class="nav-link" onclick="showSection('yotaste')">
-                            <i class="fas fa-utensils me-2"></i> YoTaste
-                        </a>
-                        <a href="#" class="nav-link" onclick="showSection('yoconcert')">
-                            <i class="fas fa-music me-2"></i> YoConcert
-                        </a>
-                        <a href="#" class="nav-link" onclick="showSection('yostay')">
-                            <i class="fas fa-hotel me-2"></i> YoStay
-                        </a>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Main Content -->
-            <div class="col-md-10 main-content">
-                <!-- Users Section -->
-                <div id="users" class="feature-section active">
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 bg-dark min-vh-100 p-0">
+            <div class="d-flex flex-column flex-shrink-0 p-3 text-white">
+                <span class="fs-4 mb-4">Admin Dashboard</span>
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li>
+                        <a href="#users" class="nav-link text-white active" data-bs-toggle="pill">
+                            <i class="fas fa-users me-2"></i>
+                            Users
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#yostay" class="nav-link text-white" data-bs-toggle="pill">
+                            <i class="fas fa-hotel me-2"></i>
+                            YoStay
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#yoconcert" class="nav-link text-white" data-bs-toggle="pill">
+                            <i class="fas fa-music me-2"></i>
+                            YoConcert
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#yotaste" class="nav-link text-white" data-bs-toggle="pill">
+                            <i class="fas fa-utensils me-2"></i>
+                            YoTaste
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#yotrip" class="nav-link text-white" data-bs-toggle="pill">
+                            <i class="fas fa-plane me-2"></i>
+                            YoTrip
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10 p-4">
+            <div class="tab-content">
+                <!-- Users Tab -->
+                <div class="tab-pane fade show active" id="users">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Users</h5>
+                                    <p class="card-text fs-2" id="totalUsers">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2>User Management</h2>
+                        <h2>Users Management</h2>
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                            <i class="fas fa-plus me-2"></i>Add New User
+                            <i class="fas fa-plus me-2"></i>Add User
                         </button>
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Username</th>
-                                            <th>Email</th>
-                                            <th>Password</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>john_doe</td>
-                                            <td>john@example.com</td>
-                                            <td>********</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#editUserModal">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger" onclick="confirmDelete('user', 1)">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <table class="table" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="editUserModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit User</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editUserForm">
+                                    <input type="hidden" name="userId">
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" class="form-control" name="username" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">New Password (leave blank to keep current)</label>
+                                        <input type="password" class="form-control" name="password">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="updateUser()">Update User</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- YoTrip Section -->
-                <div id="yotrip" class="feature-section">
+                <div class="tab-pane fade" id="yostay">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2>YoTrip Destinations</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDestinationModal">
+                        <h2>YoStay Management</h2>
+                        <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Thumbnail</th>
-                                            <th>Destination Name</th>
-                                            <th>Open Time</th>
-                                            <th>Address</th>
-                                            <th>Phone</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td><img src="/api/placeholder/100/60" alt="destination" class="thumbnail-img"></td>
-                                            <td>Beach Resort</td>
-                                            <td>09:00 - 18:00</td>
-                                            <td>123 Beach Road</td>
-                                            <td>+1234567890</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#editDestinationModal">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-danger" onclick="confirmDelete('destination', 1)">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Destination Name</th>
+                                        <th>Address</th>
+                                        <th>Open Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <img src="/api/placeholder/50/50" alt="Hotel" class="img-thumbnail">
+                                        </td>
+                                        <td>Luxury Hotel</td>
+                                        <td>123 Beach Road</td>
+                                        <td>24/7</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning me-2">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- Similar sections for YoTaste, YoConcert, and YoStay -->
-                <!-- Copy the YoTrip section structure and modify the titles and content -->
+                <!-- YoConcert Tab -->
+                <div class="tab-pane fade" id="yoconcert">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>YoConcert Management</h2>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add Destination
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Destination Name</th>
+                                        <th>Address</th>
+                                        <th>Open Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <img src="/api/placeholder/50/50" alt="Concert" class="img-thumbnail">
+                                        </td>
+                                        <td>City Arena</td>
+                                        <td>456 Main Street</td>
+                                        <td>10:00 - 22:00</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning me-2">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- YoTaste Tab -->
+                <div class="tab-pane fade" id="yotaste">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>YoTaste Management</h2>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add Destination
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Destination Name</th>
+                                        <th>Address</th>
+                                        <th>Open Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <img src="/api/placeholder/50/50" alt="Restaurant" class="img-thumbnail">
+                                        </td>
+                                        <td>Gourmet Restaurant</td>
+                                        <td>789 Food Street</td>
+                                        <td>11:00 - 23:00</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning me-2">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="yotrip">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>YoTrip Management</h2>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add Destination
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Destination Name</th>
+                                        <th>Address</th>
+                                        <th>Open Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <img src="/api/placeholder/50/50" alt="Restaurant" class="img-thumbnail">
+                                        </td>
+                                        <td>Gourmet Restaurant</td>
+                                        <td>789 Food Street</td>
+                                        <td>11:00 - 23:00</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning me-2">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addUserForm">
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" class="form-control" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Add User</button>
-                </div>
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveUser()">Save User</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Add Destination Modal -->
-    <div class="modal fade" id="addDestinationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Destination</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addDestinationForm">
-                        <div class="mb-3">
-                            <label class="form-label">Destination Name</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Open Time</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Phone</label>
-                            <input type="tel" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Thumbnail Image</label>
-                            <input type="file" class="form-control" accept="image/*" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Add Destination</button>
-                </div>
+<!-- Add Destination Modal -->
+<div class="modal fade" id="addDestinationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Destination</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addDestinationForm">
+                    <div class="mb-3">
+                        <label class="form-label">Destination Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" class="form-control" name="address" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Open Time</label>
+                        <input type="text" class="form-control" name="openTime" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Image</label>
+                        <input type="file" class="form-control" name="image" accept="image/*" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveDestination()">Save Destination</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<div class="modal fade" id="destinationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Destination Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="destinationForm">
+                    <input type="hidden" name="destinationId">
+                    <input type="hidden" name="section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Destination Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" name="address" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Open Time</label>
+                                <input type="text" class="form-control" name="openTime" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                <input type="file" class="form-control" name="image" accept="image/*">
+                                <div id="currentImage" class="mt-2"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Reviews</label>
+                                <div id="reviewsList" class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Add Review</label>
+                                <textarea class="form-control" name="newReview" rows="3"></textarea>
+                                <div class="mt-2">
+                                    <label class="form-label">Rating</label>
+                                    <select class="form-select" name="rating">
+                                        <option value="5">5 Stars</option>
+                                        <option value="4">4 Stars</option>
+                                        <option value="3">3 Stars</option>
+                                        <option value="2">2 Stars</option>
+                                        <option value="1">1 Star</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-secondary mt-2" onclick="addReview()">Add Review</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveDestination()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+// Initialize data storage
+let users = JSON.parse(localStorage.getItem('users')) || [];
+let destinations = JSON.parse(localStorage.getItem('destinations')) || [];
+
+// Update total users count
+function updateTotalUsers() {
+    document.getElementById('totalUsers').textContent = users.length;
+}
+
+// Save user
+function saveUser() {
+    const form = document.getElementById('addUserForm');
+    const formData = new FormData(form);
     
-    <script>
-        // Show/hide sections
-        function showSection(sectionId) {
-            document.querySelectorAll('.feature-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.querySelector(`#${sectionId}`).classList.add('active');
-            
-            // Update active nav link
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            event.target.closest('.nav-link').classList.add('active');
-        }
+    const user = {
+        id: Date.now(),
+        username: formData.get('username'),
+        email: formData.get('email'),
+        password: formData.get('password')
+    };
+    
+    users.push(user);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    renderUsers();
+    updateTotalUsers();
+    
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+    modal.hide();
+    form.reset();
+}
 
-        // Delete confirmation
-        function confirmDelete(type, id) {
-            if (confirm(`Are you sure you want to delete this ${type}?`)) {
-                console.log(`Deleting ${type}:`, id);
-                // Add delete logic here
-            }
+// Delete user
+function deleteUser(id) {
+    users = users.filter(user => user.id !== id);
+    localStorage.setItem('users', JSON.stringify(users));
+    renderUsers();
+    updateTotalUsers();
+}
+
+// Render users table
+function renderUsers() {
+    const tbody = document.querySelector('#usersTable tbody');
+    tbody.innerHTML = '';
+    
+    users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-2">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Save destination
+function saveDestination() {
+    const form = document.getElementById('addDestinationForm');
+    const formData = new FormData(form);
+    
+    const destination = {
+        id: Date.now(),
+        name: formData.get('name'),
+        address: formData.get('address'),
+        openTime: formData.get('openTime'),
+        image: '/api/placeholder/50/50' // In a real app, handle actual image upload
+    };
+    
+    destinations.push(destination);
+    localStorage.setItem('destinations', JSON.stringify(destinations));
+    
+    renderDestinations();
+    
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
+    modal.hide();
+    form.reset();
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', () => {
+    renderUsers();
+    updateTotalUsers();
+});
+
+let user = JSON.parse(localStorage.getItem('users')) || [];
+const sections = ['yostay', 'yoconcert', 'yotaste', 'yotrip'];
+sections.forEach(section => {
+    if (!localStorage.getItem(section)) {
+        localStorage.setItem(section, JSON.stringify([]));
+    }
+});
+
+// User functions
+function updateTotalUsers() {
+    document.getElementById('totalUsers').textContent = users.length;
+}
+
+function saveUser() {
+    const form = document.getElementById('addUserForm');
+    const formData = new FormData(form);
+    
+    const user = {
+        id: Date.now(),
+        username: formData.get('username'),
+        email: formData.get('email'),
+        password: formData.get('password')
+    };
+    
+    users.push(user);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    renderUsers();
+    updateTotalUsers();
+    
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+    modal.hide();
+    form.reset();
+}
+
+function editUser(id) {
+    const user = users.find(u => u.id === id);
+    if (!user) return;
+
+    const form = document.getElementById('editUserForm');
+    form.querySelector('[name="userId"]').value = user.id;
+    form.querySelector('[name="username"]').value = user.username;
+    form.querySelector('[name="email"]').value = user.email;
+
+    new bootstrap.Modal(document.getElementById('editUserModal')).show();
+}
+
+function updateUser() {
+    const form = document.getElementById('editUserForm');
+    const formData = new FormData(form);
+    const id = parseInt(formData.get('userId'));
+    
+    const userIndex = users.findIndex(u => u.id === id);
+    if (userIndex === -1) return;
+
+    const password = formData.get('password');
+    users[userIndex] = {
+        ...users[userIndex],
+        username: formData.get('username'),
+        email: formData.get('email'),
+        ...(password && { password })
+    };
+
+    localStorage.setItem('users', JSON.stringify(users));
+    renderUsers();
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+    modal.hide();
+    form.reset();
+}
+
+function deleteUser(id) {
+    users = users.filter(user => user.id !== id);
+    localStorage.setItem('users', JSON.stringify(users));
+    renderUsers();
+    updateTotalUsers();
+}
+
+function renderUsers() {
+    const tbody = document.querySelector('#usersTable tbody');
+    tbody.innerHTML = '';
+    
+    users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-2" onclick="editUser(${user.id})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Destination functions
+function openDestinationModal(section, id = null) {
+    const destinations = JSON.parse(localStorage.getItem(section)) || [];
+    const form = document.getElementById('destinationForm');
+    form.reset();
+    
+    form.querySelector('[name="section"]').value = section;
+    
+    if (id) {
+        const destination = destinations.find(d => d.id === id);
+        if (!destination) return;
+
+        form.querySelector('[name="destinationId"]').value = destination.id;
+        form.querySelector('[name="name"]').value = destination.name;
+        form.querySelector('[name="address"]').value = destination.address;
+        form.querySelector('[name="openTime"]').value = destination.openTime;
+        
+        // Show current image
+        const currentImage = document.getElementById('currentImage');
+        currentImage.innerHTML = `
+            <img src="${destination.image}" alt="Current image" class="img-thumbnail" style="height: 100px">
+        `;
+        
+        // Render reviews
+        renderReviews(destination.reviews || []);
+    } else {
+        form.querySelector('[name="destinationId"]').value = '';
+        document.getElementById('currentImage').innerHTML = '';
+        renderReviews([]);
+    }
+
+    new bootstrap.Modal(document.getElementById('destinationModal')).show();
+}
+
+function renderReviews(reviews) {
+    const reviewsList = document.getElementById('reviewsList');
+    reviewsList.innerHTML = reviews.map(review => `
+        <div class="review-item border-bottom p-2">
+            <div class="d-flex justify-content-between">
+                <strong>${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</strong>
+                <small>${new Date(review.date).toLocaleDateString()}</small>
+            </div>
+            <p class="mb-0">${review.text}</p>
+        </div>
+    `).join('') || '<p class="text-muted">No reviews yet</p>';
+}
+
+function addReview() {
+    const form = document.getElementById('destinationForm');
+    const text = form.querySelector('[name="newReview"]').value;
+    const rating = parseInt(form.querySelector('[name="rating"]').value);
+    
+    if (!text) return;
+
+    const section = form.querySelector('[name="section"]').value;
+    const id = parseInt(form.querySelector('[name="destinationId"]').value);
+    
+    const destinations = JSON.parse(localStorage.getItem(section)) || [];
+    const destinationIndex = destinations.findIndex(d => d.id === id);
+    
+    if (destinationIndex === -1) return;
+
+    const review = {
+        id: Date.now(),
+        text,
+        rating,
+        date: new Date().toISOString()
+    };
+
+    destinations[destinationIndex].reviews = destinations[destinationIndex].reviews || [];
+    destinations[destinationIndex].reviews.push(review);
+    
+    localStorage.setItem(section, JSON.stringify(destinations));
+    
+    form.querySelector('[name="newReview"]').value = '';
+    renderReviews(destinations[destinationIndex].reviews);
+}
+
+function saveDestination() {
+    const form = document.getElementById('destinationForm');
+    const formData = new FormData(form);
+    const section = formData.get('section');
+    const id = formData.get('destinationId');
+    
+    const destinations = JSON.parse(localStorage.getItem(section)) || [];
+    
+    const destination = {
+        id: id ? parseInt(id) : Date.now(),
+        name: formData.get('name'),
+        address: formData.get('address'),
+        openTime: formData.get('openTime'),
+        image: '/api/placeholder/50/50', // In real app, handle image upload
+        reviews: id ? destinations.find(d => d.id === parseInt(id))?.reviews || [] : []
+    };
+
+    if (id) {
+        const index = destinations.findIndex(d => d.id === parseInt(id));
+        destinations[index] = destination;
+    } else {
+        destinations.push(destination);
+    }
+
+    localStorage.setItem(section, JSON.stringify(destinations));
+    renderDestinations(section);
+    
+    const modal = bootstrap.Modal.getInstance(document.getElementById('destinationModal'));
+    modal.hide();
+}
+
+function deleteDestination(section, id) {
+    const destinations = JSON.parse(localStorage.getItem(section)) || [];
+    const newDestinations = destinations.filter(d => d.id !== id);
+    localStorage.setItem(section, JSON.stringify(newDestinations));
+    renderDestinations(section);
+}
+
+function renderDestinations(section) {
+    const destinations = JSON.parse(localStorage.getItem(section)) || [];
+    const tbody = document.querySelector(`#${section} table tbody`);
+    tbody.innerHTML = '';
+    
+    destinations.forEach(dest => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><img src="${dest.image}" alt="${dest.name}" class="img-thumbnail" style="width: 50px; height: 50px"></td>
+            <td>${dest.name}</td>
+            <td>${dest.address}</td>
+            <td>${dest.openTime}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-2" onclick="openDestinationModal('${section}', ${dest.id})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteDestination('${section}', ${dest.id})">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', () => {
+    renderUsers();
+    updateTotalUsers();
+    sections.forEach(section => {
+        renderDestinations(section);
+        // Update Add buttons to open modal
+        const addButton = document.querySelector(`#${section} button.btn-primary`);
+        if (addButton) {
+            addButton.onclick = () => openDestinationModal(section);
         }
-    </script>
+    });
+});
+</script>
 </body>
 </html>
