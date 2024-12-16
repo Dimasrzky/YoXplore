@@ -142,7 +142,6 @@ nav {
     padding: 0px;
 }
 
- /* coloumn */
  .column {
     display: flex;
     flex-wrap: wrap;
@@ -152,7 +151,7 @@ nav {
   
   .column-left .main-image {
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
     height: auto;
     border-radius: 10px;
     margin-left: 30px;
@@ -162,32 +161,30 @@ nav {
   .column-right {
     flex: 1;
     min-width: 300px;
-    padding-left: 50px;
+    padding-left: 20px;
   }
   
   .column-right h1 {
     color: #91553D;
-    font-size: 3em;
+    font-size: 2em;
   }
   
   .column-right p {
     margin: 20px;
-    display: flex; /* Mengatur container menjadi flexbox */
     align-items: center ; /* Menyelaraskan icon dan teks secara vertikal */
     gap: 10px; /* Menambahkan jarak antara icon dan teks */
     padding-bottom: 10px;
-    font-weight: bold;
   }
   
   .column-right p img {
-    width: 25px; /* Menentukan ukuran gambar */
+    width: 20px; /* Menentukan ukuran gambar */
     height: auto;
     margin-bottom: 0; /* Menghapus margin bawah */
   }
   
   .rating {
     color: #ffb400;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: bold;
   }
   
@@ -197,12 +194,12 @@ nav {
     justify-content: space-between;
     flex-wrap: wrap;
     margin: 0px 60px 40px;
-    gap: 10px;
+    gap: 5px;
   }
   
   .gallery img {
-    width: 18%;
-    height: 150px;
+    width: 15%;
+    height: 120px;
     border-radius: 10px;
     object-fit: cover;
   }

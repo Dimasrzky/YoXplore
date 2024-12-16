@@ -6,6 +6,7 @@ body, html {
     background-size: cover;
     min-height: 100vh;
     overflow-x: hidden;
+    background-color: #f3f3f3;
 }
 
 .container {
@@ -148,16 +149,17 @@ nav {
 }
 
 .dashboard-stats {
-    display: grid;
+    display:flex;
     margin-bottom: 20px;
     justify-content: center;
     align-items: center;
     width: 100%; 
+    gap: 20px;
 }
 
 .stat-card {
     background-color: #91553D;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 100%; 
@@ -181,7 +183,7 @@ nav {
 .user-table {
     width: 100%;
     border-collapse: collapse;
-    border-radius: 5px;
+    border-radius: 10px;
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -192,13 +194,11 @@ nav {
     color: white;
     padding: 15px;
     text-align: center;
-    border-right: 1px solid #e0e0e0;
 }
 
 .user-table td {
     padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    border-right: 1px solid #e0e0e0;
+    border-bottom: 2px solid #e0e0e0;
 }
 
 .user-table th:last-child, .user-table td:last-child {
