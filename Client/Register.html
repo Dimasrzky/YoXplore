@@ -46,42 +46,4 @@
         </div>
     </div>
 </body>
-<script>
-    function handleCredentialResponse(response) {
-        console.log("Encoded JWT ID token: " + response.credential);
-    }
-    window.onload = function () {
-      google.accounts.id.initialize({
-        client_id: "YOUR_GOOGLE_CLIENT_ID",
-        callback: handleCredentialResponse
-      });
-      google.accounts.id.renderButton(
-        document.querySelector(".g_id_signin"),
-        { theme: "outline", size: "large" }  
-      );
-      google.accounts.id.prompt(); 
-    };
-
-    document.querySelector("form").addEventListener("submit", function (event) {
-        event.preventDefault(); // Mencegah pengiriman form default
-    
-        // Ambil nilai dari input
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
-    
-        // Validasi sederhana
-        if (username === "" || password === "") {
-            alert("Username dan password harus diisi!");
-            return;
-        }
-    
-        // Cek kredensial (contoh hardcode, Anda bisa mengganti dengan validasi ke backend)
-        if (username === "admin" && password === "123456") {
-            alert("Login berhasil!");
-            window.location.href = "/Client/Home.html"; // Redirect ke halaman utama
-        } else {
-            alert("Username atau password salah!");
-        }
-    });
-</script>
 </html>
