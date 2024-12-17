@@ -14,7 +14,7 @@
         <div class="login-section">
             <h2>Login your account</h2>
             <div class="error-message" id="alert-message" style="display: none;"></div>
-            <form id="loginForm" method="POST" action="/YoXplore/Controller/Auth.php">
+            <form method="POST" action="/YoXplore/Controller/Auth.php">
                 <input type="hidden" name="action" value="login">
 
                 <div class="input-group">
@@ -67,7 +67,7 @@
 
     document.getElementById("loginForm").addEventListener("submit", function(event) {
         event.preventDefault();
-        console.log('Form submitted'); // Debug log
+        console.log('Form submitted'); 
         
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
@@ -81,13 +81,13 @@
             method: "POST",
             body: formData
         })
-        .then(response => response.text())  // Ubah ke text() dulu untuk debug
+        .then(response => response.text())
         .then(text => {
-            console.log('Raw response:', text); // Debug log
+            console.log('Raw response:', text); 
             return JSON.parse(text);
         })
         .then(data => {
-            console.log('Parsed data:', data); // Debug log
+            console.log('Parsed data:', data); 
             if (data.success) {
                 window.location.href = "/YoXplore/Client/Home.html";
             } else {

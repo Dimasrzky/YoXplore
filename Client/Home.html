@@ -1,17 +1,8 @@
-<?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: /YoXplore/Client/Login.html");
-    exit;
-}
-?>
-
-
 <html>
     <head>
         <title>Yoxplore - Explore Yogyakarta</title>
         <link rel="icon" href="/Image/Logo Yoxplore.png" type="image/png">
-        <link rel="stylesheet" href="/Style/Home.css">
+        <link rel="stylesheet" href="../Style/Home.css">
     </head>
     <body>
         <header>
@@ -24,6 +15,8 @@ if (!isset($_SESSION['user_id'])) {
                     <a href="yotaste.html"><img src="/Image/yotaste.png" alt="Taste Icon"> YoTaste</a>
                     <a href="yostay.html"><img src="/Image/yostay.png" alt="Stay Icon"> YoStay</a>
                 </div>
+                <div class="profile-section">
+                    <span class="username-display" id="usernameDisplay"></span>
                 <div class="profile-dropdown">
                     <div class="profile-icon" onclick="toggleDropdown()">
                         <img src="/Image/user.png" alt="Profile Icon">
@@ -224,6 +217,15 @@ if (!isset($_SESSION['user_id'])) {
     </body>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/YoXplore/Controller/get_username.php')
+                .then(response => response.json())
+                .then(data => {
+                    if(data.username) {
+                        document.getElementById('usernameDisplay').textContent = data.username;
+            }
+        });
+});
         document.addEventListener('DOMContentLoaded', () => {
             const popularGrid = document.querySelector('.popular-grid');
         

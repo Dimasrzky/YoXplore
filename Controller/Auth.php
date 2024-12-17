@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 require_once __DIR__ . '/../Config/db_connect.php';
 
@@ -14,39 +13,24 @@ class Auth {
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'login') {
             $email = trim($_POST['email']);
             $password = $_POST['password'];
-
+            
             try {
-                error_log("Email received: " . $email);
-                
                 $stmt = $this->conn->prepare("SELECT * FROM client WHERE email = ?");
                 $stmt->execute([$email]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if ($user && password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['username'] = $user['username'];
-                    
-                    header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => true,
-                        'redirect' => '/YoXplore/Client/Home.html'
-                    ]);
+                    header('Location: ../Client/Home.html');
+                    exit();
                 } else {
-                    header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => false,
-                        'message' => 'Email atau password salah!'
-                    ]);
+                    header('Location: ../Client/Login.html?error=invalid');
+                    exit();
                 }
             } catch(PDOException $e) {
-                error_log("Database Error: " . $e->getMessage());
-                header('Content-Type: application/json');
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Terjadi kesalahan database'
-                ]);
+                header('Location: ../Client/Login.html?error=system');
+                exit();
             }
-            exit();
         }
     }
 

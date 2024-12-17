@@ -596,6 +596,19 @@ nav {
     opacity: 0;
 }
 
+/* Di file Home.css */
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.username-display {
+    color: #ffffff;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
 @keyframes fadeInItem {
     0% {
         opacity: 0;
