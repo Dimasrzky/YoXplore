@@ -9,6 +9,33 @@ class Auth {
         $this->conn = $conn;
     }
 
+    public function login() {
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST['action'] == 'login') {
+            $email = trim($_POST['email']);
+            $password = $_POST['password'];
+
+            $stmt = $this->conn->prepare("SELECT * FROM client WHERE email = ?");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                    
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Login berhasil'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Email atau password salah!'
+                ]);
+            }
+            exit;
+        }
+    }
+
     public function register() {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $username = trim($_POST['username']);
@@ -89,6 +116,10 @@ class Auth {
     }
 }
 
+if (isset($_POST['action']) && $_POST['action'] === 'login') {
+    $auth = new Auth($conn);
+    $auth->login();
+}
 // Inisialisasi class Auth dan jalankan proses registrasi
 if (isset($_POST['username'])) {
     $auth = new Auth($conn);

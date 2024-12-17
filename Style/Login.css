@@ -114,7 +114,8 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    margin-top: 20px;
     width: 450px;
 }
 
@@ -140,4 +141,25 @@ button:hover {
     margin-bottom: 20px;
     display: flex;
     justify-content: center;
+}
+
+
+.alert {
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: none;
+}
+
+.alert-error {
+    background-color: #fde8e8;
+    color: #e53e3e;
+    border: 1px solid #feb2b2;
+}
+
+.alert-success {
+    background-color: #e6fffa;
+    color: #047481;
+    border: 1px solid #81e6d9;
 }

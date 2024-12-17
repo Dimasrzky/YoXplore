@@ -13,20 +13,25 @@
 
         <div class="login-section">
             <h2>Login your account</h2>
-            <div class="error-message"></div>
-            <form method="POST" action="/YoXplore/Controller/Auth.php">
+            <div class="error-message" id="alert-message" style="display: none;"></div>
+            <form id="loginForm" method="POST" action="/YoXplore/Controller/Auth.php">
                 <input type="hidden" name="action" value="login">
+
                 <div class="input-group">
-                    <input type="text" id="email" name="email" placeholder=" " required>
+                    <input type="text" id="email" name="email" placeholder=" ">
                     <label for="email">Email</label>
                 </div>
+
                 <div class="input-group">
-                    <input type="password" id="password" name="password" placeholder=" " required>
+                    <input type="password" id="password" name="password" placeholder=" ">
                     <label for="password">Password</label>
                 </div>
+
                 <a href="Forgot_password.html" class="forgot-password">forgot password?</a>
+
+                <button type="submit" class="login-button">Login</button>
             </form>    
-            <button type="submit">Login</button>
+
             <div id="g_id_onload"
                 data-client_id="YOUR_GOOGLE_CLIENT_ID"
                 data-login_uri="YOUR_BACKEND_LOGIN_URI"
@@ -60,18 +65,47 @@
       google.accounts.id.prompt(); 
     };
 
-    document.querySelector("form").addEventListener("submit", function (event) {
-        event.preventDefault(); // Mencegah pengiriman form default
-    
-        // Ambil nilai dari input
-        const username = document.getElementById("username").value.trim();
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        const alertDiv = document.getElementById("alert-message");
+        const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
-    
-        // Validasi sederhana
-        if (username === "" || password === "") {
-            alert("Username dan password harus diisi!");
-            return;
+        
+        // Validasi
+        if (email === "" || password === "") {
+            alertDiv.textContent = "Email dan password harus diisi!";
+            alertDiv.style.display = "block";
+            alertDiv.style.color = "red";
+            alertDiv.style.marginBottom = "10px";
+            return false;
         }
+        
+        fetch("/YoXplore/Controller/Auth.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "/YoXplore/Client/Home.html";
+            } else {
+                alertDiv.textContent = "Email atau password salah!";
+                alertDiv.style.display = "block";
+                alertDiv.style.color = "red";
+                alertDiv.style.marginBottom = "10px";
+            }
+        })
+
+        .catch(error => {
+            alertDiv.textContent = "Terjadi kesalahan. Silakan coba lagi.";
+            alertDiv.style.display = "block";
+            alertDiv.style.color = "red";
+            alertDiv.style.marginBottom = "10px";
+        });
     });
 </script>
 </html>
