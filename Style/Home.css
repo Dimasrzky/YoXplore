@@ -624,4 +624,29 @@ nav {
     }
 }
 
-
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    .nav-links {
+      position: relative;
+      left: 0;
+      transform: none;
+    }
+    
+    .user-profile {
+      margin-left: 0;
+    }
+    
+    .hero .text {
+      width: 80%;
+      margin-left: 0;
+      padding: 0 20px;
+    }
+    
+    .search-bar {
+      width: 80%;
+    }
+    
+    .popular-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }

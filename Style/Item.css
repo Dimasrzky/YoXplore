@@ -168,6 +168,9 @@ nav {
     color: #91553D;
     font-size: 2em;
     margin-bottom: 25px;
+    padding-bottom: 20px;
+    width: 950px;
+    border-bottom: 2px solid #c9c9c9;
   }
   
   .info-item {
@@ -184,65 +187,18 @@ nav {
   }
   
   .info-item .icon img {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
   
   .info-item p {
     margin: -3px 2px;
     line-height: 1.5;
     flex: 1;
+    font-weight: bold;
+    color: #91553D;
   }
 
-  .info-item1 {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 20px; /* Space between each info item */
-  }
-  
-  .info-item1 .icon {
-    display: flex;
-    align-items: flex-start;
-    margin-right: 10px;
-    flex-shrink: 0;
-  }
-  
-  .info-item1 .icon img {
-    width: 24px;
-    height: 24px;
-  }
-  
-  .info-item1 p {
-    margin: 0;
-    line-height: 1.5;
-    flex: 1;
-  }
-
-  .info-item3 {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 20px; /* Space between each info item */
-  }
-  
-  .info-item3 .icon {
-    display: flex;
-    align-items: flex-start;
-    margin-right: 12px;
-    flex-shrink: 0;
-  }
-  
-  .info-item3 .icon img {
-    width: 18px;
-    height: 18px;
-    margin-left: 2px;
-  }
-  
-  .info-item3 p {
-    margin: -3px 2px;
-    line-height: 1.5;
-    flex: 1;
-  }
-  
   /* gallery */
   .gallery {
     position: relative;
@@ -280,7 +236,7 @@ nav {
     height: 35px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 15px;
     z-index: 1;
     transition: background-color 0.3s ease;
   }
@@ -300,7 +256,7 @@ nav {
   .carousel-dots {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 10px;
     gap: 8px;
   }
   
