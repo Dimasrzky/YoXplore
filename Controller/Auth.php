@@ -16,7 +16,6 @@ class Auth {
             $password = $_POST['password'];
 
             try {
-                // Debug: Cetak nilai yang diterima
                 error_log("Email received: " . $email);
                 
                 $stmt = $this->conn->prepare("SELECT * FROM client WHERE email = ?");
