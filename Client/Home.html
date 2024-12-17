@@ -16,7 +16,7 @@
                     <a href="yostay.html"><img src="../Image/yostay.png" alt="Stay Icon"> YoStay</a>
                 </div>
                 <div class="user-profile">
-                    <span id="username"></span></div>
+                    <span id="usernameDisplay"></span></div>
                 <div class="profile-dropdown">
                     <div class="profile-icon" onclick="toggleDropdown()">
                         <img src="../Image/user.png" alt="Profile Icon">
@@ -218,14 +218,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const usernameDisplay = document.getElementById('usernameDisplay');
             fetch('/YoXplore/Controller/get_username.php')
                 .then(response => response.json())
                 .then(data => {
                     if(data.username) {
-                        document.getElementById('username').textContent = data.username;
-            }
+                        usernameDisplay.textContent = data.username;
+                    }
+                });
         });
-});
+        
         document.addEventListener('DOMContentLoaded', () => {
             const popularGrid = document.querySelector('.popular-grid');
         
