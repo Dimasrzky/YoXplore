@@ -21,6 +21,7 @@ class Auth {
                 
                 if ($user && password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
                     header('Location: ../Client/Home.html');
                     exit();
                 } else {
