@@ -67,40 +67,40 @@
 
     document.getElementById("loginForm").addEventListener("submit", function(event) {
         event.preventDefault();
+        console.log('Form submitted'); // Debug log
         
-        const alertDiv = document.getElementById("alert-message");
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
         
-        // Validasi
-        if (email === "" || password === "") {
-            alertDiv.textContent = "Email dan password harus diisi!";
-            alertDiv.style.display = "block";
-            alertDiv.style.color = "red";
-            alertDiv.style.marginBottom = "10px";
-            return false;
-        }
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('password', password);
+        formData.append('action', 'login');
         
         fetch("/YoXplore/Controller/Auth.php", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: `action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+            body: formData
         })
-        .then(response => response.json())
+        .then(response => response.text())  // Ubah ke text() dulu untuk debug
+        .then(text => {
+            console.log('Raw response:', text); // Debug log
+            return JSON.parse(text);
+        })
         .then(data => {
+            console.log('Parsed data:', data); // Debug log
             if (data.success) {
                 window.location.href = "/YoXplore/Client/Home.html";
             } else {
-                alertDiv.textContent = "Email atau password salah!";
+                const alertDiv = document.getElementById("alert-message");
+                alertDiv.textContent = data.message || "Login gagal";
                 alertDiv.style.display = "block";
                 alertDiv.style.color = "red";
                 alertDiv.style.marginBottom = "10px";
             }
         })
-
         .catch(error => {
+            console.error('Error:', error);
+            const alertDiv = document.getElementById("alert-message");
             alertDiv.textContent = "Terjadi kesalahan. Silakan coba lagi.";
             alertDiv.style.display = "block";
             alertDiv.style.color = "red";
