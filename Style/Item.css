@@ -142,23 +142,23 @@ nav {
     padding: 0px;
 }
 
- .column {
+.column {
     display: flex;
     flex-wrap: wrap;
     padding: 30px;
     gap: 10px;
-  }
+}
   
-  .column-left .main-image {
+.column-left .main-image {
     width: 100%;
     max-width: 400px;
     height: auto;
     border-radius: 10px;
     margin-left: 30px;
     margin-top: 20px;
-  }
+}
   
-  .column-right {
+.column-right {
     flex: 1;
     min-width: 300px;
     padding-left: 20px;
@@ -167,55 +167,168 @@ nav {
   .column-right h1 {
     color: #91553D;
     font-size: 2em;
+    margin-bottom: 25px;
   }
   
-  .column-right p {
-    margin: 20px;
-    align-items: center ; /* Menyelaraskan icon dan teks secara vertikal */
-    gap: 10px; /* Menambahkan jarak antara icon dan teks */
-    padding-bottom: 10px;
+  .info-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px; /* Space between each info item */
   }
   
-  .column-right p img {
-    width: 20px; /* Menentukan ukuran gambar */
-    height: auto;
-    margin-bottom: 0; /* Menghapus margin bawah */
+  .info-item .icon {
+    display: flex;
+    align-items: flex-start;
+    margin-right: 10px;
+    flex-shrink: 0;
   }
   
-  .rating {
-    color: #ffb400;
-    font-size: 1.2em;
-    font-weight: bold;
+  .info-item .icon img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .info-item p {
+    margin: -3px 2px;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .info-item1 {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px; /* Space between each info item */
+  }
+  
+  .info-item1 .icon {
+    display: flex;
+    align-items: flex-start;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  
+  .info-item1 .icon img {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .info-item1 p {
+    margin: 0;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .info-item3 {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px; /* Space between each info item */
+  }
+  
+  .info-item3 .icon {
+    display: flex;
+    align-items: flex-start;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  
+  .info-item3 .icon img {
+    width: 18px;
+    height: 18px;
+    margin-left: 2px;
+  }
+  
+  .info-item3 p {
+    margin: -3px 2px;
+    line-height: 1.5;
+    flex: 1;
   }
   
   /* gallery */
   .gallery {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    position: relative;
     margin: 0px 60px 40px;
-    gap: 5px;
+    padding: 0 40px;
   }
   
-  .gallery img {
-    width: 15%;
-    height: 120px;
+  .carousel-container {
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+  
+  .carousel-track img {
+    width: 250px;
+    height: 150px;
     border-radius: 10px;
     object-fit: cover;
+    margin: 0 10px 0 10px;
+    flex-shrink: 0;
   }
   
-  /* map */
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(145, 85, 61, 0.7);
+    color: white;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 1;
+    transition: background-color 0.3s ease;
+  }
+  
+  .carousel-btn:hover {
+    background: rgba(145, 85, 61, 1);
+  }
+  
+  .prev-btn {
+    left: 0;
+  }
+  
+  .next-btn {
+    right: 0;
+  }
+  
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 8px;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 20px;
+    background: #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+  }
+  
+  .dot.active {
+    background: #91553D;
+  }
+  
+  .map-container {
+    width: 92%;
+    height: 400px;
+    border-radius: 10px;
+    margin: 0 auto;
+  }
+  
   .map {
     position: relative;
     text-align: center;
-    margin: 30px 0;
-  }
-  
-  .map img {
-    width: 93%;
-    height: 300px;
-    border-radius: 10px;
-    object-fit: cover;
+    margin: -20px 0;
   }
   
   .route-btn {
@@ -230,32 +343,51 @@ nav {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    z-index: 1;
   }
   
-  /* reviews */
-  .reviews {
+  .route-btn:hover {
+    background-color: #7a4733;
+  }
+  
+.route-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: #91553D;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+  
+.reviews {
     margin: 55px 55px 50px;
     border-radius: 10px;
     padding: 30px;
     background-color: #F1F1F1;
-  }
+}
 
-  .reviews h2 {
-    font-size: 2em;
+.reviews h2 {
+    font-size: 1.5em;
     color: #91553D;
-  }
+    margin-left: 10px;
+}
 
-  .add-comment-btn {
-    margin: -60px 20px;
+.add-comment-btn {
+    margin: -60px 10px;
     float: right;
     background-color: #91553D;
     color: white;
-    font-size: 16px;
+    font-size: 15px;
     border-radius: 5px;
     padding: 10px 10px;
     border: none;
     cursor: pointer;
-  }
+}
   
   .review-item {
     margin: 15px 0;
@@ -264,13 +396,13 @@ nav {
   }
 
   .review-item p {
-    font-size: 1.3em;
-    margin-top: 10px;
+    font-size: 1em;
+    margin-top: 15px;
   }
 
   .user-name {
     font-weight: bold;
-    font-size: 22px;
+    font-size: 15px;
   }
   
   .user-images {
@@ -280,14 +412,15 @@ nav {
   }
   
   .user-images img {
-    width: 150px;
-    height: 150px;
+    width: 160px;
+    height: 100px;
     border-radius: 5px;
   }
   
   .stars {
     color: #ffb400;
     font-size: 1.5em;
+    margin-top: -20px;
   }
   
   .review-item .more-reviews {

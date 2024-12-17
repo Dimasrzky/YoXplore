@@ -1,5 +1,6 @@
 <html>
     <head>
+        <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY" async defer></script>
         <title>Yoxplore - Explore Yogyakarta</title>
         <link rel="icon" href="/Image/Logo Yoxplore.png" type="image/png">
         <link rel="stylesheet" href="/Style/Item.css">
@@ -40,28 +41,51 @@
               </div>
               <div class="column-right">
                 <h1>Gudeg Yu Djum Pusat</h1>
-                <p>
-                  <span class="icon"> <img src="/Image/MapPin.png" alt=""></span> Jl. Kaliurang Km. 4,5  Gang Cokrowolo Karangasem, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281<br>
-                  <span class="icon"> <img src="/Image/MapPin.png" alt=""></span> Open | 05:00 - 19:00<br>
-                  <span class="icon"> <img src="/Image/MapPin.png" alt=""></span> (0274) 519548
-                </p>
-                <p class="rating">★ 4.9 / 5</p>
+                <div class="info-item1">
+                  <span class="icon"><img src="/Image/location.png" alt=""></span>
+                  <p>Jl. Kaliurang Km. 4,5  Gang Cokrowolo Karangasem, Caturtunggal, Kec. Depok, Kabupaten Sleman</p>
+                </div>
+                <div class="info-item">
+                  <span class="icon"><img src="/Image/alrm.png" alt=""></span>
+                  <p>Open | 05:00 - 19:00</p>
+                </div>
+                <div class="info-item3">
+                  <span class="icon"><img src="/Image/call.png" alt=""></span>
+                  <p>(0274) 519548</p>
+                </div>
               </div>
             </div>
         
             <div class="gallery">
-              <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 1">
-              <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 2">
-              <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 3">
-              <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 4">
-              <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 5">
+                <button class="carousel-btn prev-btn">❮</button>
+                <div class="carousel-container">
+                  <div class="carousel-track">
+                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 1">
+                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 2">
+                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 3">
+                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 4">
+                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 5">
+                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 6">
+                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 7">
+                  </div>
+                </div>
+                <button class="carousel-btn next-btn">❯</button>
+                <div class="carousel-dots"></div>
             </div>
-        
+            
             <div class="map">
-              <img src="/Image/map.png" alt="Map">
-              <button class="route-btn">Show Route</button>
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.2396766611586!2d110.38016937497274!3d-7.765828092365833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a59b2d4729729%3A0x4c4e3994dd5a0669!2sGudeg%20Yu%20Djum!5e0!3m2!1sen!2sid!4v1708181669044!5m2!1sen!2sid" 
+                  width="92%" 
+                  height="400" 
+                  style="border:0; border-radius:10px;" 
+                  allowfullscreen="" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+                <button class="route-btn" onclick="window.open('https://www.google.com/maps/place/Gudeg+Yu+Djum+Pusat/@-7.7653644,110.3777387,17z/data=!3m1!4b1!4m6!3m5!1s0x2e7a59ad3ffdbc85:0x3d88576226010d10!8m2!3d-7.7653644!4d110.3803136!16s%2Fg%2F11cphr0w9t?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D', '_blank')">Get Direction</button>
             </div>
-        
+
             <div class="reviews">
               <h2>Review</h2>
               <button class="add-comment-btn">+ Add Comment</button>
@@ -89,9 +113,6 @@
                 </div>
                 <p>umm enakk poll gais</p>
                 <div class="stars">★★★★★</div>
-                <div class="more-reviews">
-                  <a href="#">See more reviews ⭢</a>
-                </div>
               </div>
             </div>
         </div>
@@ -175,5 +196,103 @@
                 }
             }
         };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.querySelector('.carousel-track');
+            const slides = Array.from(track.children);
+            const nextButton = document.querySelector('.next-btn');
+            const prevButton = document.querySelector('.prev-btn');
+            const dotsContainer = document.querySelector('.carousel-dots');
+          
+            // Add dots
+            slides.forEach((_, index) => {
+              const dot = document.createElement('button');
+              dot.classList.add('dot');
+              if (index === 0) dot.classList.add('active');
+              dotsContainer.appendChild(dot);
+            });
+          
+            const dots = Array.from(document.querySelectorAll('.dot'));
+            let currentIndex = 0;
+          
+            // Set slide width and arrangement
+            const slideWidth = slides[0].getBoundingClientRect().width;
+            slides.forEach((slide, index) => {
+              slide.style.left = slideWidth * index + 'px';
+            });
+          
+            // Function to move to slide
+            const moveToSlide = (index) => {
+              if (index < 0) index = slides.length - 1;
+              if (index >= slides.length) index = 0;
+              
+              track.style.transform = `translateX(-${slideWidth * index}px)`;
+              
+              // Update dots
+              dots.forEach(dot => dot.classList.remove('active'));
+              dots[index].classList.add('active');
+              
+              currentIndex = index;
+            };
+          
+            // Next button click
+            nextButton.addEventListener('click', () => {
+              moveToSlide(currentIndex + 1);
+            });
+          
+            // Previous button click
+            prevButton.addEventListener('click', () => {
+              moveToSlide(currentIndex - 1);
+            });
+          
+            // Dot clicks
+            dots.forEach((dot, index) => {
+              dot.addEventListener('click', () => {
+                moveToSlide(index);
+              });
+            });
+          
+            // Optional: Auto-play
+            setInterval(() => {
+              moveToSlide(currentIndex + 1);
+            }, 5000);
+          });
+
+          // Initialize Street View
+            function initStreetView() {
+                // Coordinates for Gudeg Yu Djum (example coordinates)
+                const yuDjumLocation = { lat: -7.765828, lng: 110.377842 };
+                
+                const streetViewOptions = {
+                position: yuDjumLocation,
+                pov: { heading: 165, pitch: 0 },
+                zoom: 1
+                };
+                
+                const streetView = new google.maps.StreetViewPanorama(
+                document.getElementById('street-view'),
+                streetViewOptions
+                );
+            }
+            
+            // Function to open Google Maps directions
+            function openGoogleMaps() {
+                // Coordinates for Gudeg Yu Djum
+                const destination = "-7.765828,110.377842";
+                const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
+                window.open(url, '_blank');
+            }
+            
+            // Load Google Maps API
+            function loadGoogleMapsAPI() {
+                const script = document.createElement('script');
+                script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initStreetView`;
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            }
+            
+            // Call the function to load the API when the page loads
+            document.addEventListener('DOMContentLoaded', loadGoogleMapsAPI);
     </script>
 </html>
