@@ -1,33 +1,80 @@
 <html>
 <head>
     <title>Login As Admin</title>
-    <link rel="icon" href="/Image/Logo Yoxplore.png" type="image/png">
+    <link rel="icon" href="../Image/Logo Yoxplore.png" type="image/png">
     <link rel="stylesheet" href="/Style/LoginAdmin.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="container"> 
         <div class="background-section">
-            <img src="/Image/Yoxplore logo text.png">
+            <img src="../Image/Yoxplore logo text.png">
         </div>
 
         <div class="login-section">
             <h2>Login as admin</h2>
-            <form method="POST" action="/Client/Home.html">
+            <div class="error-message" id="error-message" style="display: none; color: red; margin-bottom: 10px;"></div>
+            <form id="adminLoginForm" method="POST" onsubmit="return validateAdminLogin(event)">
                 <div class="input-group">
-                    <input type="text" id="username" name="username" placeholder=" " required>
-                    <label for="username">Username</label>
+                    <input type="text" id="email" name="email" value="admin@yoxplore.com" placeholder=" ">
+                    <label for="email">Email</label>
                 </div>
                 <div class="input-group">
-                    <input type="password" id="password" name="password" placeholder=" " required>
+                    <input type="password" id="password" name="password" placeholder=" ">
                     <label for="password">Password</label>
                 </div>
-                <a href="/Client/Forgot_password.html" class="forgot-password">forgot password?</a>
-            </form>    
-            <button type="submit">Login</button>
-            <a href="Register.html" class="create-account">Create Account</a>        
+                <button type="submit">Login</button>
+            </form>       
         </div>
     </div>
+    <script>         
+        const adminCredentials = {             
+            email: "admin@yoxplore.com",             
+            password: "admin123"         
+        };              
+
+        function validateAdminLogin(event) {             
+            event.preventDefault();             
+            
+            const email = document.getElementById('email').value.trim();             
+            const password = document.getElementById('password').value.trim();             
+            const errorMessage = document.getElementById('error-message');             
+            
+            // Reset pesan error
+            errorMessage.style.display = "none";
+
+            // Validasi field kosong             
+            if (email === "" && password === "") {                 
+                errorMessage.textContent = "Email dan password harus diisi!";                 
+                errorMessage.style.display = "block";
+                return false;             
+            }             
+            
+            if (email === "") {                 
+                errorMessage.textContent = "Email harus diisi!";                 
+                errorMessage.style.display = "block";
+                return false;             
+            }             
+            
+            if (password === "") {                 
+                errorMessage.textContent = "Password harus diisi!";                 
+                errorMessage.style.display = "block";
+                return false;             
+            }             
+            
+            // Validasi kredensial             
+            if (email === adminCredentials.email && password === adminCredentials.password) {                 
+                // Login berhasil                 
+                window.location.href = '../Admin/dashboard.html';             
+            } else {                 
+                // Login gagal                 
+                errorMessage.textContent = "Email atau password salah!";                 
+                errorMessage.style.display = "block";             
+            }             
+            
+            return false;         
+        }     
+    </script> 
 </body>
 </html>
 

@@ -37,7 +37,7 @@
         <!-- Sidebar -->
         <div class="col-md-2 bg-dark min-vh-100 p-0">
             <div class="d-flex flex-column flex-shrink-0 p-3 text-white">
-                <span class="fs-4 mb-4">Admin Dashboard</span>
+                <span class="fs-4 mb-4"><\> YoAdmin</span>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li>
                         <a href="#users" class="nav-link text-white active" data-bs-toggle="pill">
@@ -88,28 +88,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2>Users Management</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                            <i class="fas fa-plus me-2"></i>Add User
-                        </button>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <table class="table" id="usersTable">
-                                <thead>
-                                    <tr>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="modal fade" id="editUserModal" tabindex="-1">
                     <div class="modal-dialog">
@@ -456,6 +434,17 @@
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let destinations = JSON.parse(localStorage.getItem('destinations')) || [];
 
+
+function fetchUsers() {
+    fetch('../Controller/get_users.php')
+        .then(response => response.json())
+        .then(data => {
+            users = data;
+            renderUsers();  
+            updateTotalUsers();
+        })
+        .catch(error => console.error('Error:', error));
+}
 // Update total users count
 function updateTotalUsers() {
     document.getElementById('totalUsers').textContent = users.length;
@@ -502,8 +491,9 @@ function renderUsers() {
         tr.innerHTML = `
             <td>${user.username}</td>
             <td>${user.email}</td>
+            <td>${user.created_at}</td>
             <td>
-                <button class="btn btn-sm btn-warning me-2">
+                <button class="btn btn-sm btn-warning me-2" onclick="editUser(${user.id})">
                     <i class="fas fa-edit"></i> Edit
                 </button>
                 <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
@@ -540,6 +530,7 @@ function saveDestination() {
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
+    fetchUsers();
     renderUsers();
     updateTotalUsers();
 });
@@ -616,10 +607,24 @@ function updateUser() {
 }
 
 function deleteUser(id) {
-    users = users.filter(user => user.id !== id);
-    localStorage.setItem('users', JSON.stringify(users));
-    renderUsers();
-    updateTotalUsers();
+    if (confirm('Are you sure you want to delete this user?')) {
+        fetch('../Controller/delete_user.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: id })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchUsers(); // Refresh user list
+            } else {
+                alert('Error deleting user');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
 }
 
 function renderUsers() {
