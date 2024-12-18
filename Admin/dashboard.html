@@ -556,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchUsers();
     renderUsers();
     updateTotalUsers();
-    setInterval(fetchUsers, 30000);
+    setInterval(fetchUsers, 3000);
 });
 
 let user = JSON.parse(localStorage.getItem('users')) || [];
@@ -686,7 +686,7 @@ function renderUsers() {
 // Panggil fungsi saat halaman dimuat
 document.addEventListener('DOMContentLoaded', () => {
     renderUsers();
-    setInterval(renderUsers, 30000); // Refresh data setiap 30 detik
+    setInterval(renderUsers, 3000); // Refresh data setiap 30 detik
 });
 
 // Destination functions
