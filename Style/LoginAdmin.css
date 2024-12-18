@@ -19,7 +19,7 @@ body, html {
 .background-section {
     width: 125%;
     margin-top: -150px;
-    background: url('/Image/bg\ login.jpeg') no-repeat center center;
+    background: url('../Image/bg login.jpeg') no-repeat center center;
     background-size: cover;
     justify-items: center;
 }
