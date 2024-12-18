@@ -494,7 +494,13 @@ function fetchUsers() {
 
 // Update total users count
 function updateTotalUsers() {
-    document.getElementById('totalUsers').textContent = users.length;
+    fetch('../Controller/get_users.php')
+        .then(response => response.json())
+        .then(data => {
+            // Update total users sesuai jumlah data dari database
+            document.getElementById('totalUsers').textContent = data.length;
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 // Save user
@@ -551,14 +557,6 @@ function saveDestination() {
     form.reset();
 }
 
-// Initialize the page
-document.addEventListener('DOMContentLoaded', () => {
-    fetchUsers();
-    renderUsers();
-    updateTotalUsers();
-    setInterval(fetchUsers, 3000);
-});
-
 let user = JSON.parse(localStorage.getItem('users')) || [];
 const sections = ['yostay', 'yoconcert', 'yotaste', 'yotrip'];
 sections.forEach(section => {
@@ -566,11 +564,6 @@ sections.forEach(section => {
         localStorage.setItem(section, JSON.stringify([]));
     }
 });
-
-// User functions
-function updateTotalUsers() {
-    document.getElementById('totalUsers').textContent = users.length;
-}
 
 function saveUser() {
     const form = document.getElementById('addUserForm');
@@ -682,12 +675,6 @@ function renderUsers() {
         })
         .catch(error => console.error('Error:', error));
 }
-
-// Panggil fungsi saat halaman dimuat
-document.addEventListener('DOMContentLoaded', () => {
-    renderUsers();
-    setInterval(renderUsers, 3000); // Refresh data setiap 30 detik
-});
 
 // Destination functions
 function openDestinationModal(section, id = null) {
@@ -842,6 +829,10 @@ document.addEventListener('DOMContentLoaded', () => {
             addButton.onclick = () => openDestinationModal(section);
         }
     });
+    setInterval(() => {
+        renderUsers();
+        updateTotalUsers(); // Update total users setiap 3 detik juga
+    }, 3000);
 });
 </script>
 </body>
