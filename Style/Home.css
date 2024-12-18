@@ -83,7 +83,8 @@ nav {
 }
 
 .user-profile {
-    margin-left: 84%;
+    margin-left: 80%;
+    padding: 0 5px 0 20px;
 }
 
 .profile-dropdown {
