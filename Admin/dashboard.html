@@ -120,18 +120,18 @@
                             </div>
                             <div class="modal-body">
                                 <form id="editUserForm">
-                                    <input type="hidden" name="userId">
+                                    <input type="hidden" name="userId" id="editUserId">
                                     <div class="mb-3">
                                         <label class="form-label">Username</label>
-                                        <input type="text" class="form-control" name="username" required>
+                                        <input type="text" class="form-control" name="username" id="editUsername" required>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email" required>
+                                        <input type="email" class="form-control" name="email" id="editEmail" required>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">New Password (leave blank to keep current)</label>
-                                        <input type="password" class="form-control" name="password">
+                                        <input type="password" class="form-control" name="password" id="editPassword">
                                     </div>
                                 </form>
                             </div>
@@ -587,40 +587,51 @@ function saveUser() {
     form.reset();
 }
 
-function editUser(id) {
-    const user = users.find(u => u.id === id);
-    if (!user) return;
-
-    const form = document.getElementById('editUserForm');
-    form.querySelector('[name="userId"]').value = user.id;
-    form.querySelector('[name="username"]').value = user.username;
-    form.querySelector('[name="email"]').value = user.email;
+function editUser(id, username, email) {
+    document.getElementById('editUserId').value = id;
+    document.getElementById('editUsername').value = username;
+    document.getElementById('editEmail').value = email;
 
     new bootstrap.Modal(document.getElementById('editUserModal')).show();
 }
 
 function updateUser() {
-    const form = document.getElementById('editUserForm');
-    const formData = new FormData(form);
-    const id = parseInt(formData.get('userId'));
-    
-    const userIndex = users.findIndex(u => u.id === id);
-    if (userIndex === -1) return;
+    const id = document.getElementById('editUserId').value;
+    const username = document.getElementById('editUsername').value;
+    const email = document.getElementById('editEmail').value;
+    const password = document.getElementById('editPassword').value;
 
-    const password = formData.get('password');
-    users[userIndex] = {
-        ...users[userIndex],
-        username: formData.get('username'),
-        email: formData.get('email'),
-        ...(password && { password })
+    const data = {
+        id: id,
+        username: username,
+        email: email
     };
+    
+    if(password) {
+        data.password = password;
+    }
 
-    localStorage.setItem('users', JSON.stringify(users));
-    renderUsers();
-
-    const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-    modal.hide();
-    form.reset();
+    fetch('../Controller/update_user.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if(result.success) {
+            bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+            renderUsers(); // Refresh tabel
+            alert('User updated successfully');
+        } else {
+            alert('Failed to update user: ' + result.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating user');
+    });
 }
 
 function deleteUser(id) {
@@ -654,18 +665,16 @@ function renderUsers() {
             data.forEach(user => {
                 // Format tanggal
                 const createdAt = new Date(user.created_at).toLocaleDateString();
-                
-                // Buat baris tabel untuk setiap user
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${user.username}</td>
                     <td>${user.email}</td>
                     <td>${createdAt}</td>
                     <td>
-                        <button class="btn btn-sm btn-warning me-2" onclick="editUser(${user.id})">
+                        <button class="btn btn-warning btn-sm" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
                             <i class="fas fa-edit"></i> Edit
                         </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
+                        <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">
                             <i class="fas fa-trash"></i> Delete
                         </button>
                     </td>
@@ -673,7 +682,6 @@ function renderUsers() {
                 tbody.appendChild(tr);
             });
         })
-        .catch(error => console.error('Error:', error));
 }
 
 // Destination functions
