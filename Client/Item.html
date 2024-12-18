@@ -1,7 +1,7 @@
 <html>
     <head>
         <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY" async defer></script>
-        <title>Yoxplore - Explore Yogyakarta</title>
+        <title>Item page</title>
         <link rel="icon" href="/Image/Logo Yoxplore.png" type="image/png">
         <link rel="stylesheet" href="/Style/Item.css">
     </head>
@@ -34,87 +34,174 @@
             </nav>
         </header>
 
-        <div class="container">
+        <div class="main">
+          <div class="container2">
             <div class="column">
-              <div class="column-left">
-                <img class="main-image" src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="main image">
-              </div>
-              <div class="column-right">
-                <h1>Gudeg Yu Djum Pusat</h1>
-                <div class="info-item">
-                  <span class="icon"><img src="/Image/location.png" alt=""></span>
-                  <p>Jl. Kaliurang Km. 4,5  Gang Cokrowolo Karangasem, Caturtunggal, Kec. Depok, Kabupaten Sleman</p>
+                <div class="column-right">
+                    <h1>Gudeg Yu Djum Pusat</h1>
+                    <div class="info-section">
+                        <div class="location-info">
+                            <div class="info-item">
+                                <span class="icon"><img src="/Image/location.png" alt=""></span>
+                                <p>Jl. Kaliurang Km. 4,5 Gang Cokrowolo Karangasem, Caturtunggal, Kec. Depok, Kabupaten Sleman</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon"><img src="/Image/clock.png" alt=""></span>
+                                <p>05:00 - 19:00</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon"><img src="/Image/call.png" alt=""></span>
+                                <p>(0274) 519548</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="info-item">
-                  <span class="icon"><img src="/Image//clock.png" alt=""></span>
-                  <p>05:00 - 19:00</p>
-                </div>
-                <div class="info-item">
-                  <span class="icon"><img src="/Image/call.png" alt=""></span>
-                  <p>(0274) 519548</p>
-                </div>
-              </div>
             </div>
-        
+  
             <div class="gallery">
-                <button class="carousel-btn prev-btn">❮</button>
-                <div class="carousel-container">
-                  <div class="carousel-track">
-                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 1">
-                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 2">
-                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 3">
-                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 4">
-                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 5">
-                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 6">
-                    <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Image 7">
-                  </div>
-                </div>
-                <button class="carousel-btn next-btn">❯</button>
-                <div class="carousel-dots"></div>
+              <div class="gallery-item parent">
+                  <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Main Hotel Image">
+              </div>
+              <div class="gallery-item child">
+                  <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Hotel Image 2">
+              </div>
+              <div class="gallery-item child">
+                  <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Hotel Image 3">
+              </div>
+              <div class="gallery-item child">
+                  <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Hotel Image 4">
+              </div>
+              <div class="gallery-item child">
+                  <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Hotel Image 5">
+              </div>
+              <div class="gallery-item child">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Hotel Image 4">
+              </div>
+              <div class="gallery-item child last-item">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Hotel Image 5">
+                <a href="javascript:void(0)" onclick="openGallery()" class="overlay-link">
+                    <div class="overlay-content">
+                        <div class="image-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke="white" stroke-width="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5" fill="white"/>
+                                <path d="M3 15L8 10L13 15L21 7" stroke="white" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <span>See All Photos</span>
+                    </div>
+                </a>
             </div>
-            
-            <div class="map">
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.2396766611586!2d110.38016937497274!3d-7.765828092365833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a59b2d4729729%3A0x4c4e3994dd5a0669!2sGudeg%20Yu%20Djum!5e0!3m2!1sen!2sid!4v1708181669044!5m2!1sen!2sid" 
-                  width="92%" 
-                  height="400" 
-                  style="border:0; border-radius:10px;" 
-                  allowfullscreen="" 
-                  loading="lazy" 
-                  referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
-                <button class="route-btn" onclick="window.open('https://www.google.com/maps/place/Gudeg+Yu+Djum+Pusat/@-7.7653644,110.3777387,17z/data=!3m1!4b1!4m6!3m5!1s0x2e7a59ad3ffdbc85:0x3d88576226010d10!8m2!3d-7.7653644!4d110.3803136!16s%2Fg%2F11cphr0w9t?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D', '_blank')">Get Direction</button>
             </div>
+        </div>
+      </div>
 
-            <div class="reviews">
-              <h2>Review</h2>
-              <button class="add-comment-btn">+ Add Comment</button>
-        
-              <div class="review-item">
-                <div class="review-user">
-                  <span class="user-name">San-Antonio James</span>
-                  <div class="user-images">
-                    <img src="https://via.placeholder.com/70" alt="Review Image 1">
-                    <img src="https://via.placeholder.com/70" alt="Review Image 2">
-                  </div>
-                </div>
-                <p>So delicious, mantap jiwaaa</p>
-                <div class="stars">★★★★★</div>
-              </div>
-        
-              <div class="review-item">
-                <div class="review-user">
-                  <span class="user-name">Michael Andreas Jordan</span>
-                  <div class="user-images">
-                    <img src="https://via.placeholder.com/70" alt="Review Image 1">
-                    <img src="https://via.placeholder.com/70" alt="Review Image 2">
-                    <img src="https://via.placeholder.com/70" alt="Review Image 3">
-                  </div>
-                </div>
-                <p>umm enakk poll gais</p>
-                <div class="stars">★★★★★</div>
-              </div>
+      <div id="gallery-modal" class="gallery-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>All Photos</h2>
+                <span class="close">&times;</span>
             </div>
+            <div class="modal-gallery">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Photo 1">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Photo 2">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Photo 3">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Photo 4">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Photo 5">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Photo 6">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Photo 7">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Photo 8">
+                <img src="https://jogjakartour.com/wp-content/uploads/2017/08/Gudeg-yu-Djum.png" alt="Photo 9">
+                <!-- Add more images as needed -->
+            </div>
+        </div>
+    </div>
+            
+        <div class="map">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.2396766611586!2d110.38016937497274!3d-7.765828092365833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a59b2d4729729%3A0x4c4e3994dd5a0669!2sGudeg%20Yu%20Djum!5e0!3m2!1sen!2sid!4v1708181669044!5m2!1sen!2sid" 
+              width="90%" 
+              height="400" 
+              style="border:0; border-radius:10px;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+              <button class="route-btn" onclick="window.open('https://www.google.com/maps/dir/-7.6884023,110.4111036/69MH%2BHWR+Gudeg+Yu+Djum+Pusat,+Jl.+Kaliurang+Km.+4,5+CT+III%2F22+Gang+Cokrowolo+Karangasem,+Mbarek,+Jl.+Agro,+Kocoran,+Caturtunggal,+Kec.+Depok,+Kabupaten+Sleman,+Daerah+Istimewa+Yogyakarta+55281/@-7.7272546,110.3502156,13z/data=!3m1!4b1!4m10!4m9!1m1!4e1!1m5!1m1!1s0x2e7a59ad3ffdbc85:0x3d88576226010d10!2m2!1d110.3803678!2d-7.7653865!3e9?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D', '_blank')">Get Direction</button>
+        </div>
+
+        <!-- Add this after the map div and before the footer -->
+        <div class="reviews-section">
+          <div class="reviews-header">
+            <h2>Customer Reviews</h2>
+            <button class="add-review-btn" onclick="openReviewModal()">
+                + Add Review
+            </button>
+        </div>
+          <div class="reviews-container">
+              <div class="review-card">
+                  <div class="review-header">
+                      <div class="reviewer-info">
+                          <img src="/Image/user.png" alt="User Profile" class="reviewer-pic">
+                          <div class="reviewer-details">
+                              <h4>John Smith</h4>
+                          </div>
+                      </div>
+                      <div class="review-rating">
+                          <span class="rating-score">4</span>
+                          <span class="rating-max">/5</span>
+                      </div>
+                  </div>
+                  <p class="review-text">"The best Gudeg in Yogyakarta! The chicken is tender and the sauce is perfectly sweet. Been here multiple times and never disappointed!"</p>
+                  <div class="review-images">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1566898917/yxqo4rpfummqvlwo36tr.jpg" alt="Food Review 1">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1566898917/yxqo4rpfummqvlwo36tr.jpg" alt="Food Review 2">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1566898917/yxqo4rpfummqvlwo36tr.jpg" alt="Food Review 3">
+                  </div>
+              </div>
+
+              <div class="review-card">
+                  <div class="review-header">
+                      <div class="reviewer-info">
+                          <img src="/Image/user.png" alt="User Profile" class="reviewer-pic">
+                          <div class="reviewer-details">
+                              <h4>Sarah Chen</h4>
+                          </div>
+                      </div>
+                      <div class="review-rating">
+                          <span class="rating-score">5</span>
+                          <span class="rating-max">/5</span>
+                      </div>
+                  </div>
+                  <p class="review-text">"Amazing traditional taste! The place was packed but service was still quick. Love how they maintain the authentic flavor. Worth waking up early for!"</p>
+                  <div class="review-images">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1566898917/yxqo4rpfummqvlwo36tr.jpg" alt="Restaurant Review 1">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1566898917/yxqo4rpfummqvlwo36tr.jpg" alt="Restaurant Review 2">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1566898917/yxqo4rpfummqvlwo36tr.jpg" alt="Restaurant Review 2">
+                  </div>
+              </div>
+
+              <div class="review-card">
+                  <div class="review-header">
+                      <div class="reviewer-info">
+                          <img src="/Image/user.png" alt="User Profile" class="reviewer-pic">
+                          <div class="reviewer-details">
+                              <h4>Ahmad Rasyid</h4>
+                          </div>
+                      </div>
+                      <div class="review-rating">
+                          <span class="rating-score">4</span>
+                          <span class="rating-max">/5</span>
+                      </div>
+                  </div>
+                  <p class="review-text">"A must-visit place in Yogyakarta! The gudeg is perfectly cooked and the sambal goreng krecek adds a nice spicy touch. Great ambiance too!"</p>
+                  <div class="review-images">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1566898917/yxqo4rpfummqvlwo36tr.jpg" alt="Atmosphere Review 1">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1566898917/yxqo4rpfummqvlwo36tr.jpg" alt="Food Review 4">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1566898917/yxqo4rpfummqvlwo36tr.jpg" alt="Restaurant Review 2">
+                  </div>
+              </div>
+          </div>
         </div>
         
         <footer class="footer">
@@ -291,8 +378,38 @@
                 script.defer = true;
                 document.head.appendChild(script);
             }
-            
-            // Call the function to load the API when the page loads
-            document.addEventListener('DOMContentLoaded', loadGoogleMapsAPI);
+
+            function openGallery() {
+              const modal = document.getElementById('gallery-modal');
+              modal.style.display = 'block';
+              document.body.style.overflow = 'hidden'; // Prevent scrolling of background
+          }
+          
+          // Close button functionality
+          document.addEventListener('DOMContentLoaded', function() {
+              const modal = document.getElementById('gallery-modal');
+              const closeBtn = document.querySelector('.close');
+          
+              closeBtn.onclick = function() {
+                  modal.style.display = 'none';
+                  document.body.style.overflow = 'auto'; // Re-enable scrolling
+              }
+          
+              // Close modal when clicking outside of modal content
+              window.onclick = function(event) {
+                  if (event.target === modal) {
+                      modal.style.display = 'none';
+                      document.body.style.overflow = 'auto';
+                  }
+              }
+          
+              // Close modal when pressing ESC key
+              document.addEventListener('keydown', function(event) {
+                  if (event.key === 'Escape' && modal.style.display === 'block') {
+                      modal.style.display = 'none';
+                      document.body.style.overflow = 'auto';
+                  }
+              });
+          });
     </script>
 </html>
