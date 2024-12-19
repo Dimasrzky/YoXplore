@@ -259,7 +259,7 @@ nav {
 
 .background-wrapper {
     position: relative;
-    background-image: url('/Image/bg_profile.jpg'); 
+    background-image: url('../Image/bg_profile.jpg'); 
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat; 
