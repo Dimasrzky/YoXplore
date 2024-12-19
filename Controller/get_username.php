@@ -3,8 +3,14 @@ session_start();
 header('Content-Type: application/json');
 
 if(isset($_SESSION['username'])) {
-    echo json_encode(['username' => $_SESSION['username']]);
+    echo json_encode([
+        'success' => true,
+        'username' => $_SESSION['username']
+    ]);
 } else {
-    echo json_encode(['username' => null]);
+    echo json_encode([
+        'success' => false,
+        'message' => 'No active session'
+    ]);
 }
 ?>

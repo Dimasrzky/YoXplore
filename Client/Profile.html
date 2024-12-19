@@ -130,7 +130,17 @@
                     navbarProfileIcon.style.width = '40px';
                     navbarProfileIcon.style.height = '40px';
                     navbarProfileIcon.style.objectFit = 'cover';
-        }
+                }
+
+                fetch('/YoXplore/Controller/get_username.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.username) {
+                            // Isi field username
+                            document.getElementById('username').value = data.username;
+                            document.getElementById('usernameDisplay').textContent = data.username;
+            }
+        });
     }
 
         
