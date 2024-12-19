@@ -148,13 +148,15 @@
     }
 
         
-        document.getElementById('imageUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const imageData = event.target.result;
-                
+    document.getElementById('imageUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const userId = sessionStorage.getItem('user_id'); // Ambil user_id dari session
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const imageData = event.target.result;
+                    
                 // Update foto profile besar
                 const profileImage = document.querySelector('.profile-image');
                 profileImage.src = imageData;
@@ -162,7 +164,7 @@
                 profileImage.style.width = '150px';
                 profileImage.style.height = '150px';
                 profileImage.style.objectFit = 'cover';
-                
+                    
                 // Update foto di navbar
                 const navbarProfileIcon = document.querySelector('.profile-icon img');
                 navbarProfileIcon.src = imageData;
@@ -170,14 +172,43 @@
                 navbarProfileIcon.style.width = '40px';
                 navbarProfileIcon.style.height = '40px';
                 navbarProfileIcon.style.objectFit = 'cover';
-                
-                // Simpan ke localStorage
-                localStorage.setItem('profileImage', imageData);
+                    
+                // Simpan ke localStorage dengan key unik per user
+                localStorage.setItem(`profileImage_${userId}`, imageData);
             };
             reader.readAsDataURL(file);
         }
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const userId = sessionStorage.getItem('user_id');
+        // Load saved profile picture if exists for current user
+        const savedProfileImage = localStorage.getItem(`profileImage_${userId}`);
+        
+        if (savedProfileImage) {
+            // Update foto di halaman profile (gambar besar)
+            const profileImageElement = document.querySelector('.profile-image');
+            if (profileImageElement) {
+                profileImageElement.src = savedProfileImage;
+                profileImageElement.style.borderRadius = '50%';
+                profileImageElement.style.width = '150px';
+                profileImageElement.style.height = '150px';
+                profileImageElement.style.objectFit = 'cover';
+            }
+    
+            const navbarProfileIcon = document.querySelector('.profile-icon img');
+            if (navbarProfileIcon) {
+                navbarProfileIcon.src = savedProfileImage;
+                navbarProfileIcon.style.borderRadius = '50%';
+                navbarProfileIcon.style.width = '40px';
+                navbarProfileIcon.style.height = '40px';
+                navbarProfileIcon.style.objectFit = 'cover';
+            }
+        }
+    }
+  )  // ... rest of your code
 });
+
         document.getElementById('profileForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -240,6 +271,7 @@
                 if (dropdown) {
                     dropdown.style.display = 'none';
                 }
+            
             }
         };
     </script>

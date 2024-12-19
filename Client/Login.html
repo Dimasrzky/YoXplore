@@ -87,9 +87,9 @@
             return JSON.parse(text);
         })
         .then(data => {
-            console.log('Parsed data:', data); 
             if (data.success) {
-                window.location.href = "/YoXplore/Client/Home.html";
+                sessionStorage.setItem('user_id', data.user_id);
+                window.location.href = '/YoXplore/Client/Home.html';
             } else {
                 const alertDiv = document.getElementById("alert-message");
                 alertDiv.textContent = data.message || "Login gagal";
