@@ -13,14 +13,6 @@ class Auth {
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'login') {
             $email = trim($_POST['email']);
             $password = $_POST['password'];
-        
-            if ($user && password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                echo json_encode([
-                    'success' => true,
-                    'user_id' => $user['id']
-                ]);
-            }
 
             try {
                 $stmt = $this->conn->prepare("SELECT * FROM client WHERE email = ?");
