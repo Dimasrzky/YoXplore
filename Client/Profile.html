@@ -52,7 +52,7 @@
                                 </label>
                             </div>
                         </div>
-                        <form method="POST" action="../Client/Home.html">
+                        <form id="profileForm" method="POST" action="../Client/Home.html">
                             <div class="input-group">
                                 <input type="text" id="username" name="username" placeholder=" ">
                                 <label for="username">Username</label>
@@ -65,7 +65,7 @@
                                 <input type="password" id="newPassword" name="newPassword" placeholder=" ">
                                 <label for="newPassword">New Password (optional)</label>
                             </div>
-                            <button type="submit">Save Changes</button>
+                            <button type="submit" class="save-button">Save Changes</button>
                         </form>
                     </div>
                 </section>
@@ -178,14 +178,25 @@
         }
     });
 });
-        // Handle form submission
-        document.querySelector('form').addEventListener('submit', function(e) {
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
             const currentPassword = formData.get('currentPassword');
             const username = formData.get('username');
             
+            // Validasi password saat ini harus diisi
+            if (!currentPassword) {
+                alert('Please enter your current password');
+                return;
+            }
+
+            // Tambahkan foto profil ke formData jika ada
+            const profileImage = localStorage.getItem('profileImage');
+            if (profileImage) {
+                formData.append('profileImage', profileImage);
+            }
+
             fetch('../Controller/update_profile.php', {
                 method: 'POST',
                 body: formData
@@ -193,13 +204,16 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
-                    // Simpan username baru ke session storage
-                    sessionStorage.setItem('username', formData.get('username'));
+                    sessionStorage.setItem('username', username);
                     alert('Profile updated successfully!');
                     window.location.href = '../Client/Home.html';
                 } else {
-                    alert('Failed to update profile: ' + data.message);
+                    alert(data.message || 'Failed to update profile');
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating profile');
             });
         });
 
