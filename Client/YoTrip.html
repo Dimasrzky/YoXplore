@@ -202,6 +202,24 @@
     </body>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Cek username dari session storage dulu
+            const savedUsername = sessionStorage.getItem('username');
+            if(savedUsername) {
+                document.getElementById('usernameDisplay').textContent = savedUsername;
+            } else {
+                // Jika tidak ada di session storage, ambil dari server
+                fetch('/YoXplore/Controller/get_username.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.username) {
+                            document.getElementById('usernameDisplay').textContent = data.username;
+                            sessionStorage.setItem('username', data.username);
+                        }
+                    });
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
             const usernameDisplay = document.getElementById('usernameDisplay');
             fetch('/YoXplore/Controller/get_username.php')
                 .then(response => response.json())

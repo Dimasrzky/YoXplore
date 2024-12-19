@@ -145,6 +145,7 @@
             e.preventDefault();
             
             const formData = new FormData(this);
+            const username = formData.get('username');
             
             fetch('../Controller/update_profile.php', {
                 method: 'POST',
@@ -153,18 +154,20 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
+                    // Simpan username baru ke session storage
+                    sessionStorage.setItem('username', username);
+                    
+                    // Update username di navbar
+                    document.getElementById('usernameDisplay').textContent = username;
+                    
                     alert('Profile updated successfully!');
                     window.location.href = '../Client/Home.html';
                 } else {
                     alert('Failed to update profile: ' + data.message);
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while updating profile');
             });
         });
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             const usernameDisplay = document.getElementById('usernameDisplay');
             fetch('/YoXplore/Controller/get_username.php')
