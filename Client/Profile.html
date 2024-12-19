@@ -65,7 +65,7 @@
                                 <input type="password" id="newPassword" name="newPassword" placeholder=" ">
                                 <label for="newPassword">New Password (optional)</label>
                             </div>
-                            <button type="submit">Save Changes</button>
+                            <button type="submit" onclick="saveChanges(event)">Save Changes</button>
                         </form>
                     </div>
                 </section>
@@ -113,6 +113,52 @@
         </footer>
     </body>
     <script>
+        function saveChanges(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Validasi input
+            if (!password) {
+                alert("Please enter your password!");
+                return;
+            }
+        
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+            formData.append('action', 'update');
+        
+            // Kirim data ke server
+            fetch('../Controller/update_profile.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Profile updated successfully!');
+                    // Update data di session storage
+                    sessionStorage.setItem('username', username);
+                    // Redirect ke home
+                    window.location.href = '../Client/Home.html';
+                } else {
+                    alert(data.message || 'Failed to update profile');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating profile');
+            });
+        }
+        
+        // Event listener untuk form submit
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveChanges(e);
+        });
+    
         document.addEventListener('DOMContentLoaded', function() {
             // Load saved profile picture if exists
             const savedProfileImage = localStorage.getItem('profileImage');
