@@ -215,18 +215,10 @@
             const formData = new FormData(this);
             const currentPassword = formData.get('currentPassword');
             const username = formData.get('username');
+            const userId = sessionStorage.getItem('user_id');
             
-            // Validasi password saat ini harus diisi
-            if (!currentPassword) {
-                alert('Please enter your current password');
-                return;
-            }
-
-            // Tambahkan foto profil ke formData jika ada
-            const profileImage = localStorage.getItem('profileImage');
-            if (profileImage) {
-                formData.append('profileImage', profileImage);
-            }
+            // Get profile image from localStorage
+            const profileImage = localStorage.getItem(`profileImage_${userId}`);
 
             fetch('../Controller/update_profile.php', {
                 method: 'POST',
@@ -235,19 +227,21 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
+                    // Update session storage
                     sessionStorage.setItem('username', username);
+                    
+                    // Update localStorage dengan key yang benar
+                    if (profileImage) {
+                        localStorage.setItem(`profileImage_${userId}`, profileImage);
+                    }
+                    
                     alert('Profile updated successfully!');
                     window.location.href = '../Client/Home.html';
                 } else {
-                    alert(data.message || 'Failed to update profile');
+                    alert('Failed to update profile: ' + data.message);
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while updating profile');
             });
         });
-
         document.addEventListener('DOMContentLoaded', function() {
             const usernameDisplay = document.getElementById('usernameDisplay');
             fetch('/YoXplore/Controller/get_username.php')

@@ -230,6 +230,22 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const userId = sessionStorage.getItem('user_id');
+            const profileImage = localStorage.getItem(`profileImage_${userId}`);
+            
+            if (profileImage) {
+                const navbarProfileIcon = document.querySelector('.profile-icon img');
+                if (navbarProfileIcon) {
+                    navbarProfileIcon.src = profileImage;
+                    navbarProfileIcon.style.borderRadius = '50%';
+                    navbarProfileIcon.style.width = '40px';
+                    navbarProfileIcon.style.height = '40px';
+                    navbarProfileIcon.style.objectFit = 'cover';
+                }
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
             // Cek username dari session storage dulu
             const savedUsername = sessionStorage.getItem('username');
             if(savedUsername) {
