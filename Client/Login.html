@@ -98,6 +98,17 @@
                 alertDiv.style.marginBottom = "10px";
             }
         })
+
+        function handleLogin(userData) {
+            sessionStorage.setItem('user_id', userData.id);
+            sessionStorage.setItem('username', userData.username);
+            if (userData.profile_image) {
+                localStorage.setItem(`profileImage_${userData.id}`, userData.profile_image);
+            }
+        }
+    })
+
+        
         .catch(error => {
             console.error('Error:', error);
             const alertDiv = document.getElementById("alert-message");
@@ -106,7 +117,6 @@
             alertDiv.style.color = "red";
             alertDiv.style.marginBottom = "10px";
         });
-    });
 </script>
 </html>
 
