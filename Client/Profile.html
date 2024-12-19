@@ -58,6 +58,14 @@
                                 <label for="username">Username</label>
                             </div>
                             <div class="input-group">
+                                <input type="password" id="currentPassword" name="currentPassword" placeholder=" " required>
+                                <label for="currentPassword">Current Password</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="newPassword" name="newPassword" placeholder=" ">
+                                <label for="newPassword">New Password (optional)</label>
+                            </div>
+                            <div class="input-group">
                                 <input type="password" id="password" name="password" placeholder=" " required>
                                 <label for="password">Password</label>
                             </div>
@@ -179,6 +187,7 @@
             e.preventDefault();
             
             const formData = new FormData(this);
+            const currentPassword = formData.get('currentPassword');
             const username = formData.get('username');
             
             fetch('../Controller/update_profile.php', {
@@ -189,11 +198,7 @@
             .then(data => {
                 if(data.success) {
                     // Simpan username baru ke session storage
-                    sessionStorage.setItem('username', username);
-                    
-                    // Update username di navbar
-                    document.getElementById('usernameDisplay').textContent = username;
-                    
+                    sessionStorage.setItem('username', formData.get('username'));
                     alert('Profile updated successfully!');
                     window.location.href = '../Client/Home.html';
                 } else {
