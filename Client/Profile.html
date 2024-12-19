@@ -111,16 +111,28 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Load saved profile picture if exists
-            const savedProfilePic = localStorage.getItem('profilePicture');
-            if (savedProfilePic) {
-                document.querySelector('.profile-image').src = savedProfilePic;
-                // Update profile pictures in header
-                const profileIcons = document.querySelectorAll('.profile-icon img');
-                profileIcons.forEach(icon => {
-                    icon.src = savedProfilePic;
-                });
-            }
-        });
+            const savedProfileImage = localStorage.getItem('profileImage');
+            if (savedProfileImage) {
+                // Update foto di halaman profile (gambar besar)
+                const profileImageElement = document.querySelector('.profile-image');
+                if (profileImageElement) {
+                    profileImageElement.src = savedProfileImage;
+                    profileImageElement.style.borderRadius = '50%';
+                    profileImageElement.style.width = '150px';
+                    profileImageElement.style.height = '150px';
+                    profileImageElement.style.objectFit = 'cover';
+                }
+
+                const navbarProfileIcon = document.querySelector('.profile-icon img');
+                if (navbarProfileIcon) {
+                    navbarProfileIcon.src = savedProfileImage;
+                    navbarProfileIcon.style.borderRadius = '50%';
+                    navbarProfileIcon.style.width = '40px';
+                    navbarProfileIcon.style.height = '40px';
+                    navbarProfileIcon.style.objectFit = 'cover';
+        }
+    }
+
         
         document.getElementById('imageUpload').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -128,16 +140,30 @@
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     const imageData = event.target.result;
-                    // Update semua gambar profil di halaman
-                    document.querySelector('.profile-image').src = imageData;
-                    document.querySelector('.profile-icon img').src = imageData;
-                    // Simpan ke localStorage
-                    localStorage.setItem('profileImage', imageData);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
+                
+                // Update foto profile besar
+                const profileImage = document.querySelector('.profile-image');
+                profileImage.src = imageData;
+                profileImage.style.borderRadius = '50%';
+                profileImage.style.width = '150px';
+                profileImage.style.height = '150px';
+                profileImage.style.objectFit = 'cover';
+                
+                // Update foto di navbar
+                const navbarProfileIcon = document.querySelector('.profile-icon img');
+                navbarProfileIcon.src = imageData;
+                navbarProfileIcon.style.borderRadius = '50%';
+                navbarProfileIcon.style.width = '40px';
+                navbarProfileIcon.style.height = '40px';
+                navbarProfileIcon.style.objectFit = 'cover';
+                
+                // Simpan ke localStorage
+                localStorage.setItem('profileImage', imageData);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+});
         // Handle form submission
         document.querySelector('form').addEventListener('submit', function(e) {
             e.preventDefault();
