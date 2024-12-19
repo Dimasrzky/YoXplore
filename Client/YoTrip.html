@@ -206,7 +206,18 @@
             const savedUsername = sessionStorage.getItem('username');
             if(savedUsername) {
                 document.getElementById('usernameDisplay').textContent = savedUsername;
-            }
+            } else {
+                 // Jika tidak ada di sessionStorage, ambil dari server
+                fetch('/YoXplore/Controller/get_username.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.username) {
+                            // Update username di tampilan dan simpan ke sessionStorage
+                            document.getElementById('usernameDisplay').textContent = data.username;
+                            sessionStorage.setItem('username', data.username);
+                }
+            });
+    }
         
             // Load profile image berdasarkan user_id
             const userId = sessionStorage.getItem('user_id');
