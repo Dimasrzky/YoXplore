@@ -2,40 +2,47 @@
 session_start();
 require_once('../Config/db_connect.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+try {
     $userId = $_SESSION['user_id'];
     $username = $_POST['username'];
-    $password = $_POST['password'];
-    $profileImage = $_POST['profileImage']; // Base64 image data
-
-    try {
-        // Verify password
-        $stmt = $conn->prepare("SELECT password FROM client WHERE id = ?");
-        $stmt->execute([$userId]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if (!password_verify($password, $user['password'])) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Incorrect password'
-            ]);
-            exit;
-        }
-
-        $stmt = $conn->prepare("UPDATE client SET username = ?, profile_image = ? WHERE id = ?");
-        $stmt->execute([$username, $profileImage, $userId]);
-        
-        $_SESSION['username'] = $username;
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Profile updated successfully'
-        ]);
-    } catch(PDOException $e) {
+    $currentPassword = $_POST['currentPassword'];
+    $newPassword = $_POST['newPassword'];
+    $profileImage = $_POST['profileImage'];
+    
+    // Cek password lama
+    $stmt = $conn->prepare("SELECT password FROM client WHERE id = ?");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!password_verify($currentPassword, $user['password'])) {
         echo json_encode([
             'success' => false,
-            'message' => 'Database error: ' . $e->getMessage()
+            'message' => 'Current password is incorrect'
         ]);
+        exit;
     }
+    
+    // Update user
+    if (!empty($newPassword)) {
+        // Jika ada password baru
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $sql = "UPDATE client SET username = ?, password = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$username, $hashedPassword, $userId]);
+    } else {
+        // Jika hanya update username
+        $sql = "UPDATE client SET username = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$username, $userId]);
+    }
+    
+    $_SESSION['username'] = $username;
+    
+    echo json_encode(['success' => true]);
+} catch(PDOException $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database error: ' . $e->getMessage()
+    ]);
 }
 ?>
