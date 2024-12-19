@@ -254,24 +254,6 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Cek username dari session storage dulu
-            const savedUsername = sessionStorage.getItem('username');
-            if(savedUsername) {
-                document.getElementById('usernameDisplay').textContent = savedUsername;
-            } else {
-                // Jika tidak ada di session storage, ambil dari server
-                fetch('/YoXplore/Controller/get_username.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data.username) {
-                            document.getElementById('usernameDisplay').textContent = data.username;
-                            sessionStorage.setItem('username', data.username);
-                        }
-                    });
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
             // Load foto profil jika ada
             const profileImage = localStorage.getItem('profileImage');
             if (profileImage) {
@@ -285,11 +267,22 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const usernameDisplay = document.getElementById('usernameDisplay');
-            fetch('/YoXplore/Controller/get_username.php')
+            fetch('/YoXplore/Controller/get_user_data.php')
                 .then(response => response.json())
                 .then(data => {
                     if(data.username) {
                         usernameDisplay.textContent = data.username;
+
+                        if (data.profileImage) {
+                            const navbarProfileIcon = document.querySelector('.profile-icon img');
+                            if (navbarProfileIcon) {
+                                navbarProfileIcon.src = data.profileImage;
+                                navbarProfileIcon.style.borderRadius = '50%';
+                                navbarProfileIcon.style.width = '40px';
+                                navbarProfileIcon.style.height = '40px';
+                                navbarProfileIcon.style.objectFit = 'cover';
+                            }
+                        }
                     }
                 });
         });

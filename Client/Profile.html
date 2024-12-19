@@ -195,8 +195,21 @@
                 navbarProfileIcon.style.height = '40px';
                 navbarProfileIcon.style.objectFit = 'cover';
                     
-                // Simpan ke localStorage dengan key unik per user
-                localStorage.setItem(`profileImage_${userId}`, imageData);
+                fetch('../Controller/update_profile_image.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image: imageData
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Foto profil berhasil disimpan');
+                    }
+                });
             };
             reader.readAsDataURL(file);
         }

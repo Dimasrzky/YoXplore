@@ -210,22 +210,26 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Load username
-            const savedUsername = sessionStorage.getItem('username');
-            if(savedUsername) {
-                document.getElementById('usernameDisplay').textContent = savedUsername;
-            } else {
-                 // Jika tidak ada di sessionStorage, ambil dari server
-                fetch('/YoXplore/Controller/get_username.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data.username) {
-                            // Update username di tampilan dan simpan ke sessionStorage
-                            document.getElementById('usernameDisplay').textContent = data.username;
-                            sessionStorage.setItem('username', data.username);
-                }
-            });
-    }
+            const usernameDisplay = document.getElementById('usernameDisplay');
+            fetch('/YoXplore/Controller/get_user_data.php')
+                .then(response => response.json())
+                .then(data => {
+                    if(data.username) {
+                        usernameDisplay.textContent = data.username;
+
+                        if (data.profileImage) {
+                            const navbarProfileIcon = document.querySelector('.profile-icon img');
+                            if (navbarProfileIcon) {
+                                navbarProfileIcon.src = data.profileImage;
+                                navbarProfileIcon.style.borderRadius = '50%';
+                                navbarProfileIcon.style.width = '40px';
+                                navbarProfileIcon.style.height = '40px';
+                                navbarProfileIcon.style.objectFit = 'cover';
+                            }
+                        }
+                    }
+                });
+        });
         
             // Load profile image berdasarkan user_id
             const userId = sessionStorage.getItem('user_id');
@@ -241,7 +245,6 @@
                     navbarProfileIcon.style.objectFit = 'cover';
                 }
             }
-        });
         
         // Fungsi toggle dropdown tetap sama
         function toggleDropdown() {
