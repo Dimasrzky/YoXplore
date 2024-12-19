@@ -215,7 +215,19 @@
                     });
             }
         });
-        
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load foto profil jika ada
+            const profileImage = localStorage.getItem('profileImage');
+            if (profileImage) {
+                // Update foto profil di navbar
+                const profileIcons = document.querySelectorAll('.profile-icon img');
+                profileIcons.forEach(icon => {
+                    icon.src = profileImage;
+                });
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const usernameDisplay = document.getElementById('usernameDisplay');
             fetch('/YoXplore/Controller/get_username.php')

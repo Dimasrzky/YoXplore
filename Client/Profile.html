@@ -122,23 +122,21 @@
             }
         });
         
-            // Handle image upload
-            document.getElementById('imageUpload').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const imageData = event.target.result;
-                        // Update profile picture in the form
-                        document.querySelector('.profile-image').src = imageData;
-                        // Update profile icon in header
-                        document.querySelector('.profile-icon img').src = imageData;
-                        // Save to localStorage
-                        localStorage.setItem('profilePicture', imageData);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageData = event.target.result;
+                    // Update semua gambar profil di halaman
+                    document.querySelector('.profile-image').src = imageData;
+                    document.querySelector('.profile-icon img').src = imageData;
+                    // Simpan ke localStorage
+                    localStorage.setItem('profileImage', imageData);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
         
         // Handle form submission
         document.querySelector('form').addEventListener('submit', function(e) {
