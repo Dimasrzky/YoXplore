@@ -83,6 +83,11 @@ nav {
     transform: scale(1.3);
 }
 
+.user-profile {
+    margin-left: 80%;
+    padding: 0 5px 0 20px;
+}
+
 .profile-dropdown {
     position: relative;
     display: flex;

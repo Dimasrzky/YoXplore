@@ -15,6 +15,8 @@
                     <a href="../Client/YoTaste.html" class="active"><img src="../Image/yotaste.png" alt="Taste Icon"> YoTaste</a>
                     <a href="../Client/YoStay.html"><img src="../Image/yostay.png" alt="Stay Icon"> YoStay</a>
                 </div>
+                <div class="user-profile">
+                    <span id="usernameDisplay"></span></div>
                 <div class="profile-dropdown">
                     <div class="profile-icon" onclick="toggleDropdown()">
                         <img src="../Image/user.png" alt="Profile Icon">
@@ -197,6 +199,17 @@
         </footer>   
     </body>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameDisplay = document.getElementById('usernameDisplay');
+            fetch('/YoXplore/Controller/get_username.php')
+                .then(response => response.json())
+                .then(data => {
+                    if(data.username) {
+                        usernameDisplay.textContent = data.username;
+                    }
+                });
+        });
+
         function toggleDropdown() {
             const dropdown = document.getElementById('dropdown-menu');
             dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
