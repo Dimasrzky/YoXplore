@@ -58,15 +58,11 @@
                                 <label for="username">Username</label>
                             </div>
                             <div class="input-group">
-                                <input type="text" id="email" name="email" placeholder=" " required>
-                                <label for="email">Email</label>
-                            </div>
-                            <div class="input-group">
                                 <input type="password" id="password" name="password" placeholder=" " required>
                                 <label for="password">Password</label>
                             </div>
+                            <button type="submit">Save Changes</button>
                         </form>
-                        <button type="submit">Save Changes</button>
                     </div>
                 </section>
             </div>
@@ -113,6 +109,62 @@
         </footer>
     </body>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved profile picture if exists
+            const savedProfilePic = localStorage.getItem('profilePicture');
+            if (savedProfilePic) {
+                document.querySelector('.profile-image').src = savedProfilePic;
+                // Update profile pictures in header
+                const profileIcons = document.querySelectorAll('.profile-icon img');
+                profileIcons.forEach(icon => {
+                    icon.src = savedProfilePic;
+                });
+            }
+        });
+        
+            // Handle image upload
+            document.getElementById('imageUpload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const imageData = event.target.result;
+                        // Update profile picture in the form
+                        document.querySelector('.profile-image').src = imageData;
+                        // Update profile icon in header
+                        document.querySelector('.profile-icon img').src = imageData;
+                        // Save to localStorage
+                        localStorage.setItem('profilePicture', imageData);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        
+        // Handle form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('../Controller/update_profile.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    alert('Profile updated successfully!');
+                    window.location.href = '../Client/Home.html';
+                } else {
+                    alert('Failed to update profile: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating profile');
+            });
+        });
+        
         document.addEventListener('DOMContentLoaded', function() {
             const usernameDisplay = document.getElementById('usernameDisplay');
             fetch('/YoXplore/Controller/get_username.php')
