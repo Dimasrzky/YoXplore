@@ -22,13 +22,7 @@ class Auth {
                 if ($user && password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
-                    echo json_encode([
-                        'success' => true,
-                        'userData' => [
-                            'id' => $user['id'],
-                            'username' => $user['username']
-                        ]
-                    ]);
+                    header('Location: ../Client/Home.html');
                     exit();
                 } else {
                     header('Location: ../Client/Login.html?error=invalid');
