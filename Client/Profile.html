@@ -114,8 +114,30 @@
     </body>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Load saved profile picture if exists
+            // Load foto profil yang tersimpan
             const savedProfileImage = localStorage.getItem('profileImage');
+            if (savedProfileImage) {
+                // Update foto profil di halaman dan navbar
+                document.querySelector('.profile-image').src = savedProfileImage;
+                document.querySelector('.profile-icon img').src = savedProfileImage;
+            }
+        
+            // Load dan isi username yang tersimpan
+            fetch('/YoXplore/Controller/get_username.php')
+                .then(response => response.json())
+                .then(data => {
+                    if(data.username) {
+                        // Isi field username
+                        document.getElementById('username').value = data.username;
+                        document.getElementById('usernameDisplay').textContent = data.username;
+                    }
+                });
+            });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved profile picture if exists
+            const userId = sessionStorage.getItem('user_id');
+            const savedProfileImage = localStorage.getItem(`profileImage_${userId}`);
             if (savedProfileImage) {
                 // Update foto di halaman profile (gambar besar)
                 const profileImageElement = document.querySelector('.profile-image');
@@ -179,34 +201,6 @@
             reader.readAsDataURL(file);
         }
     });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const userId = sessionStorage.getItem('user_id');
-        // Load saved profile picture if exists for current user
-        const savedProfileImage = localStorage.getItem(`profileImage_${userId}`);
-        
-        if (savedProfileImage) {
-            // Update foto di halaman profile (gambar besar)
-            const profileImageElement = document.querySelector('.profile-image');
-            if (profileImageElement) {
-                profileImageElement.src = savedProfileImage;
-                profileImageElement.style.borderRadius = '50%';
-                profileImageElement.style.width = '150px';
-                profileImageElement.style.height = '150px';
-                profileImageElement.style.objectFit = 'cover';
-            }
-    
-            const navbarProfileIcon = document.querySelector('.profile-icon img');
-            if (navbarProfileIcon) {
-                navbarProfileIcon.src = savedProfileImage;
-                navbarProfileIcon.style.borderRadius = '50%';
-                navbarProfileIcon.style.width = '40px';
-                navbarProfileIcon.style.height = '40px';
-                navbarProfileIcon.style.objectFit = 'cover';
-            }
-        }
-    }
-  )  // ... rest of your code
 });
 
         document.getElementById('profileForm').addEventListener('submit', function(e) {
