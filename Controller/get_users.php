@@ -1,5 +1,5 @@
 <?php
-require_once '../Config/db_connect.php'; // pastikan path ini benar
+require_once '../Config/db_connect.php'; 
 
 header('Content-Type: application/json');
 
