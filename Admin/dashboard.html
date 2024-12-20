@@ -727,6 +727,7 @@ function saveDestination() {
         name: formData.get('name'),
         address: formData.get('address'),
         openTime: formData.get('openTime'),
+        image: 'https://via.placeholder.com/50x50',
         reviews: id ? destinations.find(d => d.id === parseInt(id))?.reviews || [] : []
     };
 
