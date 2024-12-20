@@ -4,11 +4,18 @@ require_once '../Config/db_connect.php';
 header('Content-Type: application/json');
 
 try {
-    // Query untuk mengambil data client
+
+    $test = $pdo->query("SELECT 1");
+    if(!$test) {
+        throw new Exception("Database connection failed");
+    }
+
     $sql = "SELECT id, username, email, created_at FROM client ORDER BY created_at DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    error_log("Found " . count($users) . " users");
     
     echo json_encode([
         'success' => true,
