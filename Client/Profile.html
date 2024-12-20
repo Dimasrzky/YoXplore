@@ -225,16 +225,6 @@
                 }
             });
         });
-        document.addEventListener('DOMContentLoaded', function() {
-            const usernameDisplay = document.getElementById('usernameDisplay');
-            fetch('/YoXplore/Controller/get_username.php')
-                .then(response => response.json())
-                .then(data => {
-                    if(data.username) {
-                        usernameDisplay.textContent = data.username;
-                    }
-                });
-        });
         
         function toggleDropdown() {
             const dropdown = document.getElementById('dropdown-menu');
