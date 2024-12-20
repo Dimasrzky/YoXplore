@@ -146,51 +146,51 @@
                 })
                 .catch(error => console.error('Error:', error));
         
-    document.getElementById('imageUpload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const userId = sessionStorage.getItem('user_id'); // Ambil user_id dari session
-        
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const imageData = event.target.result;
-                    
-                // Update foto profile besar
-                const profileImage = document.querySelector('.profile-image');
-                profileImage.src = imageData;
-                profileImage.style.borderRadius = '50%';
-                profileImage.style.width = '150px';
-                profileImage.style.height = '150px';
-                profileImage.style.objectFit = 'cover';
-                    
-                // Update foto di navbar
-                const navbarProfileIcon = document.querySelector('.profile-icon img');
-                navbarProfileIcon.src = imageData;
-                navbarProfileIcon.style.borderRadius = '50%';
-                navbarProfileIcon.style.width = '40px';
-                navbarProfileIcon.style.height = '40px';
-                navbarProfileIcon.style.objectFit = 'cover';
-                    
-                fetch('../Controller/update_profile_image.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        image: imageData
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log('Foto profil berhasil disimpan');
-                    }
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-});
+            document.getElementById('imageUpload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const userId = sessionStorage.getItem('user_id'); // Ambil user_id dari session
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const imageData = event.target.result;
+                            
+                        // Update foto profile besar
+                        const profileImage = document.querySelector('.profile-image');
+                        profileImage.src = imageData;
+                        profileImage.style.borderRadius = '50%';
+                        profileImage.style.width = '150px';
+                        profileImage.style.height = '150px';
+                        profileImage.style.objectFit = 'cover';
+                            
+                        // Update foto di navbar
+                        const navbarProfileIcon = document.querySelector('.profile-icon img');
+                        navbarProfileIcon.src = imageData;
+                        navbarProfileIcon.style.borderRadius = '50%';
+                        navbarProfileIcon.style.width = '40px';
+                        navbarProfileIcon.style.height = '40px';
+                        navbarProfileIcon.style.objectFit = 'cover';
+                            
+                        fetch('../Controller/update_profile_image.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                image: imageData
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Foto profil berhasil disimpan');
+                            }
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
 
         document.getElementById('profileForm').addEventListener('submit', function(e) {
             e.preventDefault();
