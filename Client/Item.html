@@ -500,5 +500,61 @@
                 }
               });
             });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // Ambil item_id dari URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const itemId = urlParams.get('id');
+            
+                // Load item data
+                fetch(`../Controller/get_item_detail.php?id=${itemId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const item = data.item;
+                document.querySelector('h1').textContent = item.name;
+                document.querySelector('.rating-score').textContent = item.avg_rating || '0';
+                document.querySelector('.location-info p').textContent = item.address;
+                // ... update elemen lainnya
+                
+                // Update gallery
+                const gallery = document.querySelector('.gallery');
+                item.images.forEach((img, index) => {
+                    // ... tambah gambar ke gallery
+                });
+                
+                // Load reviews
+                loadReviews(itemId);
+            }
+                        
+        )
+        });
+            // Handle submit review
+            document.querySelector('.submit').addEventListener('click', function() {
+                const rating = document.querySelector('[name="rating"]').value;
+                const comment = document.querySelector('textarea').value;
+                const fileInput = document.getElementById('file-input');
+                
+                const formData = new FormData();
+                formData.append('item_id', itemId);
+                formData.append('rating', rating);
+                formData.append('comment', comment);
+                
+                // Append images if any
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('images[]', fileInput.files[i]);
+                }
+            
+                fetch('../Controller/save_review.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Review berhasil ditambahkan!');
+                        location.reload();
+                    }
+                });
+            });
     </script>
 </html>

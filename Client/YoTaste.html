@@ -259,5 +259,44 @@
                 }
             }
         };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDestinations();
+        });
+        
+        function loadDestinations() {
+            const featureType = 'YoTrip'; // sesuaikan dengan halaman
+            
+            fetch(`../Controller/get_destinations.php?feature=${featureType}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        const container = document.querySelector('.popular-grid');
+                        container.innerHTML = '';
+                        
+                        data.destinations.forEach(dest => {
+                            container.innerHTML += `
+                                <div class="popular-item">
+                                    <div class="image-container">
+                                        <a href="Item.html?id=${dest.id}">
+                                            <img src="${dest.main_image}" alt="${dest.name}">
+                                            <div class="rating">
+                                                <span>★ ${dest.avg_rating || '0'}</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="content">
+                                        <h3>${dest.name}</h3>
+                                        <div class="location">
+                                            <img src="../Image/location_brown.png" alt="Location Icon">
+                                            <span>${dest.address}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                });
+        }
     </script>
 </html>
