@@ -192,15 +192,14 @@
             });
         }
         
-        // Panggil fetchUsers saat halaman dimuat
         document.addEventListener('DOMContentLoaded', () => {
-            fetchUsers();
-            // Refresh data setiap 30 detik
-            setInterval(fetchUsers, 3000);
+            renderUsers();
+            updateTotalUsers(); // Tambahkan ini
+            setInterval(() => {
+                renderUsers();
+                updateTotalUsers(); // Update total users setiap 3 detik juga
+            }, 3000);
         });
-
-        // Initialize when document is ready
-        document.addEventListener('DOMContentLoaded', loadComponents);
     </script>
 </body>
 </html>
