@@ -1,18 +1,24 @@
 <?php
-require_once('../Config/db_connect.php');
+require_once '../Config/db_connect.php';
+require_once '../Config/session_check.php';
+
+header('Content-Type: application/json');
 
 try {
-    $query = "SELECT * FROM client ORDER BY created_at DESC";
-    $stmt = $conn->prepare($query);
+    // Query untuk mengambil data user
+    $sql = "SELECT id, username, email, created_at FROM client ORDER BY created_at DESC";
+    $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    header('Content-Type: application/json');
-    echo json_encode($users);
-} catch(PDOException $e) {
-    header('Content-Type: application/json');
     echo json_encode([
-        'error' => $e->getMessage()
+        'success' => true,
+        'data' => $users,
+        'count' => count($users)
+    ]);
+} catch(PDOException $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
     ]);
 }
-?>
