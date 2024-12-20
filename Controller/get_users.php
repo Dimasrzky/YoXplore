@@ -1,6 +1,5 @@
 <?php
 require_once '../Config/db_connect.php'; // pastikan path ini benar
-require_once '../Config/session_check.php'; // pastikan path ini benar
 
 header('Content-Type: application/json');
 
