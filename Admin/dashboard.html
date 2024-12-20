@@ -862,71 +862,77 @@ function renderDestinations(section) {
 }
 
 function loadDestinations(section) {
-    // Convert ke format yang sesuai dengan ENUM di database
-    let feature_type = section.charAt(0).toUpperCase() + section.slice(1);
-    
-    fetch('../Controller/get_destinations.php?section=' + feature_type)
-        .then(response => response.json())
-        .then(result => {
-            if(result.success) {
-                const tbody = document.querySelector(`#${section} table tbody`);
-                tbody.innerHTML = '';
-                
-                if(result.data.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center">No data available</td>
-                        </tr>
-                    `;
-                    return;
-                }
+    console.log('Loading section:', section); // Debug log
 
-                result.data.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>
-                            <img src="../Controller/get_image.php?id=${item.id}" 
-                                 alt="${item.name}" 
-                                 class="img-thumbnail" 
-                                 style="width: 50px; height: 50px; object-fit: cover;">
-                        </td>
-                        <td>${item.name}</td>
-                        <td>${item.address}</td>
-                        <td>${item.opening_hours || '-'}</td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-warning" 
-                                        onclick="editDestination(${item.id}, '${section}')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="btn btn-sm btn-danger" 
-                                        onclick="deleteDestination(${item.id}, '${section}')">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+    fetch(`../Controller/get_destinations.php?section=${section}`)
+        .then(response => {
+            console.log('Response status:', response.status); // Debug log
+            return response.json();
+        })
+        .then(result => {
+            console.log('Data received:', result); // Debug log
+            
+            const tbody = document.querySelector(`#${section} table tbody`);
+            tbody.innerHTML = ''; // Clear existing content
+
+            if (!result.data || result.data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">No data available</td>
+                    </tr>`;
+                return;
             }
+
+            result.data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <img src="../Controller/get_image.php?id=${item.id}" 
+                             alt="${item.name}" 
+                             class="img-thumbnail" 
+                             style="width: 50px; height: 50px">
+                    </td>
+                    <td>${item.name}</td>
+                    <td>${item.address}</td>
+                    <td>${item.opening_hours || '-'}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-warning" 
+                                    onclick="editDestination(${item.id}, '${section}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger" 
+                                    onclick="deleteDestination(${item.id}, '${section}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Error loading destinations:', error);
             const tbody = document.querySelector(`#${section} table tbody`);
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="text-center text-danger">Error loading data</td>
-                </tr>
-            `;
+                    <td colspan="5" class="text-center text-danger">
+                        Error loading data. Please try again.
+                    </td>
+                </tr>`;
         });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize tabs
+    console.log('DOM loaded'); // Debug log
+    
+    // Initialize tab functionality
     const triggerTabList = document.querySelectorAll('[data-bs-toggle="pill"]');
     triggerTabList.forEach(triggerEl => {
         triggerEl.addEventListener('shown.bs.tab', event => {
             const targetId = event.target.getAttribute('href').slice(1);
+            console.log('Tab changed to:', targetId); // Debug log
+            
             if(targetId !== 'users') {
                 loadDestinations(targetId);
             }
@@ -934,23 +940,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Load initial content
-    renderUsers();
-    updateTotalUsers();
-    
-    // Load initial destinations if not on users tab
     const activeTab = document.querySelector('.nav-link.active');
-    const initialSection = activeTab.getAttribute('href').slice(1);
-    if(initialSection !== 'users') {
-        loadDestinations(initialSection);
-    }
-    
-    // Auto refresh users data
-    setInterval(() => {
-        if(document.querySelector('#users').classList.contains('active')) {
-            renderUsers();
-            updateTotalUsers();
+    if(activeTab) {
+        const initialSection = activeTab.getAttribute('href').slice(1);
+        console.log('Loading initial section:', initialSection); // Debug log
+        
+        if(initialSection !== 'users') {
+            loadDestinations(initialSection);
         }
-    }, 3000);
+    }
 });
 </script>
 </body>
