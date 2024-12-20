@@ -196,10 +196,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchUsers();
             // Refresh data setiap 30 detik
-            setInterval(() => {
-                renderUsers();
-                updateTotalUsers(); // Update total users setiap 3 detik juga
-            }, 3000);
+            setInterval(fetchUsers, 3000);
         });
 
         // Initialize when document is ready
