@@ -135,20 +135,22 @@ function updateUser() {
 
 function renderUsers() {
     const tbody = document.querySelector('#usersTable tbody');
+    if (!tbody) {
+        console.error('Table body element not found');
+        return;
+    }
+    
     tbody.innerHTML = '';
     
     fetch('../Controller/get_users.php')
         .then(response => response.json())
         .then(result => {
-            if (result.success) {
-                document.getElementById('totalUsers').textContent = result.count;
+            if (result.success && result.data) {
+                document.getElementById('totalUsers').textContent = result.count || 0;
                 
                 result.data.forEach(user => {
-                    // Format tanggal ke format yang diinginkan
                     const date = new Date(user.created_at);
-                    const formattedDate = date.getDate().toString().padStart(2, '0') + '/' +
-                                        (date.getMonth() + 1).toString().padStart(2, '0') + '/' +
-                                        date.getFullYear();
+                    const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
                     
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -156,10 +158,10 @@ function renderUsers() {
                         <td>${user.email}</td>
                         <td>${formattedDate}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
+                            <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
-                            <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
                         </td>
@@ -167,7 +169,11 @@ function renderUsers() {
                     tbody.appendChild(tr);
                 });
             } else {
-                console.error('Failed to load users:', result.message);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center">No users found</td>
+                    </tr>
+                `;
             }
         })
         .catch(error => {
