@@ -141,17 +141,19 @@ function renderUsers() {
         return;
     }
 
+    tbody.innerHTML = '';
+    
     fetch('../Controller/get_users.php')
         .then(response => response.json())
         .then(result => {
-            console.log('API Response:', result); // Debug log
             if (result.success && result.data) {
+                // Update total users count
                 const totalUsers = document.getElementById('totalUsers');
                 if (totalUsers) {
                     totalUsers.textContent = result.count || 0;
                 }
                 
-                tbody.innerHTML = '';
+                // Render table data
                 result.data.forEach(user => {
                     const date = new Date(user.created_at);
                     const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
