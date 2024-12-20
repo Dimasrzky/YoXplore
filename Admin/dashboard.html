@@ -453,7 +453,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 <script>
 // Initialize data storage
-let users = JSON.parse(localStorage.getItem('users')) || [];
 let destinations = JSON.parse(localStorage.getItem('destinations')) || [];
 
 
@@ -564,28 +563,6 @@ sections.forEach(section => {
         localStorage.setItem(section, JSON.stringify([]));
     }
 });
-
-function saveUser() {
-    const form = document.getElementById('addUserForm');
-    const formData = new FormData(form);
-    
-    const user = {
-        id: Date.now(),
-        username: formData.get('username'),
-        email: formData.get('email'),
-        password: formData.get('password')
-    };
-    
-    users.push(user);
-    localStorage.setItem('users', JSON.stringify(users));
-    
-    renderUsers();
-    updateTotalUsers();
-    
-    const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
-    modal.hide();
-    form.reset();
-}
 
 function editUser(id, username, email) {
     document.getElementById('editUserId').value = id;
