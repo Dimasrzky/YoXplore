@@ -39,32 +39,32 @@
             <div class="d-flex flex-column flex-shrink-0 p-3 text-white">
                 <span class="fs-4 mb-4"><\> YoAdmin</span>
                 <ul class="nav nav-pills flex-column mb-auto">
-                    <li>
-                        <a href="#users" class="nav-link text-white active" data-bs-toggle="pill">
+                    <li class="nav-item">
+                        <a href="#users-tab" class="nav-link text-white active" data-bs-toggle="tab">
                             <i class="fas fa-users me-2"></i>
                             Users
                         </a>
                     </li>
-                    <li>
-                        <a href="#yostay" class="nav-link text-white" data-bs-toggle="pill">
+                    <li class="nav-item">
+                        <a href="#yostay-tab" class="nav-link text-white" data-bs-toggle="tab">
                             <i class="fas fa-hotel me-2"></i>
                             YoStay
                         </a>
                     </li>
-                    <li>
-                        <a href="#yoconcert" class="nav-link text-white" data-bs-toggle="pill">
+                    <li class="nav-item">
+                        <a href="#yoconcert-tab" class="nav-link text-white" data-bs-toggle="tab">
                             <i class="fas fa-music me-2"></i>
                             YoConcert
                         </a>
                     </li>
-                    <li>
-                        <a href="#yotaste" class="nav-link text-white" data-bs-toggle="pill">
+                    <li class="nav-item">
+                        <a href="#yotaste-tab" class="nav-link text-white" data-bs-toggle="tab">
                             <i class="fas fa-utensils me-2"></i>
                             YoTaste
                         </a>
                     </li>
-                    <li>
-                        <a href="#yotrip" class="nav-link text-white" data-bs-toggle="pill">
+                    <li class="nav-item">
+                        <a href="#yotrip-tab" class="nav-link text-white" data-bs-toggle="tab">
                             <i class="fas fa-plane me-2"></i>
                             YoTrip
                         </a>
@@ -77,7 +77,7 @@
         <div class="col-md-10 p-4">
             <div class="tab-content">
                 <!-- Users Tab -->
-                <div class="tab-pane fade show active" id="users">
+                <div class="tab-pane fade show active" id="users-tab">
                     <div class="row mb-4">
                         <div class="col-md-4">
                             <div class="card bg-primary text-white">
@@ -143,7 +143,7 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="yostay">
+                <div class="tab-pane fade" id="yostay-tab">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoStay Management</h2>
                         <button class="btn btn-primary">
@@ -186,7 +186,7 @@
                 </div>
 
                 <!-- YoConcert Tab -->
-                <div class="tab-pane fade" id="yoconcert">
+                <div class="tab-pane fade" id="yoconcert-tab">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoConcert Management</h2>
                         <button class="btn btn-primary">
@@ -229,7 +229,7 @@
                 </div>
 
                 <!-- YoTaste Tab -->
-                <div class="tab-pane fade" id="yotaste">
+                <div class="tab-pane fade" id="yotaste-tab">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoTaste Management</h2>
                         <button class="btn btn-primary">
@@ -271,7 +271,7 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="yotrip">
+                <div class="tab-pane fade" id="yotrip-tab">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoTrip Management</h2>
                         <button class="btn btn-primary">
@@ -842,6 +842,46 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTotalUsers(); // Update total users setiap 3 detik juga
     }, 3000);
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Inisialisasi tab dengan Bootstrap
+    const triggerTabList = document.querySelectorAll('a[data-bs-toggle="tab"]');
+    triggerTabList.forEach(triggerEl => {
+        new bootstrap.Tab(triggerEl);
+    });
+
+    // Event listener untuk tab changes
+    triggerTabList.forEach(tabEl => {
+        tabEl.addEventListener('shown.bs.tab', event => {
+            const targetTab = event.target.getAttribute('href');
+            console.log('Switching to tab:', targetTab);
+        });
+    });
+
+    // Load data untuk tab aktif
+    const activeTab = document.querySelector('.nav-link.active');
+    if (activeTab) {
+        const targetId = activeTab.getAttribute('href');
+        loadTabContent(targetId);
+    }
+});
+
+function loadTabContent(tabId) {
+    console.log('Loading content for tab:', tabId);
+    switch(tabId) {
+        case '#users-tab':
+            renderUsers();
+            updateTotalUsers();
+            break;
+        case '#yostay-tab':
+            loadDestinations('yostay');
+            break;
+        case '#yoconcert-tab':
+            loadDestinations('yoconcert');
+            break;
+        // ... handle tab lainnya ...
+    }
+}
 </script>
 </body>
 </html>
