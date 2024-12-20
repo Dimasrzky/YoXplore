@@ -2,12 +2,38 @@
 function fetchUsers() {
     fetch('../Controller/get_users.php')
         .then(response => response.json())
-        .then(data => {
-            users = data;
-            renderUsers();  
-            updateTotalUsers();
+        .then(result => {
+            if (result.success) {
+                // Update total users
+                document.getElementById('totalUsers').textContent = result.count;
+                
+                // Update table
+                const tbody = document.querySelector('#usersTable tbody');
+                tbody.innerHTML = ''; // Clear existing content
+                
+                result.data.forEach(user => {
+                    const date = new Date(user.created_at).toLocaleDateString();
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td>${date}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning me-2" onclick="editUser(${user.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 function updateTotalUsers() { 
@@ -112,69 +138,38 @@ function updateUser() {
 // Script/users.js
 function renderUsers() {
     const tbody = document.querySelector('#usersTable tbody');
-    if (!tbody) {
-        console.error('Table body element not found');
-        return;
-    }
-
+    tbody.innerHTML = '';
+    
     fetch('../Controller/get_users.php')
         .then(response => response.json())
-        .then(result => {
-            console.log('API Response:', result); // Debug log
-            if (result.success && result.data) {
-                const totalUsers = document.getElementById('totalUsers');
-                if (totalUsers) {
-                    totalUsers.textContent = result.count || 0;
-                }
-                
-                tbody.innerHTML = '';
-                result.data.forEach(user => {
-                    const date = new Date(user.created_at);
-                    const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-                    
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.email}</td>
-                        <td>${formattedDate}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center">No users found</td></tr>';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading users. Please try again.</td></tr>';
+        .then(data => {
+            data.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>${user.created_at}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         });
 }
 
-// Fungsi untuk semua event listener
-function initializeUserEvents() {
-    // Initial render
+// Panggil kedua fungsi saat halaman dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    fetchUsers();
     renderUsers();
-    
-    // Auto refresh
-    setInterval(renderUsers, 3000);
-    
-    // Form submit handlers
-    const addUserForm = document.getElementById('addUserForm');
-    if (addUserForm) {
-        addUserForm.onsubmit = (e) => {
-            e.preventDefault();
-            saveUser();
-        };
-    }
-}
-
-// Initialize when script loads
-document.addEventListener('DOMContentLoaded', initializeUserEvents);
+    updateTotalUsers(); // Tambahkan ini
+    setInterval(() => {
+        renderUsers();
+        updateTotalUsers(); // Update total users setiap 3 detik juga
+    }, 3000);
+});
