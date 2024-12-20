@@ -872,6 +872,82 @@ function loadDestinations() {
             });
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Inisialisasi Bootstrap tabs
+    const triggerTabList = [].slice.call(document.querySelectorAll('[data-bs-toggle="pill"]'));
+    const tabList = triggerTabList.map(function(triggerEl) {
+        return new bootstrap.Tab(triggerEl);
+    });
+
+    // Set tab pertama (Users) sebagai active tab
+    const firstTab = document.querySelector('[href="#users"]');
+    const firstTabInstance = bootstrap.Tab.getInstance(firstTab) || new bootstrap.Tab(firstTab);
+    firstTabInstance.show();
+
+    // Event handler untuk setiap tab
+    triggerTabList.forEach(function(triggerEl) {
+        triggerEl.addEventListener('shown.bs.tab', function(event) {
+            const targetId = event.target.getAttribute('href').slice(1);
+            if (targetId !== 'users') {
+                loadDestinations(targetId);
+            }
+        });
+    });
+
+    // Load initial data
+    renderUsers();
+    updateTotalUsers();
+    
+    // Auto refresh untuk users
+    setInterval(() => {
+        renderUsers();
+        updateTotalUsers();
+    }, 3000);
+});
+
+// Update fungsi loadDestinations
+function loadDestinations(section) {
+    fetch(`../Controller/get_destinations.php?feature=${section}`)
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                const tbody = document.querySelector(`#${section} table tbody`);
+                tbody.innerHTML = '';
+                
+                data.destinations.forEach(dest => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><img src="${dest.main_image}" alt="${dest.name}" class="img-thumbnail" style="width: 50px; height: 50px"></td>
+                            <td>${dest.name}</td>
+                            <td>${dest.address}</td>
+                            <td>${dest.opening_hours}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning me-2" onclick="editDestination('${section}', ${dest.id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteDestination('${section}', ${dest.id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+        });
+}
+
+// Update Add Destination button handler
+sections.forEach(section => {
+    const addButton = document.querySelector(`#${section} button.btn-primary`);
+    if (addButton) {
+        addButton.onclick = () => {
+            const modal = new bootstrap.Modal(document.getElementById('addDestinationModal'));
+            document.querySelector('#addDestinationForm input[name="feature_type"]').value = section;
+            modal.show();
+        }
+    }
+});
 </script>
 </body>
 </html>
