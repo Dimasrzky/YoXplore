@@ -165,7 +165,7 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <img src="'https://via.placeholder.com/50x50" alt="Hotel" class="img-thumbnail">
+                                            <img src="/api/placeholder/50/50" alt="Hotel" class="img-thumbnail">
                                         </td>
                                         <td>Luxury Hotel</td>
                                         <td>123 Beach Road</td>
@@ -208,7 +208,7 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <img src="'https://via.placeholder.com/50x50" alt="Concert" class="img-thumbnail">
+                                            <img src="/api/placeholder/50/50" alt="Concert" class="img-thumbnail">
                                         </td>
                                         <td>City Arena</td>
                                         <td>456 Main Street</td>
@@ -251,7 +251,7 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <img src="'https://via.placeholder.com/50x50" alt="Restaurant" class="img-thumbnail">
+                                            <img src="/api/placeholder/50/50" alt="Restaurant" class="img-thumbnail">
                                         </td>
                                         <td>Gourmet Restaurant</td>
                                         <td>789 Food Street</td>
@@ -293,7 +293,7 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <img src="'https://via.placeholder.com/50x50" alt="Restaurant" class="img-thumbnail">
+                                            <img src="/api/placeholder/50/50" alt="Restaurant" class="img-thumbnail">
                                         </td>
                                         <td>Gourmet Restaurant</td>
                                         <td>789 Food Street</td>
@@ -723,23 +723,26 @@ function saveDestination() {
     const id = formData.get('destinationId');
     
     const destination = {
-        id: Date.now(),
+        id: id ? parseInt(id) : Date.now(),
         name: formData.get('name'),
         address: formData.get('address'),
         openTime: formData.get('openTime'),
-        image: 'https://via.placeholder.com/50x50',
+        image: '/api/placeholder/50/50', // In real app, handle image upload
         reviews: id ? destinations.find(d => d.id === parseInt(id))?.reviews || [] : []
     };
 
-    let destinations = JSON.parse(localStorage.getItem(section)) || [];
-    destinations.push(destination);
+    if (id) {
+        const index = destinations.findIndex(d => d.id === parseInt(id));
+        destinations[index] = destination;
+    } else {
+        destinations.push(destination);
+    }
+
     localStorage.setItem(section, JSON.stringify(destinations));
-    
-    loadDestinations(section);
+    renderDestinations(section);
     
     const modal = bootstrap.Modal.getInstance(document.getElementById('destinationModal'));
     modal.hide();
-    form.reset();
 }
 
 function deleteDestination(section, id) {
