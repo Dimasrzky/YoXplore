@@ -146,7 +146,7 @@
                 <div class="tab-pane fade" id="yostay">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoStay Management</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#destinationModal">
+                        <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
@@ -189,7 +189,7 @@
                 <div class="tab-pane fade" id="yoconcert">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoConcert Management</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#destinationModal">
+                        <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
@@ -232,7 +232,7 @@
                 <div class="tab-pane fade" id="yotaste">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoTaste Management</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#destinationModal">
+                        <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
@@ -274,7 +274,7 @@
                 <div class="tab-pane fade" id="yotrip">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoTrip Management</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#destinationModal">
+                        <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
@@ -503,12 +503,58 @@ function updateTotalUsers() {
         .catch(error => console.error('Error:', error));
 }
 
+// Save user
+function saveUser() {
+    const form = document.getElementById('addUserForm');
+    const formData = new FormData(form);
+    
+    const user = {
+        id: Date.now(),
+        username: formData.get('username'),
+        email: formData.get('email'),
+        password: formData.get('password')
+    };
+    
+    users.push(user);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    renderUsers();
+    updateTotalUsers();
+    
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+    modal.hide();
+    form.reset();
+}
+
 // Delete user
 function deleteUser(id) {
     users = users.filter(user => user.id !== id);
     localStorage.setItem('users', JSON.stringify(users));
     renderUsers();
     updateTotalUsers();
+}
+
+// Save destination
+function saveDestination() {
+    const form = document.getElementById('addDestinationForm');
+    const formData = new FormData(form);
+    
+    const destination = {
+        id: Date.now(),
+        name: formData.get('name'),
+        address: formData.get('address'),
+        openTime: formData.get('openTime'),
+        image: '/api/placeholder/50/50' // In a real app, handle actual image upload
+    };
+    
+    destinations.push(destination);
+    localStorage.setItem('destinations', JSON.stringify(destinations));
+    
+    renderDestinations();
+    
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
+    modal.hide();
+    form.reset();
 }
 
 let user = JSON.parse(localStorage.getItem('users')) || [];
@@ -722,6 +768,8 @@ function saveDestination() {
     const section = formData.get('section');
     const id = formData.get('destinationId');
     
+    const destinations = JSON.parse(localStorage.getItem(section)) || [];
+    
     const destination = {
         id: id ? parseInt(id) : Date.now(),
         name: formData.get('name'),
@@ -793,62 +841,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderUsers();
         updateTotalUsers(); // Update total users setiap 3 detik juga
     }, 3000);
-});
-
-function loadDestinations(section) {
-    const destinations = JSON.parse(localStorage.getItem(section)) || [];
-    const tbody = document.querySelector(`#${section} table tbody`);
-    tbody.innerHTML = '';
-    
-    destinations.forEach(dest => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><img src="https://via.placeholder.com/50x50" alt="${dest.name}" class="img-thumbnail"></td>
-            <td>${dest.name}</td>
-            <td>${dest.address}</td>
-            <td>${dest.openTime}</td>
-            <td>
-                <button class="btn btn-sm btn-warning me-2" onclick="openDestinationModal('${section}', ${dest.id})">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
-                <button class="btn btn-sm btn-danger" onclick="deleteDestination('${section}', ${dest.id})">
-                    <i class="fas fa-trash"></i> Delete
-                </button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}   
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize tabs
-    const triggerTabList = document.querySelectorAll('[data-bs-toggle="pill"]');
-    triggerTabList.forEach(triggerEl => {
-        triggerEl.addEventListener('click', function(event) {
-            event.preventDefault();
-            const targetId = this.getAttribute('href').slice(1);
-            
-            if(targetId === 'users') {
-                renderUsers();
-                updateTotalUsers();
-            } else {
-                loadDestinations(targetId);
-            }
-        });
-    });
-
-    // Initialize add destination buttons
-    sections.forEach(section => {
-        const addButton = document.querySelector(`#${section} button.btn-primary`);
-        if (addButton) {
-            addButton.onclick = () => openDestinationModal(section);
-        }
-    });
-
-    // Load initial content
-    renderUsers();
-    updateTotalUsers();
-    sections.forEach(section => loadDestinations(section));
 });
 </script>
 </body>
