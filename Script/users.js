@@ -2,34 +2,10 @@
 function fetchUsers() {
     fetch('../Controller/get_users.php')
         .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                // Update total users
-                document.getElementById('totalUsers').textContent = result.count;
-                
-                // Update table
-                const tbody = document.querySelector('#usersTable tbody');
-                tbody.innerHTML = '';
-                
-                result.data.forEach(user => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${user.username}</td>
-                        <td>${user.email}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning me-2" onclick="editUser(${user.id})">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } else {
-                console.error('Failed to fetch users:', result.message);
-            }
+        .then(data => {
+            users = data;
+            renderUsers();  
+            updateTotalUsers();
         })
         .catch(error => console.error('Error:', error));
 }
