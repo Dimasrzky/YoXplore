@@ -144,32 +144,32 @@ function renderUsers() {
         .then(response => response.json())
         .then(data => {
             data.forEach(user => {
+                // Format tanggal
+                const createdAt = new Date(user.created_at).toLocaleDateString();
+                
+                // Buat baris tabel untuk setiap user
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${user.username}</td>
                     <td>${user.email}</td>
-                    <td>${user.created_at}</td>
+                    <td>${createdAt}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
+                        <button class="btn btn-sm btn-warning me-2" onclick="editUser(${user.id})">
                             <i class="fas fa-edit"></i> Edit
                         </button>
-                        <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">
+                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
                             <i class="fas fa-trash"></i> Delete
                         </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-        });
+        })
+        .catch(error => console.error('Error:', error));
 }
 
-// Panggil kedua fungsi saat halaman dimuat
+// Panggil fungsi saat halaman dimuat
 document.addEventListener('DOMContentLoaded', () => {
-    fetchUsers();
     renderUsers();
-    updateTotalUsers(); // Tambahkan ini
-    setInterval(() => {
-        renderUsers();
-        updateTotalUsers(); // Update total users setiap 3 detik juga
-    }, 3000);
+    setInterval(renderUsers, 30000); // Refresh data setiap 30 detik
 });

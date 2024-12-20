@@ -1,31 +1,18 @@
 <?php
-require_once '../Config/db_connect.php';
-
-header('Content-Type: application/json');
+require_once('../Config/db_connect.php');
 
 try {
-
-    $test = $pdo->query("SELECT 1");
-    if(!$test) {
-        throw new Exception("Database connection failed");
-    }
-
-    $sql = "SELECT id, username, email, created_at FROM client ORDER BY created_at DESC";
-    $stmt = $pdo->prepare($sql);
+    $query = "SELECT * FROM client ORDER BY created_at DESC";
+    $stmt = $conn->prepare($query);
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    error_log("Found " . count($users) . " users");
-    
-    echo json_encode([
-        'success' => true,
-        'data' => $users,
-        'count' => count($users)
-    ]);
+    header('Content-Type: application/json');
+    echo json_encode($users);
 } catch(PDOException $e) {
-    error_log("Database error: " . $e->getMessage());
+    header('Content-Type: application/json');
     echo json_encode([
-        'success' => false,
-        'message' => "Database error: " . $e->getMessage()
+        'error' => $e->getMessage()
     ]);
 }
+?>
