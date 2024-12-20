@@ -146,7 +146,8 @@
                 <div class="tab-pane fade" id="yostay">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoStay Management</h2>
-                        <button class="btn btn-primary">
+                        <!-- Tambahkan data-bs-toggle dan data-bs-target untuk membuka modal -->
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#destinationModal">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
@@ -165,16 +166,18 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <img src="/api/placeholder/50/50" alt="Hotel" class="img-thumbnail">
+                                            <!-- Ganti source image dengan placeholder yang valid -->
+                                            <img src="https://via.placeholder.com/50x50" alt="Hotel" class="img-thumbnail">
                                         </td>
                                         <td>Luxury Hotel</td>
                                         <td>123 Beach Road</td>
                                         <td>24/7</td>
                                         <td>
-                                            <button class="btn btn-sm btn-warning me-2">
+                                            <!-- Tambahkan onclick handler untuk edit dan delete -->
+                                            <button class="btn btn-sm btn-warning me-2" onclick="openDestinationModal('yostay', 1)">
                                                 <i class="fas fa-edit"></i> Edit
                                             </button>
-                                            <button class="btn btn-sm btn-danger">
+                                            <button class="btn btn-sm btn-danger" onclick="deleteDestination('yostay', 1)">
                                                 <i class="fas fa-trash"></i> Delete
                                             </button>
                                         </td>
