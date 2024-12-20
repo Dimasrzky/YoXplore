@@ -133,48 +133,36 @@ function updateUser() {
     });
 }
 
+// Script/users.js
 function renderUsers() {
-    console.log('Rendering users...');
     const tbody = document.querySelector('#usersTable tbody');
     if (!tbody) {
         console.error('Table body element not found');
         return;
     }
 
-    tbody.innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
-
     fetch('../Controller/get_users.php')
-        .then(response => {
-            console.log('Response status:', response.status);
-            return response.json();
-        })
+        .then(response => response.json())
         .then(result => {
-            console.log('API response:', result);
+            console.log('API Response:', result); // Debug log
             if (result.success && result.data) {
-                // Update total users
-                const totalElement = document.getElementById('totalUsers');
-                if (totalElement) {
-                    totalElement.textContent = result.count || 0;
+                const totalUsers = document.getElementById('totalUsers');
+                if (totalUsers) {
+                    totalUsers.textContent = result.count || 0;
                 }
-
-                // Clear loading message
+                
                 tbody.innerHTML = '';
-
-                // Check if we have data
-                if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">No users found</td></tr>';
-                    return;
-                }
-
-                // Render users
                 result.data.forEach(user => {
+                    const date = new Date(user.created_at);
+                    const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+                    
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${user.username || ''}</td>
-                        <td>${user.email || ''}</td>
-                        <td>${user.created_at ? new Date(user.created_at).toLocaleDateString() : ''}</td>
+                        <td>${user.username}</td>
+                        <td>${user.email}</td>
+                        <td>${formattedDate}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id})">
+                            <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
                             <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
@@ -185,21 +173,14 @@ function renderUsers() {
                     tbody.appendChild(tr);
                 });
             } else {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-warning">${result.message || 'Error loading users'}</td></tr>`;
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center">No users found</td></tr>';
             }
         })
         .catch(error => {
-            console.error('Fetch error:', error);
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Failed to load users</td></tr>';
+            console.error('Error:', error);
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading users. Please try again.</td></tr>';
         });
 }
-
-// Initialize when document is ready
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, initializing users...');
-    renderUsers();
-    setInterval(renderUsers, 3000);
-});
 
 // Fungsi untuk semua event listener
 function initializeUserEvents() {
