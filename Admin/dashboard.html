@@ -40,7 +40,7 @@
                 <span class="fs-4 mb-4"><\> YoAdmin</span>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li>
-                        <a href="#users" class="nav-link text-white " data-bs-toggle="pill">
+                        <a href="#users" class="nav-link text-white active" data-bs-toggle="pill">
                             <i class="fas fa-users me-2"></i>
                             Users
                         </a>
@@ -146,7 +146,7 @@
                 <div class="tab-pane fade" id="yostay">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoStay Management</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDestinationModal">
+                        <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
@@ -189,7 +189,7 @@
                 <div class="tab-pane fade" id="yoconcert">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoConcert Management</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDestinationModal">
+                        <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
@@ -232,7 +232,7 @@
                 <div class="tab-pane fade" id="yotaste">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoTaste Management</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDestinationModal">
+                        <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
@@ -274,7 +274,7 @@
                 <div class="tab-pane fade" id="yotrip">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2>YoTrip Management</h2>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDestinationModal">
+                        <button class="btn btn-primary">
                             <i class="fas fa-plus me-2"></i>Add Destination
                         </button>
                     </div>
@@ -800,34 +800,29 @@ function deleteDestination(section, id) {
     renderDestinations(section);
 }
 
-function loadDestinations(section) {
-    fetch(`../Controller/get_destinations.php?section=${section}`)
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.querySelector(`#${section} table tbody`);
-            tbody.innerHTML = '';
-
-            if(data.success) {
-                data.destinations.forEach(dest => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><img src="${dest.image}" alt="${dest.name}" class="img-thumbnail"></td>
-                        <td>${dest.name}</td>
-                        <td>${dest.address}</td>
-                        <td>${dest.openTime}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning me-2" onclick="editDestination('${section}', ${dest.id})">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteDestination('${section}', ${dest.id})">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-        });
+function renderDestinations(section) {
+    const destinations = JSON.parse(localStorage.getItem(section)) || [];
+    const tbody = document.querySelector(`#${section} table tbody`);
+    tbody.innerHTML = '';
+    
+    destinations.forEach(dest => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><img src="${dest.image}" alt="${dest.name}" class="img-thumbnail" style="width: 50px; height: 50px"></td>
+            <td>${dest.name}</td>
+            <td>${dest.address}</td>
+            <td>${dest.openTime}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-2" onclick="openDestinationModal('${section}', ${dest.id})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteDestination('${section}', ${dest.id})">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 // Initialize the page
@@ -846,38 +841,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderUsers();
         updateTotalUsers(); // Update total users setiap 3 detik juga
     }, 3000);
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Inisialisasi Bootstrap tabs
-    let triggerTabList = Array.prototype.slice.call(document.querySelectorAll('[data-bs-toggle="pill"]'));
-    triggerTabList.forEach(function(triggerEl) {
-        let tabTrigger = new bootstrap.Tab(triggerEl);
-        
-        triggerEl.addEventListener('click', function(event) {
-            event.preventDefault();
-            tabTrigger.show();
-            
-            // Load konten berdasarkan tab yang aktif
-            const targetId = this.getAttribute('href').slice(1);
-            if(targetId === 'users') {
-                renderUsers();
-                updateTotalUsers();
-            } else {
-                loadDestinations(targetId);
-            }
-        });
-    });
-
-    // Set default active tab
-    document.querySelector('a[href="#users"]').click();
-});
-
-document.querySelectorAll('.btn-primary[data-bs-toggle="modal"]').forEach(button => {
-    button.addEventListener('click', function() {
-        const section = this.closest('.tab-pane').id;
-        document.querySelector('#addDestinationForm input[name="section"]').value = section;
-    });
 });
 </script>
 </body>
