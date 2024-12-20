@@ -50,6 +50,27 @@
                 });
         }
 
+        async function loadComponents() {
+            try {
+                // Load sidebar first
+                const sidebarResponse = await fetch('../Components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+        
+                // Then load users tab
+                const usersResponse = await fetch('../Components/users-tab.html');
+                const usersHtml = await usersResponse.text();
+                document.getElementById('main-content').innerHTML = usersHtml;
+        
+                // Finally load and initialize users.js
+                const script = document.createElement('script');
+                script.src = '../Script/users.js';
+                document.body.appendChild(script);
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
         // Initialize when document is ready
         document.addEventListener('DOMContentLoaded', loadComponents);
     </script>

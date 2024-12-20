@@ -141,17 +141,17 @@ function renderUsers() {
         return;
     }
 
-    tbody.innerHTML = '';
-    
     fetch('../Controller/get_users.php')
         .then(response => response.json())
         .then(result => {
+            console.log('API Response:', result); // Debug log
             if (result.success && result.data) {
                 const totalUsers = document.getElementById('totalUsers');
                 if (totalUsers) {
                     totalUsers.textContent = result.count || 0;
                 }
                 
+                tbody.innerHTML = '';
                 result.data.forEach(user => {
                     const date = new Date(user.created_at);
                     const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
@@ -182,6 +182,23 @@ function renderUsers() {
         });
 }
 
-// Initialize when the script loads
-renderUsers();
-setInterval(renderUsers, 3000);
+// Fungsi untuk semua event listener
+function initializeUserEvents() {
+    // Initial render
+    renderUsers();
+    
+    // Auto refresh
+    setInterval(renderUsers, 3000);
+    
+    // Form submit handlers
+    const addUserForm = document.getElementById('addUserForm');
+    if (addUserForm) {
+        addUserForm.onsubmit = (e) => {
+            e.preventDefault();
+            saveUser();
+        };
+    }
+}
+
+// Initialize when script loads
+document.addEventListener('DOMContentLoaded', initializeUserEvents);
