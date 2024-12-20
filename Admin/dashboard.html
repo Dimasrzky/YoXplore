@@ -526,43 +526,31 @@ function saveUser() {
     form.reset();
 }
 
-// Delete user
-function deleteUser(id) {
-    users = users.filter(user => user.id !== id);
-    localStorage.setItem('users', JSON.stringify(users));
+// Update inisialisasi data
+const sections = ['yostay', 'yoconcert', 'yotaste', 'yotrip'];
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize users
     renderUsers();
     updateTotalUsers();
-}
 
-// Save destination
-function saveDestination() {
-    const form = document.getElementById('addDestinationForm');
-    const formData = new FormData(form);
-    
-    const destination = {
-        id: Date.now(),
-        name: formData.get('name'),
-        address: formData.get('address'),
-        openTime: formData.get('openTime'),
-        image: '/api/placeholder/50/50' // In a real app, handle actual image upload
-    };
-    
-    destinations.push(destination);
-    localStorage.setItem('destinations', JSON.stringify(destinations));
-    
-    renderDestinations();
-    
-    const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
-    modal.hide();
-    form.reset();
-}
+    // Initialize destinations for each section
+    sections.forEach(section => {
+        if (!localStorage.getItem(section)) {
+            localStorage.setItem(section, JSON.stringify([]));
+        }
+        renderDestinations(section);
+    });
 
-let user = JSON.parse(localStorage.getItem('users')) || [];
-const sections = ['yostay', 'yoconcert', 'yotaste', 'yotrip'];
-sections.forEach(section => {
-    if (!localStorage.getItem(section)) {
-        localStorage.setItem(section, JSON.stringify([]));
-    }
+    // Update add buttons
+    sections.forEach(section => {
+        const addButton = document.querySelector(`#${section} button.btn-primary`);
+        if (addButton) {
+            addButton.setAttribute('data-bs-toggle', 'modal');
+            addButton.setAttribute('data-bs-target', '#destinationModal');
+            addButton.onclick = () => openDestinationModal(section);
+        }
+    });
 });
 
 function saveUser() {
@@ -765,32 +753,27 @@ function addReview() {
 function saveDestination() {
     const form = document.getElementById('destinationForm');
     const formData = new FormData(form);
-    const section = formData.get('section');
-    const id = formData.get('destinationId');
     
-    const destinations = JSON.parse(localStorage.getItem(section)) || [];
-    
-    const destination = {
-        id: id ? parseInt(id) : Date.now(),
-        name: formData.get('name'),
-        address: formData.get('address'),
-        openTime: formData.get('openTime'),
-        image: '/api/placeholder/50/50', // In real app, handle image upload
-        reviews: id ? destinations.find(d => d.id === parseInt(id))?.reviews || [] : []
-    };
-
-    if (id) {
-        const index = destinations.findIndex(d => d.id === parseInt(id));
-        destinations[index] = destination;
-    } else {
-        destinations.push(destination);
-    }
-
-    localStorage.setItem(section, JSON.stringify(destinations));
-    renderDestinations(section);
-    
-    const modal = bootstrap.Modal.getInstance(document.getElementById('destinationModal'));
-    modal.hide();
+    fetch('../Controller/save_destination.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+        if(result.success) {
+            const section = formData.get('section');
+            loadDestinations(section);
+            const modal = bootstrap.Modal.getInstance(document.getElementById('destinationModal'));
+            modal.hide();
+            form.reset();
+        } else {
+            alert('Failed to save destination: ' + result.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error saving destination');
+    });
 }
 
 function deleteDestination(section, id) {
@@ -825,10 +808,59 @@ function renderDestinations(section) {
     });
 }
 
+function loadDestinations(section) {
+    fetch('../Controller/get_destinations.php?section=' + section)
+        .then(response => response.json())
+        .then(result => {
+            if(result.success) {
+                const tbody = document.querySelector(`#${section} table tbody`);
+                tbody.innerHTML = '';
+                
+                result.data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <img src="${item.main_image}" 
+                                 alt="${item.name}" 
+                                 class="img-thumbnail" 
+                                 style="width: 50px; height: 50px">
+                        </td>
+                        <td>${item.name}</td>
+                        <td>${item.address}</td>
+                        <td>${item.opening_hours || '-'}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-warning" 
+                                        onclick="editDestination(${item.id}, '${section}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" 
+                                        onclick="deleteDestination(${item.id}, '${section}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        });
+}
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
+    const triggerTabList = document.querySelectorAll('[data-bs-toggle="pill"]');
+    triggerTabList.forEach(triggerEl => {
+        triggerEl.addEventListener('shown.bs.tab', event => {
+            const targetId = event.target.getAttribute('href').slice(1);
+            if(targetId !== 'users') {
+                loadDestinations(targetId);
+            }
+        });
+    });
     renderUsers();
     updateTotalUsers();
+    loadDestinations('yostay','yoconcert','yotaste','yotrip');
     sections.forEach(section => {
         renderDestinations(section);
         // Update Add buttons to open modal
