@@ -1,15 +1,17 @@
 <?php
-require_once '../Config/db_connect.php';
-require_once '../Config/session_check.php';
+require_once '../Config/db_connect.php'; // pastikan path ini benar
+require_once '../Config/session_check.php'; // pastikan path ini benar
 
 header('Content-Type: application/json');
 
 try {
-    // Query untuk mengambil data user
     $sql = "SELECT id, username, email, created_at FROM client ORDER BY created_at DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Debug output
+    error_log("Found " . count($users) . " users");
     
     echo json_encode([
         'success' => true,
@@ -17,8 +19,9 @@ try {
         'count' => count($users)
     ]);
 } catch(PDOException $e) {
+    error_log("Database error: " . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => "Database error: " . $e->getMessage()
     ]);
 }
