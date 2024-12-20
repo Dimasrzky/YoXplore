@@ -139,25 +139,51 @@ function renderUsers() {
     
     fetch('../Controller/get_users.php')
         .then(response => response.json())
-        .then(data => {
-            data.forEach(user => {
-                // Format tanggal
-                const createdAt = new Date(user.created_at).toLocaleDateString();
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${user.username}</td>
-                    <td>${user.email}</td>
-                    <td>${createdAt}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+        .then(result => {
+            if (result.success) {
+                document.getElementById('totalUsers').textContent = result.count;
+                
+                result.data.forEach(user => {
+                    // Format tanggal ke format yang diinginkan
+                    const date = new Date(user.created_at);
+                    const formattedDate = date.getDate().toString().padStart(2, '0') + '/' +
+                                        (date.getMonth() + 1).toString().padStart(2, '0') + '/' +
+                                        date.getFullYear();
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.username}</td>
+                        <td>${user.email}</td>
+                        <td>${formattedDate}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                console.error('Failed to load users:', result.message);
+            }
         })
+        .catch(error => {
+            console.error('Error:', error);
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-danger">
+                        Error loading users. Please try again.
+                    </td>
+                </tr>
+            `;
+        });
 }
+
+// Hapus semua kode yang berhubungan dengan localStorage
+document.addEventListener('DOMContentLoaded', () => {
+    renderUsers();
+    setInterval(renderUsers, 3000); // Update setiap 3 detik
+});
