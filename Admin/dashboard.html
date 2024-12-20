@@ -192,9 +192,11 @@
             });
         }
         
+        // Panggil fetchUsers saat halaman dimuat
         document.addEventListener('DOMContentLoaded', () => {
-            renderUsers();
-            updateTotalUsers(); // Tambahkan ini
+            fetchUsers();
+            loadComponents();
+            // Refresh data setiap 30 detik
             setInterval(() => {
                 renderUsers();
                 updateTotalUsers(); // Update total users setiap 3 detik juga
