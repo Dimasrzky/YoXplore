@@ -20,44 +20,38 @@
 
             <!-- Main Content - dengan offset untuk sidebar -->
             <div class="col-10">
-                <div class="tab-content">
+                <div class="tab-content" id="main-content">
                     <!-- Load users tab component -->
-                    <div id="users-tab-container"></div>
-                    <!-- Other tabs -->
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script src="../Script/users.js"></script>
-    <script src="../Script/destinations.js"></script>
-    <script src="../Script/dashboard.js"></script>
-    
     <script>
-        // Load components
-        fetch('../Components/sidebar.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('sidebar-container').innerHTML = data;
-            });
+        // Wait for all components to load before initializing
+        function loadComponents() {
+            // Load sidebar
+            fetch('../Components/sidebar.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('sidebar-container').innerHTML = html;
+                });
 
-            document.addEventListener('DOMContentLoaded', function() {
-                // Load users tab component
-                fetch('../Components/users-tab.html')
-                    .then(response => response.text())
-                    .then(html => {
-                        document.getElementById('users-tab-container').innerHTML = html;
-                        // Initialize users table
-                        renderUsers();
-                        // Start auto refresh
-                        setInterval(renderUsers, 3000);
-                    });
-            });
+            // Load users tab
+            fetch('../Components/users-tab.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('main-content').innerHTML = html;
+                    // Load users.js after the component is loaded
+                    const script = document.createElement('script');
+                    script.src = '../Script/users.js';
+                    document.body.appendChild(script);
+                });
+        }
 
-        
-        // Initialize after loading
-        document.addEventListener('DOMContentLoaded', initializeDashboard);
+        // Initialize when document is ready
+        document.addEventListener('DOMContentLoaded', loadComponents);
     </script>
 </body>
 </html>

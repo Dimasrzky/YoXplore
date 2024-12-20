@@ -133,20 +133,24 @@ function updateUser() {
     });
 }
 
+// Script/users.js
 function renderUsers() {
     const tbody = document.querySelector('#usersTable tbody');
     if (!tbody) {
         console.error('Table body element not found');
         return;
     }
-    
+
     tbody.innerHTML = '';
     
     fetch('../Controller/get_users.php')
         .then(response => response.json())
         .then(result => {
             if (result.success && result.data) {
-                document.getElementById('totalUsers').textContent = result.count || 0;
+                const totalUsers = document.getElementById('totalUsers');
+                if (totalUsers) {
+                    totalUsers.textContent = result.count || 0;
+                }
                 
                 result.data.forEach(user => {
                     const date = new Date(user.created_at);
@@ -169,27 +173,15 @@ function renderUsers() {
                     tbody.appendChild(tr);
                 });
             } else {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center">No users found</td>
-                    </tr>
-                `;
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center">No users found</td></tr>';
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center text-danger">
-                        Error loading users. Please try again.
-                    </td>
-                </tr>
-            `;
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading users. Please try again.</td></tr>';
         });
 }
 
-// Hapus semua kode yang berhubungan dengan localStorage
-document.addEventListener('DOMContentLoaded', () => {
-    renderUsers();
-    setInterval(renderUsers, 3000); // Update setiap 3 detik
-});
+// Initialize when the script loads
+renderUsers();
+setInterval(renderUsers, 3000);
