@@ -842,46 +842,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTotalUsers(); // Update total users setiap 3 detik juga
     }, 3000);
 });
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Inisialisasi tab dengan Bootstrap
-    const triggerTabList = document.querySelectorAll('a[data-bs-toggle="tab"]');
-    triggerTabList.forEach(triggerEl => {
-        new bootstrap.Tab(triggerEl);
-    });
-
-    // Event listener untuk tab changes
-    triggerTabList.forEach(tabEl => {
-        tabEl.addEventListener('shown.bs.tab', event => {
-            const targetTab = event.target.getAttribute('href');
-            console.log('Switching to tab:', targetTab);
-        });
-    });
-
-    // Load data untuk tab aktif
-    const activeTab = document.querySelector('.nav-link.active');
-    if (activeTab) {
-        const targetId = activeTab.getAttribute('href');
-        loadTabContent(targetId);
-    }
-});
-
-function loadTabContent(tabId) {
-    console.log('Loading content for tab:', tabId);
-    switch(tabId) {
-        case '#users-tab':
-            renderUsers();
-            updateTotalUsers();
-            break;
-        case '#yostay-tab':
-            loadDestinations('yostay');
-            break;
-        case '#yoconcert-tab':
-            loadDestinations('yoconcert');
-            break;
-        // ... handle tab lainnya ...
-    }
-}
 </script>
 </body>
 </html>
