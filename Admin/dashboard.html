@@ -191,6 +191,36 @@
                 alert('Error updating user');
             });
         }
+
+        function saveDestination() {
+            const form = document.getElementById('addDestinationForm');
+            const formData = new FormData(form);
+            
+            fetch('../Controller/add_destination.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if(result.success) {
+                    alert('Destination added successfully');
+                    loadDestinations();
+                    bootstrap.Modal.getInstance(document.getElementById('addDestinationModal')).hide();
+                }
+            });
+        }
+        
+        function loadDestinations() {
+            sections.forEach(section => {
+                fetch(`../Controller/get_destinations.php?feature=${section}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            renderDestinations(section, data.destinations);
+                        }
+                    });
+            });
+        }
         
         // Panggil fetchUsers saat halaman dimuat
         document.addEventListener('DOMContentLoaded', () => {
