@@ -149,3 +149,28 @@ function deleteDestination(id, section) {
         });
     }
 }
+
+function renderDestinations(section) {
+    const destinations = JSON.parse(localStorage.getItem(section)) || [];
+    const tbody = document.querySelector(`#${section} table tbody`);
+    tbody.innerHTML = '';
+    
+    destinations.forEach(dest => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><img src="${dest.image}" alt="${dest.name}" class="img-thumbnail" style="width: 50px; height: 50px"></td>
+            <td>${dest.name}</td>
+            <td>${dest.address}</td>
+            <td>${dest.openTime}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-2" onclick="openDestinationModal('${section}', ${dest.id})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteDestination('${section}', ${dest.id})">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}

@@ -1,0 +1,21 @@
+.btn-primary {
+    background-color: #91553D;
+    border-color: #91553D;
+}
+.btn-primary:hover {
+    background-color: #7a4733;
+    border-color: #7a4733;
+}
+.bg-primary {
+    background-color: #91553D !important;
+}
+.nav-pills .nav-link.active {
+    background-color: #91553D;
+}
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:focus {
+    background-color: #7a4733;
+    border-color: #7a4733;
+    box-shadow: 0 0 0 0.2rem rgba(145, 85, 61, 0.5);
+}
