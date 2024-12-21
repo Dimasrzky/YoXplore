@@ -1,25 +1,35 @@
 <?php
 require_once('../Config/db_connect.php');
+header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents('php://input'), true);
 
 try {
+    $data = json_decode(file_get_contents('php://input'), true);
+    
+    $id = $data['id'];
+    $username = $data['username'];
+    $email = $data['email'];
+    
+    $sql = "UPDATE client SET username = ?, email = ? WHERE id = ?";
+    $params = [$username, $email, $id];
+    
     if(isset($data['password']) && !empty($data['password'])) {
         $sql = "UPDATE client SET username = ?, email = ?, password = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-        $stmt->execute([$data['username'], $data['email'], $hashedPassword, $data['id']]);
-    } else {
-        $sql = "UPDATE client SET username = ?, email = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$data['username'], $data['email'], $data['id']]);
+        $params = [$username, $email, password_hash($data['password'], PASSWORD_DEFAULT), $id];
     }
     
-    echo json_encode(['success' => true]);
-} catch(PDOException $e) {
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
+    
+    echo json_encode([
+        'success' => true
+    ]);
+
+} catch(Exception $e) {
+    http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => 'Error updating user'
     ]);
 }
 ?>

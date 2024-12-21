@@ -180,6 +180,6 @@ window.updateUser = function() {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert(error.message || 'Error updating user');
+        alert('Error updating user');
     });
 };
