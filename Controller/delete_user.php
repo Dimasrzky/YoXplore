@@ -18,7 +18,7 @@ try {
     }
 
     // Hapus user
-    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM client WHERE id = ?");
     $stmt->execute([$data['id']]);
 
     echo json_encode([
