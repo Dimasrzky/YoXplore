@@ -50,7 +50,7 @@ window.saveDestination = function(e) {
         console.log(key, value);
     }
     
-    fetch('../Controller/add_destination.php', {
+    fetch('../Controller/add_destination_yostay.php', {
         method: 'POST',
         body: formData  // Jangan set Content-Type header untuk multipart/form-data
     })
