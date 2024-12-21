@@ -78,27 +78,32 @@ function submitDestination() {
     saveDestination(formData);
 }
 
-// Load categories when modal opens
-document.getElementById('addDestinationModal').addEventListener('show.bs.modal', function() {
-    loadCategories();
-});
-
 function loadCategories() {
+    const categorySelect = document.querySelector('select[name="category"]');
+    if (!categorySelect) {
+        console.error('Elemen select category tidak ditemukan');
+        return;
+    }
+
     fetch('../Controller/get_categories.php?type=YoStay')
         .then(response => response.json())
         .then(result => {
+            console.log('Response kategori:', result); // untuk debug
             if (result.success) {
-                const categorySelect = document.querySelector('select[name="category"]');
-                categorySelect.innerHTML = '<option value="">Select Category</option>';
+                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
                 
                 result.data.forEach(category => {
                     categorySelect.innerHTML += `
                         <option value="${category.id}">${category.name}</option>
                     `;
                 });
+            } else {
+                console.error('Gagal memuat kategori:', result.message);
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error saat memuat kategori:', error);
+        });
 }
 
 // Panggil loadCategories saat modal dibuka
