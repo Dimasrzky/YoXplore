@@ -91,25 +91,33 @@ window.editUser = function(id, username, email) {
 };
 
 window.deleteUser = function(id) {
-    if (!confirm('Are you sure you want to delete this user?')) return;
-    
-    fetch('../Controller/delete_user.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id })
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
+    if (confirm('Are you sure you want to delete this user?')) {
+        fetch('../Controller/delete_user.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: id })
+        })
+        .then(async response => {
+            const text = await response.text();
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Raw response:', text);
+                throw new Error('Invalid server response');
+            }
+        })
+        .then(result => {
+            if (!result.success) {
+                throw new Error(result.message || 'Failed to delete user');
+            }
+            // Refresh data setelah delete berhasil
             fetchUsers();
-        } else {
-            throw new Error(result.message || 'Failed to delete user');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert(error.message);
-    });
-};  
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'Failed to delete user');
+        });
+    }
+};
