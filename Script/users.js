@@ -1,46 +1,62 @@
-window.fetchUsers = function() {
+function fetchUsers() {
     fetch('../Controller/get_users.php')
         .then(response => response.json())
         .then(result => {
             if (result.success) {
                 // Update total users
-                document.getElementById('totalUsers').textContent = result.count;
-                
+                const totalElement = document.getElementById('totalUsers');
+                if (totalElement) {
+                    totalElement.textContent = result.count || 0;
+                }
+
                 // Update table
                 const tbody = document.querySelector('#usersTable tbody');
-                tbody.innerHTML = '';
-                
-                result.data.forEach(user => {
-                    const date = new Date(user.created_at).toLocaleDateString();
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${user.username}</td>
-                            <td>${user.email}</td>
-                            <td>${date}</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    
+                    if (Array.isArray(result.data)) {
+                        result.data.forEach(user => {
+                            const date = new Date(user.created_at).toLocaleDateString();
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td>${user.username}</td>
+                                    <td>${user.email}</td>
+                                    <td>${date}</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="4" class="text-center">No users found</td>
+                            </tr>
+                        `;
+                    }
+                }
             }
         })
         .catch(error => {
             console.error('Error:', error);
             const tbody = document.querySelector('#usersTable tbody');
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center text-danger">Error loading users</td>
-                </tr>
-            `;
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            Error loading users
+                        </td>
+                    </tr>
+                `;
+            }
         });
 }
-
 // Expose functions to global scope
 window.editUser = function(id, username, email) {
     document.getElementById('editUserId').value = id;
