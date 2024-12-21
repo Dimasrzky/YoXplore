@@ -28,6 +28,7 @@ function fetchUsers() {
                             </td>
                         </tr>
                     `;
+                    tbody.appendChild(tr);
                 });
             }
         })
