@@ -47,6 +47,7 @@ window.loadDestinations = function(section = 'YoStay') {
                         <td>${item.name}</td>
                         <td>${item.address}</td>
                         <td>${item.opening_hours || '-'}</td>
+                        <td>${item.closing_hours || '-'}</td>
                         <td>
                             <button class="btn btn-warning btn-sm me-2" onclick="editDestination(${item.id})">
                                 <i class="fas fa-edit"></i> Edit

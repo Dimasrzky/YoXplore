@@ -18,8 +18,8 @@ try {
         try {
             // Insert data destinasi
             $stmt = $conn->prepare("
-                INSERT INTO items (name, category_id, feature_type, address, opening_hours)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours)
+                VALUES (?, ?, ?, ?, ?, ?)
             ");
             
             $stmt->execute([
@@ -27,7 +27,8 @@ try {
                 $_POST['category'],
                 'YoStay',
                 $_POST['address'],
-                $_POST['openTime']
+                $_POST['openTime'],
+                $_POST['closeTime']
             ]);
             
             $item_id = $conn->lastInsertId();
