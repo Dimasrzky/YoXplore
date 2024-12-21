@@ -1,33 +1,34 @@
-function loadDestinations(section = 'YoStay') {
-    console.log('Loading destinations...'); // Debug log
+document.addEventListener('DOMContentLoaded', function() {
+    loadDestinations();
+    
+    // Event listeners untuk form dan button
+    const form = document.getElementById('addDestinationForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveDestination();
+        });
+    }
+});
 
+function loadDestinations(section = 'YoStay') {
     const tbody = document.querySelector('#destinationsTable tbody');
     if (!tbody) {
-        console.error('Table body tidak ditemukan');
+        console.error('Table body tidak ditemukan, pastikan tabel sudah dimuat');
         return;
     }
 
     fetch('../Controller/get_destinations.php?section=' + section)
-        .then(response => {
-            console.log('Response status:', response.status); // Debug response
-            return response.json();
-        })
+        .then(response => response.json())
         .then(result => {
-            console.log('Data loaded:', result); // Debug data
-
-            if (result.success) {
+            console.log('Data loaded:', result);
+            if (result.success && Array.isArray(result.data)) {
                 tbody.innerHTML = '';
-                
-                if (!Array.isArray(result.data)) {
-                    console.error('Data bukan array:', result.data);
-                    return;
-                }
-
                 result.data.forEach(item => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>
-                            <img src="${item.main_image || '../Image/placeholder.jpg'}" 
+                            <img src="data:image/jpeg;base64,${item.main_image}" 
                                  alt="${item.name}" 
                                  class="img-thumbnail" 
                                  style="width: 50px; height: 50px; object-fit: cover;">
@@ -46,13 +47,9 @@ function loadDestinations(section = 'YoStay') {
                     `;
                     tbody.appendChild(tr);
                 });
-            } else {
-                console.error('Failed to load data:', result.message);
             }
         })
-        .catch(error => {
-            console.error('Error loading destinations:', error);
-        });
+        .catch(error => console.error('Error:', error));
 }
 
 window.saveDestination = function() {
