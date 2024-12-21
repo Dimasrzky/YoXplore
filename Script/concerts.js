@@ -54,6 +54,7 @@ function loadConcertCategories() {
     const categorySelect = document.querySelector('#addConcertForm select[name="category"]');
     if (!categorySelect) return;
 
+    // Tambahkan type=YoConcert di URL
     fetch('../Controller/get_categories.php?type=YoConcert')
         .then(response => response.json())
         .then(result => {

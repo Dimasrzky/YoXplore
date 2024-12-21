@@ -1,17 +1,22 @@
 <?php
-require_once '../Config/db_connect.php';
 header('Content-Type: application/json');
+require_once('../Config/db_connect.php');
 
 try {
-    $feature_type = $_GET['type'] ?? '';
+    $type = $_GET['type'] ?? '';
     
-    $stmt = $conn->prepare("SELECT id, name FROM categories WHERE feature_type = ?");
-    $stmt->execute([$feature_type]);
-    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("
+        SELECT * FROM categories 
+        WHERE feature_type = ?
+        ORDER BY name ASC
+    ");
+    
+    $stmt->execute([$type]);
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     echo json_encode([
         'success' => true,
-        'data' => $categories
+        'data' => $data
     ]);
 
 } catch(PDOException $e) {
