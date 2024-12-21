@@ -88,14 +88,21 @@ function loadCategories() {
         .then(response => response.json())
         .then(result => {
             if (result.success) {
-                const select = document.querySelector('[name="category_id"]');
-                select.innerHTML = '<option value="">Select Category</option>';
+                const categorySelect = document.querySelector('select[name="category"]');
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
+                
                 result.data.forEach(category => {
-                    select.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+                    categorySelect.innerHTML += `
+                        <option value="${category.id}">${category.name}</option>
+                    `;
                 });
             }
-        });
+        })
+        .catch(error => console.error('Error:', error));
 }
+
+// Panggil loadCategories saat modal dibuka
+document.getElementById('addDestinationModal').addEventListener('show.bs.modal', loadCategories);
 
 // Initialize when document loads
 document.addEventListener('DOMContentLoaded', function() {

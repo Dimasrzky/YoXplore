@@ -4,6 +4,7 @@ header('Content-Type: application/json');
 
 try {
     $feature_type = $_GET['type'] ?? '';
+    
     $stmt = $conn->prepare("SELECT id, name FROM categories WHERE feature_type = ?");
     $stmt->execute([$feature_type]);
     $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -12,6 +13,7 @@ try {
         'success' => true,
         'data' => $categories
     ]);
+
 } catch(PDOException $e) {
     echo json_encode([
         'success' => false,
