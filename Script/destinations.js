@@ -40,7 +40,7 @@ window.loadDestinations = function(section = 'YoStay') {
                             <img src="data:image/jpeg;base64,${item.main_image || ''}" 
                                  alt="${item.name}" 
                                  class="img-thumbnail" 
-                                 style="width: 50px; height: 50px; object-fit: cover;"
+                                 style="width: 100px; height: 100px; object-fit: cover;"
                                  onerror="this.src='../Image/placeholder.jpg'">
                         </td>
                         <td>${item.category_name}</td>
