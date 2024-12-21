@@ -84,6 +84,9 @@
         }
 
         function initializeComponents() {
+            // Initialize users
+            initializeUsers();
+        
             // Initialize event listeners for tabs
             const triggerTabList = document.querySelectorAll('[data-bs-toggle="pill"]');
             triggerTabList.forEach(triggerEl => {
@@ -96,12 +99,10 @@
                     }
                 });
             });
-
-            // Load initial content
-            fetchUsers();
-            setInterval(fetchUsers, 3000);
         }
-
+        
+        // Single initialization point
+        document.addEventListener('DOMContentLoaded', loadComponents);
         // Single initialization point
         document.addEventListener('DOMContentLoaded', loadComponents);
     </script>

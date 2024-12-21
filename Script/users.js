@@ -1,60 +1,63 @@
-// Di awal file users.js
-console.log('Users script loaded');
+let usersTable = null;
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, fetching users...');
+function initializeUsers() {
+    usersTable = document.querySelector('#usersTable tbody');
+    if (!usersTable) {
+        console.error('Users table not found');
+        return;
+    }
     fetchUsers();
-    // Refresh data setiap 3 detik
     setInterval(fetchUsers, 3000);
-});
+}
 
 function fetchUsers() {
     fetch('../Controller/get_users.php')
         .then(response => response.json())
         .then(result => {
-            console.log('Data users:', result); // Debug log
+            console.log('Data users:', result);
             
             if (result.success) {
                 // Update total users
-                document.getElementById('totalUsers').textContent = result.count;
+                const totalElement = document.getElementById('totalUsers');
+                if (totalElement) {
+                    totalElement.textContent = result.count;
+                }
                 
                 // Update table
-                const tbody = document.querySelector('#usersTable tbody');
-                tbody.innerHTML = ''; // Clear existing content
-                
-                // Make sure we're iterating through the data array
-                if (Array.isArray(result.data)) {
-                    result.data.forEach(user => {
-                        const tr = document.createElement('tr');
-                        const date = new Date(user.created_at).toLocaleDateString();
-                        tr.innerHTML = `
-                            <td>${user.username}</td>
-                            <td>${user.email}</td>
-                            <td>${date}</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                } else {
-                    console.error('Data is not an array:', result.data);
+                if (usersTable) {
+                    usersTable.innerHTML = '';
+                    
+                    if (Array.isArray(result.data)) {
+                        result.data.forEach(user => {
+                            const tr = document.createElement('tr');
+                            const date = new Date(user.created_at).toLocaleDateString();
+                            tr.innerHTML = `
+                                <td>${user.username}</td>
+                                <td>${user.email}</td>
+                                <td>${date}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </td>
+                            `;
+                            usersTable.appendChild(tr);
+                        });
+                    }
                 }
-            } else {
-                console.error('Failed to fetch users:', result.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            const tbody = document.querySelector('#usersTable tbody');
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading users</td></tr>';
+            if (usersTable) {
+                usersTable.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading users</td></tr>';
+            }
         });
 }
+
 
 function updateTotalUsers() { 
     fetch('../Controller/get_users.php')
@@ -187,9 +190,3 @@ function renderUsers() {
         })
         .catch(error => console.error('Error:', error));
 }
-
-// Panggil fungsi saat halaman dimuat
-document.addEventListener('DOMContentLoaded', () => {
-    renderUsers();
-    setInterval(renderUsers, 30000); // Refresh data setiap 30 detik
-});
