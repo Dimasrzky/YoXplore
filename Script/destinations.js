@@ -43,25 +43,33 @@ window.saveDestination = function() {
 
     const formData = new FormData(form);
     
+    // Log untuk debugging
+    console.log('Form data:', Object.fromEntries(formData));
+    
     fetch('../Controller/add_destination.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(result => {
         if (result.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
             modal.hide();
             form.reset();
             loadDestinations();
-            alert('Destination added successfully');
+            alert('Destinasi berhasil ditambahkan');
         } else {
-            throw new Error(result.message || 'Failed to add destination');
+            throw new Error(result.message || 'Gagal menambahkan destinasi');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Failed to add destination: ' + error.message);
+        alert('Gagal menambahkan destinasi: ' + error.message);
     });
 }
 
