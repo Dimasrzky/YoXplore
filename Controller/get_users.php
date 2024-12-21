@@ -1,13 +1,17 @@
 <?php
-require_once('../Config/db_connect.php');
+require_once '../Config/db_connect.php';
 
 header('Content-Type: application/json');
 
 try {
-    $query = "SELECT * FROM client ORDER BY created_at DESC";
-    $stmt = $conn->prepare($query);
+    // Tambahkan ORDER BY untuk mengurutkan data
+    $sql = "SELECT id, username, email, created_at FROM client ORDER BY created_at DESC";
+    $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Debug log
+    error_log("Found " . count($users) . " users");
     
     echo json_encode([
         'success' => true,
@@ -15,9 +19,9 @@ try {
         'count' => count($users)
     ]);
 } catch(PDOException $e) {
+    error_log("Database error: " . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'message' => 'Failed to fetch users: ' . $e->getMessage()
+        'message' => $e->getMessage()
     ]);
 }
-?>

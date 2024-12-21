@@ -1,8 +1,19 @@
-// User-related functions
+// Di awal file users.js
+console.log('Users script loaded');
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, fetching users...');
+    fetchUsers();
+    // Refresh data setiap 3 detik
+    setInterval(fetchUsers, 3000);
+});
+
 function fetchUsers() {
     fetch('../Controller/get_users.php')
         .then(response => response.json())
         .then(result => {
+            console.log('Data users:', result); // Debug log
+            
             if (result.success) {
                 // Update total users
                 document.getElementById('totalUsers').textContent = result.count;
@@ -11,29 +22,37 @@ function fetchUsers() {
                 const tbody = document.querySelector('#usersTable tbody');
                 tbody.innerHTML = ''; // Clear existing content
                 
-                result.data.forEach(user => {
-                    const date = new Date(user.created_at).toLocaleDateString();
-                    tbody.innerHTML += `
-                        <tr>
+                // Make sure we're iterating through the data array
+                if (Array.isArray(result.data)) {
+                    result.data.forEach(user => {
+                        const tr = document.createElement('tr');
+                        const date = new Date(user.created_at).toLocaleDateString();
+                        tr.innerHTML = `
                             <td>${user.username}</td>
                             <td>${user.email}</td>
                             <td>${date}</td>
                             <td>
-                                <button class="btn btn-sm btn-warning me-2" onclick="editUser(${user.id})">
+                                <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
-                                <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
                                     <i class="fas fa-trash"></i> Delete
                                 </button>
                             </td>
-                        </tr>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    console.error('Data is not an array:', result.data);
+                }
+            } else {
+                console.error('Failed to fetch users:', result.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            const tbody = document.querySelector('#usersTable tbody');
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading users</td></tr>';
         });
 }
 
