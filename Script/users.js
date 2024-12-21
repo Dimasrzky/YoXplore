@@ -52,9 +52,6 @@ function fetchUsers() {
         })
         .catch(error => {
             console.error('Error:', error);
-            if (usersTable) {
-                usersTable.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Error loading users</td></tr>';
-            }
         });
 }
 
