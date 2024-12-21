@@ -1,5 +1,5 @@
 <?php
-require_once '../Config/db_connect.php';
+require_once __DIR__ . '/../Config/db_connect.php';
 
 // Matikan semua output buffer
 ob_clean();
