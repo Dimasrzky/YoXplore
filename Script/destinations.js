@@ -34,10 +34,16 @@ function loadDestinations(section = 'YoStay') {
         .catch(error => console.error('Error:', error));
 }
 
-window.saveDestination = function(e) {
-    if (e) e.preventDefault();
-    
+window.saveDestination = function() {
     const form = document.getElementById('addDestinationForm');
+    const imageFile = form.querySelector('input[type="file"]').files[0];
+    
+    // Cek ukuran file
+    if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+        alert('Ukuran file terlalu besar (maksimal 5MB)');
+        return;
+    }
+
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
@@ -45,28 +51,14 @@ window.saveDestination = function(e) {
 
     const formData = new FormData(form);
     
-    // Debug: log form data
-    for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-    }
-    
-    fetch('../Controller/add_destination_yostay.php', {
+    fetch('/YoXplore/Controller/add_destination.php', {
         method: 'POST',
-        body: formData  // Jangan set Content-Type header untuk multipart/form-data
+        body: formData
     })
-    .then(async response => {
-        const text = await response.text();
-        console.log('Raw response:', text);
-        try {
-            return JSON.parse(text);
-        } catch (e) {
-            throw new Error('Invalid JSON response: ' + text);
-        }
-    })
+    .then(response => response.json())
     .then(result => {
         if (result.success) {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
-            modal.hide();
+            bootstrap.Modal.getInstance(document.getElementById('addDestinationModal')).hide();
             form.reset();
             loadDestinations();
             alert('Destinasi berhasil ditambahkan');
