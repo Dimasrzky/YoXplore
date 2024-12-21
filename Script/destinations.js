@@ -1,62 +1,28 @@
-function loadDestinations(section) {
-    console.log('Loading section:', section); // Debug log
+function loadCategories() {
+    const categorySelect = document.querySelector('select[name="category"]');
+    if (!categorySelect) {
+        console.error('Elemen select category tidak ditemukan');
+        return;
+    }
 
-    fetch(`../Controller/get_destinations.php?section=${section}`)
-        .then(response => {
-            console.log('Response status:', response.status); // Debug log
-            return response.json();
-        })
+    fetch('../Controller/get_categories.php?type=YoStay')
+        .then(response => response.json())
         .then(result => {
-            console.log('Data received:', result); // Debug log
-            
-            const tbody = document.querySelector(`#${section} table tbody`);
-            tbody.innerHTML = ''; // Clear existing content
-
-            if (!result.data || result.data.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center">No data available</td>
-                    </tr>`;
-                return;
+            console.log('Response kategori:', result); // untuk debug
+            if (result.success) {
+                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+                
+                result.data.forEach(category => {
+                    categorySelect.innerHTML += `
+                        <option value="${category.id}">${category.name}</option>
+                    `;
+                });
+            } else {
+                console.error('Gagal memuat kategori:', result.message);
             }
-
-            result.data.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>
-                        <img src="../Controller/get_image.php?id=${item.id}" 
-                             alt="${item.name}" 
-                             class="img-thumbnail" 
-                             style="width: 50px; height: 50px">
-                    </td>
-                    <td>${item.name}</td>
-                    <td>${item.address}</td>
-                    <td>${item.opening_hours || '-'}</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-sm btn-warning" 
-                                    onclick="editDestination(${item.id}, '${section}')">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn btn-sm btn-danger" 
-                                    onclick="deleteDestination(${item.id}, '${section}')">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
         })
         .catch(error => {
-            console.error('Error loading destinations:', error);
-            const tbody = document.querySelector(`#${section} table tbody`);
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" class="text-center text-danger">
-                        Error loading data. Please try again.
-                    </td>
-                </tr>`;
+            console.error('Error saat memuat kategori:', error);
         });
 }
 
@@ -174,3 +140,4 @@ function renderDestinations(section) {
         tbody.appendChild(tr);
     });
 }
+document.getElementById('addDestinationModal').addEventListener('show.bs.modal', loadCategories);
