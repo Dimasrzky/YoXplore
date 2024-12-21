@@ -80,7 +80,7 @@ window.saveConcert = function() {
     const formData = new FormData(form);
     const isEdit = formData.get('id') ? true : false;
 
-    fetch(isEdit ? '../Controller/update_destination.php' : '../Controller/add_destination_yoconcert.php', {
+    fetch(isEdit ? '../Controller/update_destination.php' : '../Controller/add_destination_yoshow.php', {
         method: 'POST',
         body: formData
     })
