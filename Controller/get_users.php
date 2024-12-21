@@ -1,36 +1,26 @@
 <?php
 require_once '../Config/db_connect.php';
 
+// Matikan semua output buffer
+ob_clean();
 header('Content-Type: application/json');
 
 try {
-    $sql = "SELECT id, username, email, created_at FROM client ORDER BY created_at DESC";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    $stmt = $pdo->query("SELECT id, username, email, created_at FROM client ORDER BY created_at DESC");
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Pastikan output JSON bersih
-    $response = [
+    // Pastikan tidak ada output lain sebelum JSON
+    echo json_encode([
         'success' => true,
-        'data' => array_map(function($user) {
-            return [
-                'id' => $user['id'],
-                'username' => htmlspecialchars($user['username']),
-                'email' => htmlspecialchars($user['email']),
-                'created_at' => $user['created_at']
-            ];
-        }, $users),
+        'data' => $users,
         'count' => count($users)
-    ];
-
-    echo json_encode($response);
-    exit;
+    ]);
 
 } catch(PDOException $e) {
-    $response = [
+    http_response_code(500);
+    echo json_encode([
         'success' => false,
-        'message' => 'Database error: ' . $e->getMessage()
-    ];
-    echo json_encode($response);
-    exit;
+        'message' => $e->getMessage()
+    ]);
 }
+exit;

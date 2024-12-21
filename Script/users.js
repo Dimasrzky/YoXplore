@@ -1,60 +1,56 @@
 function fetchUsers() {
     fetch('../Controller/get_users.php')
-        .then(response => {
-            // Validasi response terlebih dahulu
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        .then(async response => {
+            const text = await response.text();
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Raw response:', text);
+                throw new Error('Server response was not valid JSON');
             }
-            return response.text().then(text => {
-                try {
-                    return JSON.parse(text);
-                } catch (err) {
-                    console.error('Raw response:', text);
-                    throw new Error('Invalid JSON response');
-                }
-            });
         })
         .then(result => {
-            if (result.success) {
-                // Update total users
-                const totalElement = document.getElementById('totalUsers');
-                if (totalElement) {
-                    totalElement.textContent = result.count || 0;
-                }
-
-                // Update table
-                const tbody = document.querySelector('#usersTable tbody');
-                if (tbody) {
-                    tbody.innerHTML = '';
-                    
-                    if (Array.isArray(result.data) && result.data.length > 0) {
-                        result.data.forEach(user => {
-                            const tr = document.createElement('tr');
-                            const date = new Date(user.created_at).toLocaleDateString();
-                            tr.innerHTML = `
-                                <td>${user.username}</td>
-                                <td>${user.email}</td>
-                                <td>${date}</td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </td>
-                            `;
-                            tbody.appendChild(tr);
-                        });
-                    } else {
-                        tbody.innerHTML = `
-                            <tr>
-                                <td colspan="4" class="text-center">No users found</td>
-                            </tr>
-                        `;
-                    }
-                }
+            if (!result.success) {
+                throw new Error(result.message || 'Failed to fetch users');
             }
+
+            // Update total
+            const totalElement = document.getElementById('totalUsers');
+            if (totalElement) {
+                totalElement.textContent = result.count || 0;
+            }
+
+            // Update table
+            const tbody = document.querySelector('#usersTable tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!Array.isArray(result.data) || result.data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center">No users found</td>
+                    </tr>`;
+                return;
+            }
+
+            result.data.forEach(user => {
+                const date = new Date(user.created_at).toLocaleDateString();
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${escapeHtml(user.username)}</td>
+                        <td>${escapeHtml(user.email)}</td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${escapeHtml(user.username)}', '${escapeHtml(user.email)}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>`;
+            });
         })
         .catch(error => {
             console.error('Error:', error);
@@ -63,83 +59,57 @@ function fetchUsers() {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="4" class="text-center text-danger">
-                            ${error.message || 'Error loading users'}
+                            ${escapeHtml(error.message)}
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             }
         });
 }
 
+// Helper function untuk escape HTML
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// Panggil fetchUsers setiap 5 detik
+document.addEventListener('DOMContentLoaded', () => {
+    fetchUsers();
+    setInterval(fetchUsers, 3000);
+});
+
+// Expose functions untuk event handlers
 window.editUser = function(id, username, email) {
     document.getElementById('editUserId').value = id;
     document.getElementById('editUsername').value = username;
     document.getElementById('editEmail').value = email;
     new bootstrap.Modal(document.getElementById('editUserModal')).show();
-}
+};
 
 window.deleteUser = function(id) {
-    if (confirm('Are you sure you want to delete this user?')) {
-        fetch('../Controller/delete_user.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: id })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                fetchUsers();
-            } else {
-                alert('Error deleting user');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-}
-
-window.updateUser = function() {
-    const id = document.getElementById('editUserId').value;
-    const username = document.getElementById('editUsername').value;
-    const email = document.getElementById('editEmail').value;
-    const password = document.getElementById('editPassword').value;
-
-    const data = {
-        id: id,
-        username: username,
-        email: email
-    };
+    if (!confirm('Are you sure you want to delete this user?')) return;
     
-    if(password) {
-        data.password = password;
-    }
-
-    fetch('../Controller/update_user.php', {
+    fetch('../Controller/delete_user.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ id })
     })
     .then(response => response.json())
     .then(result => {
-        if(result.success) {
-            bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
-            renderUsers(); // Refresh tabel
-            alert('User updated successfully');
+        if (result.success) {
+            fetchUsers();
         } else {
-            alert('Failed to update user: ' + result.message);
+            throw new Error(result.message || 'Failed to delete user');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error updating user');
+        alert(error.message);
     });
-}
-
-// Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
-    fetchUsers();
-    setInterval(fetchUsers, 3000);
-});
+};  
