@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // destinations.js
 window.loadDestinations = function(section = 'YoStay') {
     console.log('Loading destinations for:', section);
+    
     const tbody = document.querySelector('#destinationsTable tbody');
     if (!tbody) {
         console.error('Table body tidak ditemukan');
@@ -36,12 +37,14 @@ window.loadDestinations = function(section = 'YoStay') {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>
-                            <img src="data:image/jpeg;base64,${item.main_image}" 
+                            <img src="data:image/jpeg;base64,${item.main_image || ''}" 
                                  alt="${item.name}" 
                                  class="img-thumbnail" 
-                                 style="width: 50px; height: 50px; object-fit: cover;">
+                                 style="width: 50px; height: 50px; object-fit: cover;"
+                                 onerror="this.src='../Image/placeholder.jpg'">
                         </td>
                         <td>${item.name}</td>
+                        <td>${item.category_name}</td>
                         <td>${item.address}</td>
                         <td>${item.opening_hours || '-'}</td>
                         <td>
