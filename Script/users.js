@@ -139,7 +139,6 @@ window.deleteUser = function(id) {
     }
 };
 
-// Di users.js
 window.updateUser = function() {
     const id = document.getElementById('editUserId').value;
     const username = document.getElementById('editUsername').value;
@@ -173,6 +172,7 @@ window.updateUser = function() {
             }
             // Refresh tabel
             fetchUsers();
+            // Hanya satu alert
             alert('User updated successfully');
         } else {
             throw new Error(result.message || 'Failed to update user');
