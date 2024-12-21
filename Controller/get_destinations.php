@@ -15,7 +15,7 @@ try {
             LEFT JOIN categories c ON i.category_id = c.id 
             WHERE i.feature_type = ?";
     
-    $stmt = $pdo->prepare($sql);
+    $stmt = $conn->prepare($sql);
     $stmt->execute([$section]);
     $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
