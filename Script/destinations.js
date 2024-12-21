@@ -53,7 +53,7 @@ window.saveDestination = function() {
         console.log(pair[0] + ': ' + pair[1]);
     }
 
-    fetch('../Controller/add_destination.php', {
+    fetch('../Controller/add_destination_yostay.php', {
         method: 'POST',
         body: formData
     })
