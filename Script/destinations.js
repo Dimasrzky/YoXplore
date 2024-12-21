@@ -1,33 +1,19 @@
 function loadDestinations(section = 'YoStay') {
+    const tbody = document.querySelector('#destinationsTable tbody');
+    if (!tbody) {
+        console.error('Table body tidak ditemukan');
+        return;
+    }
+
     fetch(`../Controller/get_destinations.php?section=${section}`)
         .then(response => response.json())
         .then(result => {
-            if (result.success) {
-                const tbody = document.querySelector('#destinationsTable tbody');
-                tbody.innerHTML = '';
+            if (result.success && Array.isArray(result.data)) {
+                tbody.innerHTML = '';  // Clear existing content
                 
                 result.data.forEach(item => {
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>
-                            <img src="${item.main_image || '../Image/placeholder.jpg'}" 
-                                 alt="${item.name}" 
-                                 class="img-thumbnail" 
-                                 style="width: 50px; height: 50px; object-fit: cover;">
-                        </td>
-                        <td>${item.name}</td>
-                        <td>${item.address}</td>
-                        <td>${item.opening_hours || '-'}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm me-2" onclick="editDestination(${item.id})">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteDestination(${item.id})">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
+                    // ... rest of your code
                 });
             }
         })
@@ -48,7 +34,7 @@ window.saveDestination = function() {
 
     const formData = new FormData(form);
 
-    // Debug: cek data yang akan dikirim
+    // Debug: log form data
     for (let pair of formData.entries()) {
         console.log(pair[0] + ': ' + pair[1]);
     }
@@ -57,20 +43,20 @@ window.saveDestination = function() {
         method: 'POST',
         body: formData
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.text().then(text => {
-                throw new Error(text || 'HTTP error! status: ' + response.status);
-            });
+    .then(async response => {
+        const text = await response.text();
+        console.log('Raw response:', text); // Debug
+        
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            throw new Error('Invalid server response: ' + text);
         }
-        return response.json();
     })
     .then(result => {
         if (result.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
-            if (modal) {
-                modal.hide();
-            }
+            if (modal) modal.hide();
             form.reset();
             loadDestinations();
             alert('Destinasi berhasil ditambahkan');
