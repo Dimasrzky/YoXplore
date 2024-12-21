@@ -57,226 +57,56 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="addUserModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addUserForm">
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control" name="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="saveUser()">Save User</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Add Destination Modal -->
-    <div class="modal fade" id="addDestinationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Destination</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addDestinationForm">
-                        <input type="hidden" name="feature_type" value="YoStay">
-                        <div class="mb-3">
-                            <label class="form-label">Category</label>
-                            <select class="form-control" name="category_id" required>
-                                <option value="">Select Category</option>
-                                <!-- Categories will be loaded here -->
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Destination Name</label>
-                            <input type="text" class="form-control" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Address</label>
-                            <input type="text" class="form-control" name="address" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Open Time</label>
-                            <input type="text" class="form-control" name="openTime" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Image</label>
-                            <input type="file" class="form-control" name="image" accept="image/*" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="submitDestination()">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Wait for all components to load before initializing
-        function loadComponents() {
-            // Load sidebar
-            fetch('../Components/sidebar.html')
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('sidebar-container').innerHTML = html;
-                });
+        async function loadComponents() {
+            try {
+                // Load sidebar
+                const sidebarResponse = await fetch('../Components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHtml;
 
-            // Load users tab
-            fetch('../Components/users-tab.html')
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('main-content').innerHTML = html;
-                    // Load users.js after the component is loaded
-                    const script = document.createElement('script');
-                    script.src = '../Script/users.js';
-                    document.body.appendChild(script);
-                });
-        }
-
-        function fetchUsers() {
-            fetch('../Controller/get_users.php')
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        // Update total users
-                        document.getElementById('totalUsers').textContent = result.count;
-                        
-                        // Update table
-                        const tbody = document.querySelector('#usersTable tbody');
-                        tbody.innerHTML = '';
-                        
-                        result.data.forEach(user => {
-                            const date = new Date(user.created_at).toLocaleDateString();
-                            tbody.innerHTML += `
-                                <tr>
-                                    <td>${user.username}</td>
-                                    <td>${user.email}</td>
-                                    <td>${date}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning me-2" onclick="editUser(${user.id})">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function renderUsers() {
-            const tbody = document.querySelector('#usersTable tbody');
-            tbody.innerHTML = '';
-            
-            fetch('../Controller/get_users.php')
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(user => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${user.username}</td>
-                            <td>${user.email}</td>
-                            <td>${user.created_at}</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                });
-        }
-
-        function editUser(id, username, email) {
-            // Isi form dengan data user
-            document.getElementById('editUserId').value = id;
-            document.getElementById('editUsername').value = username;
-            document.getElementById('editEmail').value = email;
-            
-            // Tampilkan modal
-            new bootstrap.Modal(document.getElementById('editUserModal')).show();
-        }
-
-        function updateUser() {
-            const id = document.getElementById('editUserId').value;
-            const username = document.getElementById('editUsername').value;
-            const email = document.getElementById('editEmail').value;
-            const password = document.getElementById('editPassword').value;
-        
-            const data = {
-                id: id,
-                username: username,
-                email: email
-            };
-            
-            if(password) {
-                data.password = password;
-            }
-        
-            fetch('../Controller/update_user.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if(result.success) {
-                    bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
-                    renderUsers(); // Refresh tabel
-                    alert('User updated successfully');
-                } else {
-                    alert('Failed to update user: ' + result.message);
+                // Load all tab contents
+                const sections = ['users', 'yostay', 'yoconcert', 'yotaste', 'yotrip'];
+                for (const section of sections) {
+                    const response = await fetch(`../Components/${section}-tab.html`);
+                    const html = await response.text();
+                    document.getElementById('main-content').innerHTML += html;
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error updating user');
-            });
-        }
-        
-        // Panggil fetchUsers saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchUsers();
-            // Refresh data setiap 30 detik
-            setInterval(fetchUsers, 3000);
-        });
 
-        // Initialize when document is ready
+                // Initialize components after loading
+                initializeComponents();
+
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        function initializeComponents() {
+            // Initialize event listeners for tabs
+            const triggerTabList = document.querySelectorAll('[data-bs-toggle="pill"]');
+            triggerTabList.forEach(triggerEl => {
+                triggerEl.addEventListener('shown.bs.tab', event => {
+                    const targetId = event.target.getAttribute('href').slice(1);
+                    if (targetId === 'users') {
+                        fetchUsers();
+                    } else {
+                        loadDestinations(targetId);
+                    }
+                });
+            });
+
+            // Load initial content
+            fetchUsers();
+            setInterval(fetchUsers, 3000);
+        }
+
+        // Single initialization point
         document.addEventListener('DOMContentLoaded', loadComponents);
     </script>
+
+    <!-- Load component scripts after main initialization -->
     <script src="../Script/users.js"></script>
     <script src="../Script/destinations.js"></script>
 </body>
