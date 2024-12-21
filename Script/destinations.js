@@ -1,125 +1,176 @@
-function loadDestinations(section = 'YoStay') {
-    const tbody = document.querySelector('#destinationsTable tbody');
-    if (!tbody) {
-        console.error('Table body tidak ditemukan');
-        return;
-    }
+function loadDestinations(section) {
+    console.log('Loading section:', section); // Debug log
 
     fetch(`../Controller/get_destinations.php?section=${section}`)
-        .then(response => response.json())
-        .then(result => {
-            if (result.success && Array.isArray(result.data)) {
-                tbody.innerHTML = '';  // Clear existing content
-                
-                result.data.forEach(item => {
-                    const tr = document.createElement('tr');
-                    // ... rest of your code
-                });
-            }
+        .then(response => {
+            console.log('Response status:', response.status); // Debug log
+            return response.json();
         })
-        .catch(error => console.error('Error:', error));
+        .then(result => {
+            console.log('Data received:', result); // Debug log
+            
+            const tbody = document.querySelector(`#${section} table tbody`);
+            tbody.innerHTML = ''; // Clear existing content
+
+            if (!result.data || result.data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">No data available</td>
+                    </tr>`;
+                return;
+            }
+
+            result.data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <img src="../Controller/get_image.php?id=${item.id}" 
+                             alt="${item.name}" 
+                             class="img-thumbnail" 
+                             style="width: 50px; height: 50px">
+                    </td>
+                    <td>${item.name}</td>
+                    <td>${item.address}</td>
+                    <td>${item.opening_hours || '-'}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-warning" 
+                                    onclick="editDestination(${item.id}, '${section}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger" 
+                                    onclick="deleteDestination(${item.id}, '${section}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading destinations:', error);
+            const tbody = document.querySelector(`#${section} table tbody`);
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-danger">
+                        Error loading data. Please try again.
+                    </td>
+                </tr>`;
+        });
 }
 
-window.saveDestination = function() {
-    const form = document.getElementById('addDestinationForm');
-    if (!form) {
-        console.error('Form tidak ditemukan');
-        return;
-    }
-
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
-
+function saveDestination() {
+    const form = document.getElementById('destinationForm');
     const formData = new FormData(form);
-
-    // Debug: log form data
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
-
-    fetch('../Controller/add_destination_yostay.php', {
+    
+    // Convert section name untuk match dengan ENUM di database
+    const section = formData.get('section');
+    formData.set('feature_type', section.charAt(0).toUpperCase() + section.slice(1));
+    
+    fetch('../Controller/save_destination.php', {
         method: 'POST',
         body: formData
     })
-    .then(async response => {
-        const text = await response.text();
-        console.log('Raw response:', text); // Debug
-        
-        try {
-            return JSON.parse(text);
-        } catch (e) {
-            throw new Error('Invalid server response: ' + text);
-        }
-    })
+    .then(response => response.json())
     .then(result => {
-        if (result.success) {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
-            if (modal) modal.hide();
+        if(result.success) {
+            loadDestinations(section);
+            const modal = bootstrap.Modal.getInstance(document.getElementById('destinationModal'));
+            modal.hide();
             form.reset();
-            loadDestinations();
-            alert('Destinasi berhasil ditambahkan');
+            alert('Destination saved successfully');
         } else {
-            throw new Error(result.message || 'Gagal menambahkan destinasi');
+            alert('Failed to save destination: ' + result.message);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Gagal menambahkan destinasi: ' + (error.message || error));
+        alert('Error saving destination');
     });
 }
 
-function submitDestination() {
-    const form = document.getElementById('addDestinationForm');
-    const formData = new FormData(form);
-    
-    // Validasi form
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
-
-    saveDestination(formData);
-}
-
-function loadCategories() {
-    const categorySelect = document.querySelector('select[name="category"]');
-    if (!categorySelect) {
-        console.error('Elemen select category tidak ditemukan');
-        return;
-    }
-
-    fetch('../Controller/get_categories.php?type=YoStay')
+function editDestination(id, section) {
+    fetch(`../Controller/get_destination.php?id=${id}`)
         .then(response => response.json())
         .then(result => {
-            console.log('Response kategori:', result); // untuk debug
-            if (result.success) {
-                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+            if(result.success) {
+                const data = result.data;
+                const form = document.getElementById('destinationForm');
                 
-                result.data.forEach(category => {
-                    categorySelect.innerHTML += `
-                        <option value="${category.id}">${category.name}</option>
+                form.querySelector('[name="destinationId"]').value = data.id;
+                form.querySelector('[name="name"]').value = data.name;
+                form.querySelector('[name="address"]').value = data.address;
+                form.querySelector('[name="openTime"]').value = data.opening_hours;
+                form.querySelector('[name="section"]').value = section;
+                
+                // Show current image if exists
+                if(data.id) {
+                    document.getElementById('currentImage').innerHTML = `
+                        <img src="../Controller/get_image.php?id=${data.id}" 
+                             alt="Current image" 
+                             class="img-thumbnail" 
+                             style="height: 100px; object-fit: cover;">
                     `;
-                });
+                }
+                
+                new bootstrap.Modal(document.getElementById('destinationModal')).show();
             } else {
-                console.error('Gagal memuat kategori:', result.message);
+                alert('Failed to load destination data');
             }
         })
         .catch(error => {
-            console.error('Error saat memuat kategori:', error);
+            console.error('Error:', error);
+            alert('Error loading destination data');
         });
 }
 
-// Panggil loadCategories saat modal dibuka
-document.getElementById('addDestinationModal').addEventListener('show.bs.modal', loadCategories);
+function deleteDestination(id, section) {
+    if(confirm('Are you sure you want to delete this destination?')) {
+        fetch('../Controller/delete_destination.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: id })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.success) {
+                loadDestinations(section);
+                alert('Destination deleted successfully');
+            } else {
+                alert('Failed to delete destination: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting destination');
+        });
+    }
+}
 
-// Initialize when document loads
-document.addEventListener('DOMContentLoaded', function() {
-    loadDestinations();
-});
-
-window.showAddDestinationModal = function() {
-    const modal = new bootstrap.Modal(document.getElementById('addDestinationModal'));
-    modal.show();
+function renderDestinations(section) {
+    const destinations = JSON.parse(localStorage.getItem(section)) || [];
+    const tbody = document.querySelector(`#${section} table tbody`);
+    tbody.innerHTML = '';
+    
+    destinations.forEach(dest => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><img src="${dest.image}" alt="${dest.name}" class="img-thumbnail" style="width: 50px; height: 50px"></td>
+            <td>${dest.name}</td>
+            <td>${dest.address}</td>
+            <td>${dest.openTime}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-2" onclick="openDestinationModal('${section}', ${dest.id})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteDestination('${section}', ${dest.id})">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 }

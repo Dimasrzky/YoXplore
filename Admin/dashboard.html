@@ -97,11 +97,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addDestinationForm" enctype="multipart/form-data">
+                    <form id="addDestinationForm">
                         <input type="hidden" name="feature_type" value="YoStay">
                         <div class="mb-3">
                             <label class="form-label">Category</label>
-                            <select name="category" id="categorySelect" class="form-control" required>
+                            <select class="form-control" name="category_id" required>
                                 <option value="">Select Category</option>
                                 <!-- Categories will be loaded here -->
                             </select>
@@ -116,7 +116,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Open Time</label>
-                            <input type="time" class="form-control" name="openTime" required>
+                            <input type="text" class="form-control" name="openTime" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Image</label>
@@ -126,7 +126,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="saveDestination()">Save</button>
+                    <button type="button" class="btn btn-primary" onclick="sacDestination()">Save</button>
                 </div>
             </div>
         </div>
