@@ -300,6 +300,13 @@
     </body>
 
     <script>
+        function logout() {
+            // Clear semua data
+            sessionStorage.clear();
+            localStorage.clear();
+            window.location.href = '../Client/Login.html';
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             const usernameDisplay = document.getElementById('usernameDisplay');
             fetch('/YoXplore/Controller/get_user_data.php')
