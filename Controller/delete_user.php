@@ -10,7 +10,7 @@ try {
         throw new Exception('Invalid ID');
     }
 
-    $stmt = $conn->prepare("SELECT id FROM users WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id FROM client WHERE id = ?");
     $stmt->execute([$data['id']]);
     
     if ($stmt->rowCount() === 0) {
