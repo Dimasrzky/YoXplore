@@ -1,51 +1,19 @@
-document.addEventListener('DOMContentLoaded', function() {
-    loadDestinations();
-    
-    // Event listeners untuk form dan button
-    const form = document.getElementById('addDestinationForm');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveDestination();
-        });
-    }
-});
-
 function loadDestinations(section = 'YoStay') {
     const tbody = document.querySelector('#destinationsTable tbody');
     if (!tbody) {
-        console.error('Table body tidak ditemukan, pastikan tabel sudah dimuat');
+        console.error('Table body tidak ditemukan');
         return;
     }
 
-    fetch('../Controller/get_destinations.php?section=' + section)
+    fetch(`../Controller/get_destinations.php?section=${section}`)
         .then(response => response.json())
         .then(result => {
-            console.log('Data loaded:', result);
             if (result.success && Array.isArray(result.data)) {
-                tbody.innerHTML = '';
+                tbody.innerHTML = '';  // Clear existing content
+                
                 result.data.forEach(item => {
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>
-                            <img src="data:image/jpeg;base64,${item.main_image}" 
-                                 alt="${item.name}" 
-                                 class="img-thumbnail" 
-                                 style="width: 50px; height: 50px; object-fit: cover;">
-                        </td>
-                        <td>${item.name}</td>
-                        <td>${item.address}</td>
-                        <td>${item.opening_hours || '-'}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm me-2" onclick="editDestination(${item.id})">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteDestination(${item.id})">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
+                    // ... rest of your code
                 });
             }
         })
