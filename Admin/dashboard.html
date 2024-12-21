@@ -84,27 +84,28 @@
         }
 
         function initializeComponents() {
-            // Initialize users
-            initializeUsers();
-        
-            // Initialize event listeners for tabs
+            // Initialize tab functionality
             const triggerTabList = document.querySelectorAll('[data-bs-toggle="pill"]');
             triggerTabList.forEach(triggerEl => {
                 triggerEl.addEventListener('shown.bs.tab', event => {
                     const targetId = event.target.getAttribute('href').slice(1);
-                    if (targetId === 'users') {
-                        fetchUsers();
+                    if(targetId === 'users') {
+                        window.fetchUsers();
                     } else {
                         loadDestinations(targetId);
                     }
                 });
             });
+        
+            // Load initial data
+            window.fetchUsers();
         }
         
-        // Single initialization point
-        document.addEventListener('DOMContentLoaded', loadComponents);
-        // Single initialization point
-        document.addEventListener('DOMContentLoaded', loadComponents);
+        // Initialize when document is ready
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadComponents();
+            initializeComponents();
+        });
     </script>
 
     <!-- Load component scripts after main initialization -->
