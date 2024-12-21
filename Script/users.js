@@ -1,57 +1,71 @@
-let usersTable = null;
-
-function initializeUsers() {
-    usersTable = document.querySelector('#usersTable tbody');
-    if (!usersTable) {
-        console.error('Users table not found');
-        return;
-    }
-    fetchUsers();
-    setInterval(fetchUsers, 3000);
-}
-
 function fetchUsers() {
     fetch('../Controller/get_users.php')
-        .then(response => response.json())
+        .then(response => {
+            // Check if response is valid
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text().then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error('Error parsing JSON:', text);
+                    throw new Error('Invalid JSON response');
+                }
+            });
+        })
         .then(result => {
             console.log('Data users:', result);
             
-            if (result.success) {
+            if (result.success && Array.isArray(result.data)) {
                 // Update total users
                 const totalElement = document.getElementById('totalUsers');
                 if (totalElement) {
-                    totalElement.textContent = result.count;
+                    totalElement.textContent = result.count || 0;
                 }
-                
+
                 // Update table
-                if (usersTable) {
-                    usersTable.innerHTML = '';
+                const tbody = document.querySelector('#usersTable tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
                     
-                    if (Array.isArray(result.data)) {
-                        result.data.forEach(user => {
-                            const tr = document.createElement('tr');
-                            const date = new Date(user.created_at).toLocaleDateString();
-                            tr.innerHTML = `
-                                <td>${user.username}</td>
-                                <td>${user.email}</td>
-                                <td>${date}</td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
+                    result.data.forEach(user => {
+                        const tr = document.createElement('tr');
+                        const date = new Date(user.created_at);
+                        const formattedDate = date.toLocaleDateString();
+                        
+                        tr.innerHTML = `
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td>${formattedDate}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-warning btn-sm" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
+                                    <button class="btn btn-danger btn-sm ms-2" onclick="deleteUser(${user.id})">
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
-                                </td>
-                            `;
-                            usersTable.appendChild(tr);
-                        });
-                    }
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
                 }
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            const tbody = document.querySelector('#usersTable tbody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            Error loading users. ${error.message}
+                        </td>
+                    </tr>
+                `;
+            }
         });
 }
 
@@ -187,3 +201,9 @@ function renderUsers() {
         })
         .catch(error => console.error('Error:', error));
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Initializing users...');
+    fetchUsers();
+    setInterval(fetchUsers, 3000);
+});
