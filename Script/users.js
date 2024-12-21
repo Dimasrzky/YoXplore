@@ -78,6 +78,10 @@ function escapeHtml(unsafe) {
 
 // Panggil fetchUsers setiap 5 detik
 document.addEventListener('DOMContentLoaded', () => {
+    const updateBtn = document.querySelector('#editUserModal .btn-primary');
+    if (updateBtn) {
+        updateBtn.removeAttribute('onclick');
+    }
     fetchUsers();
     setInterval(fetchUsers, 3000);
 });
@@ -87,24 +91,11 @@ function editUser(id, username, email) {
     document.getElementById('editUserId').value = id;
     document.getElementById('editUsername').value = username;
     document.getElementById('editEmail').value = email;
-
-    // Clear password field
     document.getElementById('editPassword').value = '';
-
-    // Get modal instance
-    const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
     
-    // Add click handler to save button
-    const saveButton = document.querySelector('#editUserModal .btn-primary');
-    if(saveButton) {
-        // Remove old handlers
-        saveButton.replaceWith(saveButton.cloneNode(true));
-        // Add new handler
-        document.querySelector('#editUserModal .btn-primary').addEventListener('click', updateUser);
-    }
+    initializeUpdateForm();
     
-    // Show modal
-    modal.show();
+    new bootstrap.Modal(document.getElementById('editUserModal')).show();
 }
 
 window.deleteUser = function(id) {
@@ -139,7 +130,13 @@ window.deleteUser = function(id) {
     }
 };
 
-window.updateUser = function() {
+function updateUser() {
+    // Prevent double submission
+    const submitButton = document.querySelector('#editUserModal .btn-primary');
+    if (submitButton) {
+        submitButton.disabled = true;
+    }
+
     const id = document.getElementById('editUserId').value;
     const username = document.getElementById('editUsername').value;
     const email = document.getElementById('editEmail').value;
@@ -165,15 +162,14 @@ window.updateUser = function() {
     .then(response => response.json())
     .then(result => {
         if(result.success) {
-            // Tutup modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-            if(modal) {
-                modal.hide();
-            }
-            // Refresh tabel
+            // Close modal first
+            bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+            
+            // Then update table
             fetchUsers();
-            // Hanya satu alert
-            alert('User updated successfully');
+            
+            // Single alert
+            setTimeout(() => alert('User updated successfully'), 100);
         } else {
             throw new Error(result.message || 'Failed to update user');
         }
@@ -181,5 +177,11 @@ window.updateUser = function() {
     .catch(error => {
         console.error('Error:', error);
         alert('Error updating user');
+    })
+    .finally(() => {
+        // Re-enable submit button
+        if (submitButton) {
+            submitButton.disabled = false;
+        }
     });
-};
+}
