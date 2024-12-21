@@ -1,6 +1,19 @@
 function fetchUsers() {
     fetch('../Controller/get_users.php')
-        .then(response => response.json())
+        .then(response => {
+            // Validasi response terlebih dahulu
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text().then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (err) {
+                    console.error('Raw response:', text);
+                    throw new Error('Invalid JSON response');
+                }
+            });
+        })
         .then(result => {
             if (result.success) {
                 // Update total users
@@ -14,24 +27,24 @@ function fetchUsers() {
                 if (tbody) {
                     tbody.innerHTML = '';
                     
-                    if (Array.isArray(result.data)) {
+                    if (Array.isArray(result.data) && result.data.length > 0) {
                         result.data.forEach(user => {
+                            const tr = document.createElement('tr');
                             const date = new Date(user.created_at).toLocaleDateString();
-                            tbody.innerHTML += `
-                                <tr>
-                                    <td>${user.username}</td>
-                                    <td>${user.email}</td>
-                                    <td>${date}</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </button>
-                                        <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
-                                    </td>
-                                </tr>
+                            tr.innerHTML = `
+                                <td>${user.username}</td>
+                                <td>${user.email}</td>
+                                <td>${date}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm me-2" onclick="editUser(${user.id}, '${user.username}', '${user.email}')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </td>
                             `;
+                            tbody.appendChild(tr);
                         });
                     } else {
                         tbody.innerHTML = `
@@ -50,14 +63,14 @@ function fetchUsers() {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="4" class="text-center text-danger">
-                            Error loading users
+                            ${error.message || 'Error loading users'}
                         </td>
                     </tr>
                 `;
             }
         });
 }
-// Expose functions to global scope
+
 window.editUser = function(id, username, email) {
     document.getElementById('editUserId').value = id;
     document.getElementById('editUsername').value = username;
