@@ -6,7 +6,7 @@ ob_clean();
 header('Content-Type: application/json');
 
 try {
-    $stmt = $pdo->query("SELECT id, username, email, created_at FROM client ORDER BY created_at DESC");
+    $stmt = $conn->query("SELECT id, username, email, created_at FROM client ORDER BY created_at DESC");
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Pastikan tidak ada output lain sebelum JSON
