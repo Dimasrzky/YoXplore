@@ -8,46 +8,65 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDestinations('YoStay');
 });
 
-// Fungsi untuk menampilkan modal Add Destination
-function showAddDestinationModal() {
-    const modal = new bootstrap.Modal(document.getElementById('addDestinationModal'));
-    
-    // Load kategori sebelum modal ditampilkan
-    loadCategories();
-    
-    // Tampilkan modal
-    modal.show();
-}
+// Event listener saat dokumen dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener untuk tombol Add Destination
+    const addButton = document.querySelector('[data-action="addDestination"]');
+    if (addButton) {
+        addButton.addEventListener('click', showAddDestinationModal);
+    }
+});
 
-// Fungsi untuk load kategori
-function loadCategories() {
-    const categorySelect = document.querySelector('select[name="category"]');
-    if (!categorySelect) {
-        console.error('Category select element not found');
+// destinations.js
+window.loadDestinations = function(section = 'YoStay') {
+    console.log('Loading destinations for:', section);
+    const tbody = document.querySelector('#destinationsTable tbody');
+    if (!tbody) {
+        console.error('Table body tidak ditemukan');
         return;
     }
 
-    fetch('../Controller/get_categories.php?type=YoStay')
+    fetch(`../Controller/get_destinations.php?section=${section}`)
         .then(response => response.json())
         .then(result => {
-            if (result.success) {
-                categorySelect.innerHTML = '<option value="">Select Category</option>';
-                result.data.forEach(category => {
-                    categorySelect.innerHTML += `
-                        <option value="${category.id}">${category.name}</option>
+            if (result.success && Array.isArray(result.data)) {
+                tbody.innerHTML = '';
+                
+                result.data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <img src="data:image/jpeg;base64,${item.main_image}" 
+                                 alt="${item.name}" 
+                                 class="img-thumbnail" 
+                                 style="width: 50px; height: 50px; object-fit: cover;">
+                        </td>
+                        <td>${item.name}</td>
+                        <td>${item.address}</td>
+                        <td>${item.opening_hours || '-'}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-2" onclick="editDestination(${item.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteDestination(${item.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
                     `;
+                    tbody.appendChild(tr);
                 });
-            } else {
-                console.error('Failed to load categories:', result.message);
             }
         })
-        .catch(error => {
-            console.error('Error loading categories:', error);
-        });
-}
+        .catch(error => console.error('Error:', error));
+};
 
-// Fungsi untuk menyimpan destination baru
-function saveDestination() {
+window.showAddDestinationModal = function() {
+    const modal = new bootstrap.Modal(document.getElementById('addDestinationModal'));
+    loadCategories();
+    modal.show();
+};
+
+window.saveDestination = function() {
     const form = document.getElementById('addDestinationForm');
     if (!form.checkValidity()) {
         form.reportValidity();
@@ -55,7 +74,7 @@ function saveDestination() {
     }
 
     const formData = new FormData(form);
-    
+
     fetch('../Controller/add_destination_yostay.php', {
         method: 'POST',
         body: formData
@@ -64,7 +83,7 @@ function saveDestination() {
     .then(result => {
         if (result.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
-            modal.hide();
+            if (modal) modal.hide();
             form.reset();
             loadDestinations('YoStay');
             alert('Destinasi berhasil ditambahkan');
@@ -76,13 +95,34 @@ function saveDestination() {
         console.error('Error:', error);
         alert('Gagal menambahkan destinasi: ' + error.message);
     });
+};
+
+function loadCategories() {
+    const categorySelect = document.querySelector('select[name="category"]');
+    if (!categorySelect) return;
+
+    fetch('../Controller/get_categories.php?type=YoStay')
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
+                result.data.forEach(category => {
+                    categorySelect.innerHTML += `
+                        <option value="${category.id}">${category.name}</option>
+                    `;
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
-// Event listener saat dokumen dimuat
-document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener untuk tombol Add Destination
-    const addButton = document.querySelector('[data-action="addDestination"]');
-    if (addButton) {
-        addButton.addEventListener('click', showAddDestinationModal);
-    }
-});
+// Fungsi untuk menampilkan modal Add Destination
+function showAddDestinationModal() {
+    const modal = new bootstrap.Modal(document.getElementById('addDestinationModal'));
+    
+    // Load kategori sebelum modal ditampilkan
+    loadCategories();
+    
+    // Tampilkan modal
+    modal.show();
+}
