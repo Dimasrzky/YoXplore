@@ -43,8 +43,8 @@ window.loadDestinations = function(section = 'YoStay') {
                                  style="width: 50px; height: 50px; object-fit: cover;"
                                  onerror="this.src='../Image/placeholder.jpg'">
                         </td>
-                        <td>${item.name}</td>
                         <td>${item.category_name}</td>
+                        <td>${item.name}</td>
                         <td>${item.address}</td>
                         <td>${item.opening_hours || '-'}</td>
                         <td>
