@@ -1,22 +1,37 @@
 function loadDestinations(section = 'YoStay') {
-    fetch(`../Controller/get_destinations.php?section=${section}`)
-        .then(response => response.json())
+    const tbody = document.querySelector('#destinationsTable tbody');
+    if (!tbody) {
+        console.error('Table body tidak ditemukan');
+        return;
+    }
+
+    fetch('../Controller/get_destinations.php?section=' + section)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(result => {
             if (result.success) {
-                const tbody = document.querySelector('#destinationsTable tbody');
                 tbody.innerHTML = '';
                 
+                if (!Array.isArray(result.data)) {
+                    console.error('Data tidak valid');
+                    return;
+                }
+
                 result.data.forEach(item => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>
                             <img src="${item.main_image || '../Image/placeholder.jpg'}" 
-                                 alt="${item.name}" 
+                                 alt="${item.name || ''}" 
                                  class="img-thumbnail" 
                                  style="width: 50px; height: 50px; object-fit: cover;">
                         </td>
-                        <td>${item.name}</td>
-                        <td>${item.address}</td>
+                        <td>${item.name || ''}</td>
+                        <td>${item.address || ''}</td>
                         <td>${item.opening_hours || '-'}</td>
                         <td>
                             <button class="btn btn-warning btn-sm me-2" onclick="editDestination(${item.id})">
@@ -29,18 +44,20 @@ function loadDestinations(section = 'YoStay') {
                     `;
                     tbody.appendChild(tr);
                 });
+            } else {
+                throw new Error(result.message || 'Gagal memuat data');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Gagal memuat data: ' + error.message);
+        });
 }
 
 window.saveDestination = function() {
     const form = document.getElementById('addDestinationForm');
-    const imageFile = form.querySelector('input[type="file"]').files[0];
-    
-    // Cek ukuran file
-    if (imageFile && imageFile.size > 5 * 1024 * 1024) {
-        alert('Ukuran file terlalu besar (maksimal 5MB)');
+    if (!form) {
+        console.error('Form tidak ditemukan');
         return;
     }
 
@@ -50,15 +67,30 @@ window.saveDestination = function() {
     }
 
     const formData = new FormData(form);
-    
-    fetch('/YoXplore/Controller/add_destination_yostay.php', {
+
+    // Debug: cek data yang akan dikirim
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+
+    fetch('../Controller/add_destination.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(text || 'HTTP error! status: ' + response.status);
+            });
+        }
+        return response.json();
+    })
     .then(result => {
         if (result.success) {
-            bootstrap.Modal.getInstance(document.getElementById('addDestinationModal')).hide();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
+            if (modal) {
+                modal.hide();
+            }
             form.reset();
             loadDestinations();
             alert('Destinasi berhasil ditambahkan');
@@ -68,7 +100,7 @@ window.saveDestination = function() {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Gagal menambahkan destinasi: ' + error.message);
+        alert('Gagal menambahkan destinasi: ' + (error.message || error));
     });
 }
 
