@@ -34,7 +34,15 @@ function loadDestinations(section = 'YoStay') {
         .catch(error => console.error('Error:', error));
 }
 
-function saveDestination(formData) {
+window.saveDestination = function() {
+    const form = document.getElementById('addDestinationForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const formData = new FormData(form);
+    
     fetch('../Controller/add_destination.php', {
         method: 'POST',
         body: formData
@@ -42,8 +50,10 @@ function saveDestination(formData) {
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            bootstrap.Modal.getInstance(document.getElementById('addDestinationModal')).hide();
-            loadDestinations('YoStay');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
+            modal.hide();
+            form.reset();
+            loadDestinations();
             alert('Destination added successfully');
         } else {
             throw new Error(result.message || 'Failed to add destination');
@@ -91,3 +101,8 @@ function loadCategories() {
 document.addEventListener('DOMContentLoaded', function() {
     loadDestinations();
 });
+
+window.showAddDestinationModal = function() {
+    const modal = new bootstrap.Modal(document.getElementById('addDestinationModal'));
+    modal.show();
+}
