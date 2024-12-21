@@ -86,6 +86,38 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(fetchUsers, 3000);
 });
 
+function initializeUpdateForm() {
+    const form = document.getElementById('editUserForm');
+    const submitButton = document.querySelector('#editUserModal .btn-primary');
+    
+    if (submitButton) {
+        const newButton = submitButton.cloneNode(true);
+        submitButton.parentNode.replaceChild(newButton, submitButton);
+        newButton.addEventListener('click', function() {
+            updateUser();
+        });
+    }
+}
+
+function editUser(userId) {
+    fetch(`../Controller/get_user.php?id=${userId}`)
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                const user = result.data;
+                document.getElementById('editUserId').value = user.id;
+                document.getElementById('editUsername').value = user.username;
+                document.getElementById('editEmail').value = user.email;
+                
+                const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                modal.show();
+                
+                initializeUpdateForm();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
 // Expose functions untuk event handlers
 function editUser(id, username, email) {
     document.getElementById('editUserId').value = id;

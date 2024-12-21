@@ -140,4 +140,13 @@ function renderDestinations(section) {
         tbody.appendChild(tr);
     });
 }
-document.getElementById('addDestinationModal').addEventListener('show.bs.modal', loadCategories);
+
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('addDestinationModal');
+    if (modal) {
+        modal.addEventListener('show.bs.modal', loadCategories);
+    }
+
+    // Load initial data
+    loadDestinations('YoStay');
+});
