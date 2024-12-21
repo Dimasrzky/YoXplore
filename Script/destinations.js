@@ -51,7 +51,7 @@ window.saveDestination = function() {
 
     const formData = new FormData(form);
     
-    fetch('/YoXplore/Controller/add_destination.php', {
+    fetch('/YoXplore/Controller/add_destination_yostay.php', {
         method: 'POST',
         body: formData
     })
