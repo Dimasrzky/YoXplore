@@ -78,8 +78,9 @@ window.saveDestination = function() {
     }
 
     const formData = new FormData(form);
+    const isEdit = formData.get('id') ? true : false;
 
-    fetch('../Controller/add_destination_yostay.php', {
+    fetch(isEdit ? '../Controller/update_destination.php' : '../Controller/add_destination_yostay.php', {
         method: 'POST',
         body: formData
     })
@@ -87,19 +88,19 @@ window.saveDestination = function() {
     .then(result => {
         if (result.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
-            if (modal) modal.hide();
+            modal.hide();
             form.reset();
             loadDestinations('YoStay');
-            alert('Destinasi berhasil ditambahkan');
+            alert(isEdit ? 'Destinasi berhasil diupdate' : 'Destinasi berhasil ditambahkan');
         } else {
-            throw new Error(result.message || 'Gagal menambahkan destinasi');
+            throw new Error(result.message || 'Gagal ' + (isEdit ? 'mengupdate' : 'menambahkan') + ' destinasi');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Gagal menambahkan destinasi: ' + error.message);
+        alert(error.message);
     });
-};
+}
 
 function loadCategories() {
     const categorySelect = document.querySelector('select[name="category"]');
@@ -129,4 +130,63 @@ function showAddDestinationModal() {
     
     // Tampilkan modal
     modal.show();
+}
+
+// Fungsi untuk mengedit destinasi
+window.editDestination = function(id) {
+    fetch(`../Controller/get_destination_detail.php?id=${id}`)
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                const data = result.data;
+                
+                // Isi form dengan data yang ada
+                const form = document.getElementById('addDestinationForm');
+                form.querySelector('select[name="category"]').value = data.category_id;
+                form.querySelector('input[name="name"]').value = data.name;
+                form.querySelector('input[name="address"]').value = data.address;
+                form.querySelector('input[name="openTime"]').value = data.opening_hours;
+                form.querySelector('input[name="closeTime"]').value = data.closing_hours;
+                
+                // Tambahkan ID untuk update
+                if (!form.querySelector('input[name="id"]')) {
+                    const idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.name = 'id';
+                    form.appendChild(idInput);
+                }
+                form.querySelector('input[name="id"]').value = id;
+                
+                // Tampilkan modal
+                const modal = new bootstrap.Modal(document.getElementById('addDestinationModal'));
+                modal.show();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Fungsi untuk menghapus destinasi
+window.deleteDestination = function(id) {
+    if (confirm('Apakah Anda yakin ingin menghapus destinasi ini?')) {
+        fetch('../Controller/delete_destination.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: id })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Destinasi berhasil dihapus');
+                loadDestinations('YoStay'); // Reload tabel
+            } else {
+                alert('Gagal menghapus destinasi: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Gagal menghapus destinasi');
+        });
+    }
 }
