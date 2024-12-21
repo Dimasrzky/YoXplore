@@ -1,37 +1,22 @@
 function loadDestinations(section = 'YoStay') {
-    const tbody = document.querySelector('#destinationsTable tbody');
-    if (!tbody) {
-        console.error('Table body tidak ditemukan');
-        return;
-    }
-
-    fetch('../Controller/get_destinations.php?section=' + section)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
+    fetch(`../Controller/get_destinations.php?section=${section}`)
+        .then(response => response.json())
         .then(result => {
             if (result.success) {
+                const tbody = document.querySelector('#destinationsTable tbody');
                 tbody.innerHTML = '';
                 
-                if (!Array.isArray(result.data)) {
-                    console.error('Data tidak valid');
-                    return;
-                }
-
                 result.data.forEach(item => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>
                             <img src="${item.main_image || '../Image/placeholder.jpg'}" 
-                                 alt="${item.name || ''}" 
+                                 alt="${item.name}" 
                                  class="img-thumbnail" 
                                  style="width: 50px; height: 50px; object-fit: cover;">
                         </td>
-                        <td>${item.name || ''}</td>
-                        <td>${item.address || ''}</td>
+                        <td>${item.name}</td>
+                        <td>${item.address}</td>
                         <td>${item.opening_hours || '-'}</td>
                         <td>
                             <button class="btn btn-warning btn-sm me-2" onclick="editDestination(${item.id})">
@@ -44,14 +29,9 @@ function loadDestinations(section = 'YoStay') {
                     `;
                     tbody.appendChild(tr);
                 });
-            } else {
-                throw new Error(result.message || 'Gagal memuat data');
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Gagal memuat data: ' + error.message);
-        });
+        .catch(error => console.error('Error:', error));
 }
 
 window.saveDestination = function() {
