@@ -1,23 +1,58 @@
 function loadDestinations(section = 'YoStay') {
+    console.log('Loading destinations...'); // Debug log
+
     const tbody = document.querySelector('#destinationsTable tbody');
     if (!tbody) {
         console.error('Table body tidak ditemukan');
         return;
     }
 
-    fetch(`../Controller/get_destinations.php?section=${section}`)
-        .then(response => response.json())
+    fetch('../Controller/get_destinations.php?section=' + section)
+        .then(response => {
+            console.log('Response status:', response.status); // Debug response
+            return response.json();
+        })
         .then(result => {
-            if (result.success && Array.isArray(result.data)) {
-                tbody.innerHTML = '';  // Clear existing content
+            console.log('Data loaded:', result); // Debug data
+
+            if (result.success) {
+                tbody.innerHTML = '';
                 
+                if (!Array.isArray(result.data)) {
+                    console.error('Data bukan array:', result.data);
+                    return;
+                }
+
                 result.data.forEach(item => {
                     const tr = document.createElement('tr');
-                    // ... rest of your code
+                    tr.innerHTML = `
+                        <td>
+                            <img src="${item.main_image || '../Image/placeholder.jpg'}" 
+                                 alt="${item.name}" 
+                                 class="img-thumbnail" 
+                                 style="width: 50px; height: 50px; object-fit: cover;">
+                        </td>
+                        <td>${item.name}</td>
+                        <td>${item.address}</td>
+                        <td>${item.opening_hours || '-'}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-2" onclick="editDestination(${item.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteDestination(${item.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
                 });
+            } else {
+                console.error('Failed to load data:', result.message);
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error loading destinations:', error);
+        });
 }
 
 window.saveDestination = function() {
