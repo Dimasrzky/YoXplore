@@ -131,15 +131,28 @@ function editUser(id, username, email) {
 }
 
 function deleteUser(userId) {
-    if (confirm('Are you sure you want to delete this user?')) {
-        const formData = new FormData();
-        formData.append('id', userId);
+    if (!userId || isNaN(userId)) {
+        console.error('Invalid user ID:', userId);
+        return;
+    }
 
+    if (confirm('Apakah Anda yakin ingin menghapus user ini?')) {
         fetch('../Controller/delete_user.php', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: userId })
         })
-        .then(response => response.json())
+        .then(async response => {
+            const text = await response.text();
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Invalid JSON response:', text);
+                throw new Error('Server returned invalid JSON');
+            }
+        })
         .then(result => {
             if (result.success) {
                 alert('User berhasil dihapus');
