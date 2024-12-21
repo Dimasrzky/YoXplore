@@ -1,53 +1,64 @@
 <?php
-// Pastikan tidak ada whitespace sebelum <?php
-require_once('../Config/db_connect.php');
-
-// Tambahkan header JSON
+// Tambahkan ini di awal file untuk debug
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 header('Content-Type: application/json');
 
-// Tambahkan error handling
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
+require_once('../Config/db_connect.php');
+
+// Log data yang diterima
+error_log("POST data: " . print_r($_POST, true));
+error_log("FILES data: " . print_r($_FILES, true));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Validasi input
         if (empty($_POST['name']) || empty($_POST['category']) || empty($_POST['address'])) {
-            throw new Exception('Semua field harus diisi');
+            throw new Exception('Mohon isi semua field yang diperlukan');
         }
 
         $name = $_POST['name'];
         $address = $_POST['address'];
-        $openTime = $_POST['openTime'];
+        $openTime = $_POST['openTime'] ?? null;
         $feature_type = 'YoStay';
         $category_id = $_POST['category'];
         
-        // Validasi file upload
+        // Cek apakah ada file yang diupload
         if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-            throw new Exception('Error pada upload gambar');
+            throw new Exception('Mohon upload gambar');
         }
 
-        // Handle image upload
-        $image = $_FILES['image'];
-        $imageData = file_get_contents($image['tmp_name']);
+        $conn->beginTransaction();
 
-        $stmt = $conn->prepare("
-            INSERT INTO items (name, category_id, feature_type, address, opening_hours)
-            VALUES (?, ?, ?, ?, ?)
-        ");
-        $stmt->execute([$name, $category_id, $feature_type, $address, $openTime]);
-        
-        $item_id = $conn->lastInsertId();
-        
-        // Save image
-        $stmt = $conn->prepare("
-            INSERT INTO item_images (item_id, image_url, is_main)
-            VALUES (?, ?, 1)
-        ");
-        $stmt->execute([$item_id, $imageData]);
-        
-        echo json_encode(['success' => true]);
-        
+        try {
+            // Insert item
+            $stmt = $conn->prepare("
+                INSERT INTO items (name, category_id, feature_type, address, opening_hours)
+                VALUES (?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([$name, $category_id, $feature_type, $address, $openTime]);
+            
+            $item_id = $conn->lastInsertId();
+            
+            // Handle image
+            $image = $_FILES['image'];
+            $imageData = file_get_contents($image['tmp_name']);
+            
+            // Insert image
+            $stmt = $conn->prepare("
+                INSERT INTO item_images (item_id, image_url, is_main)
+                VALUES (?, ?, 1)
+            ");
+            $stmt->execute([$item_id, $imageData]);
+
+            $conn->commit();
+            
+            echo json_encode(['success' => true]);
+            
+        } catch (Exception $e) {
+            $conn->rollBack();
+            throw $e;
+        }
     } catch(Exception $e) {
         http_response_code(400);
         echo json_encode([

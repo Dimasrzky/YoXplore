@@ -34,7 +34,9 @@ function loadDestinations(section = 'YoStay') {
         .catch(error => console.error('Error:', error));
 }
 
-window.saveDestination = function() {
+window.saveDestination = function(e) {
+    if (e) e.preventDefault();
+    
     const form = document.getElementById('addDestinationForm');
     if (!form.checkValidity()) {
         form.reportValidity();
@@ -43,18 +45,23 @@ window.saveDestination = function() {
 
     const formData = new FormData(form);
     
-    // Log untuk debugging
-    console.log('Form data:', Object.fromEntries(formData));
+    // Debug: log form data
+    for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
     
-    fetch('../Controller/add_destination_yostay.php', {
+    fetch('../Controller/add_destination.php', {
         method: 'POST',
-        body: formData
+        body: formData  // Jangan set Content-Type header untuk multipart/form-data
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+    .then(async response => {
+        const text = await response.text();
+        console.log('Raw response:', text);
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            throw new Error('Invalid JSON response: ' + text);
         }
-        return response.json();
     })
     .then(result => {
         if (result.success) {
