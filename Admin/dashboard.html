@@ -59,6 +59,8 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="../Script/users.js"></script>
+    <script src="../Script/destinations.js"></script>
     <script>
         // Wait for all components to load before initializing
         function loadComponents() {
@@ -228,6 +230,26 @@
             // Refresh data setiap 30 detik
             setInterval(fetchUsers, 3000);
         });
+
+        async function loadComponents() {
+            try {
+                // Load sidebar
+                const sidebarResponse = await fetch('../Components/sidebar.html');
+                const sidebarHtml = await sidebarResponse.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+
+                // Load all tab contents
+                const sections = ['users', 'yostay', 'yoconcert', 'yotaste', 'yotrip'];
+                for (const section of sections) {
+                    const response = await fetch(`../Components/${section}-tab.html`);
+                    const html = await response.text();
+                    document.getElementById('main-content').innerHTML += html;
+                }
+
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
 
         // Initialize when document is ready
         document.addEventListener('DOMContentLoaded', loadComponents);
