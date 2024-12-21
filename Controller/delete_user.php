@@ -15,7 +15,7 @@ try {
     }
 
     // Delete the user
-    $stmt = $pdo->prepare("DELETE FROM client WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM client WHERE id = ?");
     $stmt->execute([$id]);
 
     if ($stmt->rowCount() > 0) {

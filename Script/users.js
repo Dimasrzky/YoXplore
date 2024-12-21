@@ -98,37 +98,30 @@ function editUser(id, username, email) {
     new bootstrap.Modal(document.getElementById('editUserModal')).show();
 }
 
-window.deleteUser = function(id) {
+function deleteUser(userId) {
     if (confirm('Are you sure you want to delete this user?')) {
+        const formData = new FormData();
+        formData.append('id', userId);
+
         fetch('../Controller/delete_user.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: id })
+            body: formData
         })
-        .then(async response => {
-            const text = await response.text();
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Raw response:', text);
-                throw new Error('Invalid server response');
-            }
-        })
+        .then(response => response.json())
         .then(result => {
-            if (!result.success) {
+            if (result.success) {
+                alert('User berhasil dihapus');
+                fetchUsers(); // Reload daftar user
+            } else {
                 throw new Error(result.message || 'Failed to delete user');
             }
-            // Refresh data setelah delete berhasil
-            fetchUsers();
         })
         .catch(error => {
             console.error('Error:', error);
-            alert(error.message || 'Failed to delete user');
+            alert('Gagal menghapus user: ' + error.message);
         });
     }
-};
+}
 
 function updateUser() {
     // Prevent double submission
