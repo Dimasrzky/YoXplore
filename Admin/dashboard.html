@@ -206,6 +206,9 @@
                     if(targetId === 'yostay') {
                         window.loadDestinations('YoStay');
                     }
+                    if(targetId === 'yoconcert') {
+                        loadConcerts();
+                    }
                 });
             });
 
@@ -214,20 +217,6 @@
             if (activeTab && activeTab.getAttribute('href') === '#yostay') {
                 window.loadDestinations('YoStay');
             }
-        });
-
-        document.addEventListener('DOMContentLoaded', async function() {
-            await loadComponents();
-            
-            const triggerTabList = document.querySelectorAll('[data-bs-toggle="pill"]');
-            triggerTabList.forEach(triggerEl => {
-                triggerEl.addEventListener('shown.bs.tab', event => {
-                    const targetId = event.target.getAttribute('href').slice(1);
-                    if(targetId === 'yoconcert') {
-                        loadConcerts();
-                    }
-                });
-            });
         });
     </script>
 
