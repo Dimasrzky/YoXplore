@@ -46,7 +46,7 @@ window.saveDestination = function() {
     // Log untuk debugging
     console.log('Form data:', Object.fromEntries(formData));
     
-    fetch('../Controller/add_destination.php', {
+    fetch('../Controller/add_destination_yostay.php', {
         method: 'POST',
         body: formData
     })
