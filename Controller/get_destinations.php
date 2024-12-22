@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once('../Config/db_connect.php');
 
 try {
-    $section = $_GET['section'] ?? '';
+    $section = $_GET['section'] ?? 'YoTrip';
     
     $query = "
         SELECT i.*, 
@@ -24,6 +24,7 @@ try {
     $stmt->execute([$section]);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
+    // Convert image data to base64
     foreach ($data as &$item) {
         if (!empty($item['main_image'])) {
             $item['main_image'] = base64_encode($item['main_image']);
@@ -36,6 +37,7 @@ try {
     ]);
 
 } catch(PDOException $e) {
+    http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
