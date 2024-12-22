@@ -118,18 +118,6 @@ function editUser(userId) {
         .catch(error => console.error('Error:', error));
 }
 
-// Expose functions untuk event handlers
-function editUser(id, username, email) {
-    document.getElementById('editUserId').value = id;
-    document.getElementById('editUsername').value = username;
-    document.getElementById('editEmail').value = email;
-    document.getElementById('editPassword').value = '';
-    
-    initializeUpdateForm();
-    
-    new bootstrap.Modal(document.getElementById('editUserModal')).show();
-}
-
 function deleteUser(userId) {
     if (!userId || isNaN(userId)) {
         console.error('Invalid user ID:', userId);
@@ -223,3 +211,44 @@ function updateUser() {
         }
     });
 }
+
+window.showAddUserModal = function() {
+    const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
+    
+    // Reset form jika ada
+    const form = document.getElementById('addUserForm');
+    if (form) form.reset();
+    
+    modal.show();
+};
+
+window.saveUser = function() {
+    const form = document.getElementById('addUserForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const formData = new FormData(form);
+
+    fetch('../Controller/add_user.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+            modal.hide();
+            form.reset();
+            fetchUsers();
+            alert('User berhasil ditambahkan');
+        } else {
+            throw new Error(result.message || 'Gagal menambahkan user');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Gagal menambahkan user: ' + error.message);
+    });
+};
