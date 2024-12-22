@@ -95,7 +95,6 @@ function loadTripCategories() {
     const categorySelect = document.querySelector('#addTripForm select[name="category"]');
     if (!categorySelect) return;
 
-    // Tambahkan type=YoTrip untuk memfilter kategori yang sesuai
     fetch('../Controller/get_categories.php?type=YoTrip')
         .then(response => response.json())
         .then(result => {
@@ -148,6 +147,9 @@ window.saveTrip = function() {
 };
 
 window.editTrip = function(id) {
+    // Load categories terlebih dahulu
+    loadTripCategories();  // Panggil ini dulu
+    
     fetch(`../Controller/get_destination_detail.php?id=${id}`)
         .then(response => response.json())
         .then(result => {
@@ -155,19 +157,23 @@ window.editTrip = function(id) {
                 const data = result.data;
                 const form = document.getElementById('addTripForm');
                 
-                form.querySelector('select[name="category"]').value = data.category_id;
-                form.querySelector('input[name="name"]').value = data.name;
-                form.querySelector('input[name="address"]').value = data.address;
-                form.querySelector('input[name="openTime"]').value = data.opening_hours;
-                form.querySelector('input[name="closeTime"]').value = data.closing_hours;
-                
-                if (!form.querySelector('input[name="id"]')) {
-                    const idInput = document.createElement('input');
-                    idInput.type = 'hidden';
-                    idInput.name = 'id';
-                    form.appendChild(idInput);
-                }
-                form.querySelector('input[name="id"]').value = id;
+                // Tunggu sebentar agar kategori selesai dimuat
+                setTimeout(() => {
+                    form.querySelector('select[name="category"]').value = data.category_id;
+                    form.querySelector('input[name="name"]').value = data.name;
+                    form.querySelector('input[name="address"]').value = data.address;
+                    form.querySelector('input[name="openTime"]').value = data.opening_hours;
+                    form.querySelector('input[name="closeTime"]').value = data.closing_hours;
+                    
+                    // Tambahkan input hidden untuk id jika belum ada
+                    if (!form.querySelector('input[name="id"]')) {
+                        const idInput = document.createElement('input');
+                        idInput.type = 'hidden';
+                        idInput.name = 'id';
+                        form.appendChild(idInput);
+                    }
+                    form.querySelector('input[name="id"]').value = id;
+                }, 500);
                 
                 const modal = new bootstrap.Modal(document.getElementById('addTripModal'));
                 modal.show();
