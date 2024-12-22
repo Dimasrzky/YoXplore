@@ -1,25 +1,15 @@
 window.loadTrips = function(section = 'YoTrip') {
-    console.log('Loading trips for:', section);
+    console.log('Loading trips for section:', section);
     
     const tbody = document.querySelector('#tripTable tbody');
     if (!tbody) {
-        console.error('Table body tidak ditemukan');
+        console.error('Trip table body not found');
         return;
     }
-
+ 
     fetch(`../Controller/get_destinations.php?section=${section}`)
-        .then(async response => {
-            const text = await response.text();
-            console.log('Raw response:', text);
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Invalid JSON:', text);
-                throw new Error('Invalid server response');
-            }
-        })
+        .then(response => response.json())
         .then(result => {
-            console.log('Parsed data:', result);
             if (result.success && Array.isArray(result.data)) {
                 tbody.innerHTML = '';
                 
@@ -49,16 +39,18 @@ window.loadTrips = function(section = 'YoTrip') {
                     `;
                     tbody.appendChild(tr);
                 });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No data available</td></tr>';
             }
         })
-        .catch(error => {
-            console.error('Error loading trips:', error);
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Error: ${error.message}</td></tr>`;
-        });
-};
-
+        .catch(error => console.error('Error:', error));
+ };
+ 
+ // Load saat halaman dibuka jika di tab YoTrip
+ document.addEventListener('DOMContentLoaded', function() {
+    const yotripTab = document.querySelector('#yotrip');
+    if (yotripTab && yotripTab.classList.contains('active')) {
+        loadTrips();
+    }
+ });
 window.showAddTripModal = function() {
     // Debug log
     console.log('Opening Trip modal...');
