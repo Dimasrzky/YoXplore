@@ -245,29 +245,40 @@
         }
 
         document.addEventListener('DOMContentLoaded', async function() {
-            await loadComponents();
-            
-            // Initialize tabs and load initial data
-            const triggerTabList = document.querySelectorAll('[data-bs-toggle="pill"]');
-            triggerTabList.forEach(triggerEl => {
-                triggerEl.addEventListener('shown.bs.tab', event => {
-                    const targetId = event.target.getAttribute('href').slice(1);
-                    if(targetId === 'yostay') {
-                        window.loadDestinations('YoStay');
-                    }
-                    if(targetId === 'yoconcert') {
-                        loadConcerts();
-                    }
-                    if(targetId === 'yotaste') {
-                        window.loadTastePlaces();
-                    }
+            try {
+                await loadComponents();
+                console.log('Components loaded');
+                
+                // Event listeners for tabs
+                const tabs = document.querySelectorAll('[data-bs-toggle="pill"]');
+                tabs.forEach(tab => {
+                    tab.addEventListener('shown.bs.tab', function(event) {
+                        const target = event.target.getAttribute('href');
+                        switch(target) {
+                            case '#yostay':
+                                window.loadDestinations('YoStay');
+                                break;
+                            case '#yoconcert':
+                                window.loadConcerts('YoConcert');
+                                break;
+                            case '#yotaste':
+                                window.loadTastePlaces('YoTaste');
+                                break;
+                        }
+                    });
                 });
-            });
-
-            // Load initial data if YoStay tab is active
-            const activeTab = document.querySelector('.nav-link.active');
-            if (activeTab && activeTab.getAttribute('href') === '#yostay') {
-                window.loadDestinations('YoStay');
+    
+                // Load initial data based on active tab
+                const activeTab = document.querySelector('.nav-link.active');
+                if (activeTab) {
+                    const target = activeTab.getAttribute('href');
+                    if (target === '#yotaste') {
+                        window.loadTastePlaces('YoTaste');
+                    }
+                }
+    
+            } catch (error) {
+                console.error('Error initializing:', error);
             }
         });
     </script>
