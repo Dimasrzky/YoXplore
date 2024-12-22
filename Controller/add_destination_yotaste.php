@@ -14,19 +14,20 @@ try {
     $conn->beginTransaction();
 
     try {
-        // Pastikan jumlah ? sesuai dengan jumlah parameter yang akan dieksekusi
+        // Perhatikan jumlah tanda tanya (?) harus sama dengan jumlah parameter di execute
         $stmt = $conn->prepare("
             INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours, phone)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
         
         $stmt->execute([
-            $_POST['name'],
-            $_POST['category'],
-            $_POST['address'],
-            $_POST['openTime'],
-            $_POST['closeTime'],
-            $_POST['phone'] ?? null
+            $_POST['name'],                 // Parameter 1
+            $_POST['category'],             // Parameter 2
+            'YoTaste',                      // Parameter 3
+            $_POST['address'],              // Parameter 4
+            $_POST['openTime'] ?? null,     // Parameter 5
+            $_POST['closeTime'] ?? null,    // Parameter 6
+            $_POST['phone'] ?? null         // Parameter 7
         ]);
         
         $item_id = $conn->lastInsertId();
@@ -55,6 +56,6 @@ try {
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => 'Gagal menambahkan restaurant: ' . $e->getMessage()
     ]);
 }
