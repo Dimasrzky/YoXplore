@@ -18,14 +18,14 @@ try {
     }
 
     // Cek apakah username sudah ada
-    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+    $stmt = $conn->prepare("SELECT id FROM client WHERE username = ?");
     $stmt->execute([$_POST['username']]);
     if ($stmt->rowCount() > 0) {
         throw new Exception('Username sudah digunakan');
     }
 
     // Cek apakah email sudah ada
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id FROM client WHERE email = ?");
     $stmt->execute([$_POST['email']]);
     if ($stmt->rowCount() > 0) {
         throw new Exception('Email sudah digunakan');
@@ -36,7 +36,7 @@ try {
 
     // Insert user baru
     $stmt = $conn->prepare("
-        INSERT INTO users (username, email, password, created_at)
+        INSERT INTO client (username, email, password, created_at)
         VALUES (?, ?, ?, CURRENT_TIMESTAMP)
     ");
     
