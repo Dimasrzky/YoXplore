@@ -246,5 +246,30 @@
                 });
             }
         });
+
+        // Load YoTrip destinations
+function loadYoTrip(filter = '') {
+    fetch('../Controller/get_destinations.php?section=YoTrip&filter=' + encodeURIComponent(filter))
+        .then(response => response.json())
+        .then(result => {
+            // Proses data hasil fetch dan tampilkan ke halaman
+        })
+        .catch(error => {
+            console.error('Error loading YoTrip destinations:', error);
+        });
+}
+
+// Panggil fungsi saat halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    loadYoTrip();
+
+    const sortOptions = document.getElementById('sort-options');
+    if (sortOptions) {
+        sortOptions.addEventListener('change', function() {
+            const filter = this.value;
+            loadYoTrip(filter);
+        });
+    }
+});
     </script>
 </html>

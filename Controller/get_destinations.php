@@ -72,3 +72,8 @@ try {
         'message' => 'Unexpected error: ' . $e->getMessage()
     ], JSON_PRETTY_PRINT);
 }
+
+// di file ../Controller/get_destinations.php
+$filter = $_GET['filter'] ?? '';
+$query .= $filter ? " AND category_name = :filter" : "";
+$stmt->bindParam(':filter', $filter, PDO::PARAM_STR);
