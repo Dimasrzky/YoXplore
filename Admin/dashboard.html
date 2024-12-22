@@ -152,15 +152,15 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="addTasteModal" tabindex="-1">
+<div class="modal fade" id="addTastePlaceModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add New Taste Destination</h5>
+                <h5 class="modal-title">Add New Restaurant</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="addTasteForm" enctype="multipart/form-data">
+                <form id="addTastePlaceForm" enctype="multipart/form-data">
                     <input type="hidden" name="feature_type" value="YoTaste">
                     <div class="mb-3">
                         <label class="form-label">Category</label>
@@ -169,7 +169,7 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Destination Name</label>
+                        <label class="form-label">Restaurant Name</label>
                         <input type="text" class="form-control" name="name" required>
                     </div>
                     <div class="mb-3">
@@ -194,7 +194,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="saveTaste()">Save</button>
+                <button type="button" class="btn btn-primary" onclick="saveTastePlace()">Save</button>
             </div>
         </div>
     </div>

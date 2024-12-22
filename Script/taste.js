@@ -1,5 +1,5 @@
-window.loadTaste = function(section = 'YoTaste') {
-    console.log('Loading concerts for:', section);
+window.loadTastePlaces = function(section = 'YoTaste') {
+    console.log('Loading taste places for:', section);
     
     const tbody = document.querySelector('#tasteTable tbody');
     if (!tbody) {
@@ -29,10 +29,10 @@ window.loadTaste = function(section = 'YoTaste') {
                         <td>${item.opening_hours || '-'}</td>
                         <td>${item.closing_hours || '-'}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm me-2" onclick="editTaste(${item.id})">
+                            <button class="btn btn-warning btn-sm me-2" onclick="editTastePlace(${item.id})">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteTaste(${item.id})">
+                            <button class="btn btn-danger btn-sm" onclick="deleteTastePlace(${item.id})">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
                         </td>
@@ -44,17 +44,21 @@ window.loadTaste = function(section = 'YoTaste') {
         .catch(error => console.error('Error:', error));
 };
 
-window.showAddTasteModal = function() {
+window.showAddTastePlaceModal = function() {
+    const form = document.getElementById('addTastePlaceForm');
+    form.reset();
+    const idInput = form.querySelector('input[name="id"]');
+    if (idInput) idInput.remove();
+    
     loadTasteCategories();
-    const modal = new bootstrap.Modal(document.getElementById('addTasteModal'));
+    const modal = new bootstrap.Modal(document.getElementById('addTastePlaceModal'));
     modal.show();
 };
 
 function loadTasteCategories() {
-    const categorySelect = document.querySelector('#addTasteForm select[name="category"]');
+    const categorySelect = document.querySelector('#addTastePlaceForm select[name="category"]');
     if (!categorySelect) return;
 
-    // Tambahkan type=YoConcert di URL
     fetch('../Controller/get_categories.php?type=YoTaste')
         .then(response => response.json())
         .then(result => {
@@ -70,15 +74,18 @@ function loadTasteCategories() {
         .catch(error => console.error('Error:', error));
 }
 
-window.saveTaste = function() {
-    const form = document.getElementById('addTasteForm');
+window.saveTastePlace = function() {
+    const form = document.getElementById('addTastePlaceForm');
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
     }
 
     const formData = new FormData(form);
-    const isEdit = formData.get('id') ? true : false;
+    const isEdit = form.querySelector('input[name="id"]') ? true : false;
+
+    console.log('Operation:', isEdit ? 'Edit' : 'Add New');
+    console.log('Form data:', Object.fromEntries(formData));
 
     fetch(isEdit ? '../Controller/update_destination.php' : '../Controller/add_destination_yotaste.php', {
         method: 'POST',
@@ -87,13 +94,17 @@ window.saveTaste = function() {
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addTasteModal'));
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addTastePlaceModal'));
             modal.hide();
+            
             form.reset();
-            loadTaste();
-            alert(isEdit ? 'Warung berhasil diupdate' : 'Item Taste berhasil ditambahkan');
+            const idInput = form.querySelector('input[name="id"]');
+            if (idInput) idInput.remove();
+            
+            loadTastePlaces();
+            alert(isEdit ? 'Restaurant berhasil diupdate' : 'Restaurant berhasil ditambahkan');
         } else {
-            throw new Error(result.message || 'Gagal ' + (isEdit ? 'mengupdate' : 'menambahkan') + ' Warung');
+            throw new Error(result.message || 'Gagal ' + (isEdit ? 'mengupdate' : 'menambahkan') + ' restaurant');
         }
     })
     .catch(error => {
@@ -102,13 +113,13 @@ window.saveTaste = function() {
     });
 };
 
-window.editTaste = function(id) {
+window.editTastePlace = function(id) {
     fetch(`../Controller/get_destination_detail.php?id=${id}`)
         .then(response => response.json())
         .then(result => {
             if (result.success) {
                 const data = result.data;
-                const form = document.getElementById('addTasteForm');
+                const form = document.getElementById('addTastePlaceForm');
                 
                 form.querySelector('select[name="category"]').value = data.category_id;
                 form.querySelector('input[name="name"]').value = data.name;
@@ -124,15 +135,15 @@ window.editTaste = function(id) {
                 }
                 form.querySelector('input[name="id"]').value = id;
                 
-                const modal = new bootstrap.Modal(document.getElementById('addTasteModal'));
+                const modal = new bootstrap.Modal(document.getElementById('addTastePlaceModal'));
                 modal.show();
             }
         })
         .catch(error => console.error('Error:', error));
 };
 
-window.deleteTaste = function(id) {
-    if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+window.deleteTastePlace = function(id) {
+    if (confirm('Apakah Anda yakin ingin menghapus restaurant ini?')) {
         fetch('../Controller/delete_destination.php', {
             method: 'POST',
             headers: {
@@ -144,22 +155,21 @@ window.deleteTaste = function(id) {
         .then(result => {
             if (result.success) {
                 alert('Item berhasil dihapus');
-                loadTaste();
+                loadTastePlaces();
             } else {
-                alert('Gagal menghapus item: ' + result.message);
+                alert('Gagal menghapus Item: ' + result.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Gagal menghapus item');
+            alert('Gagal menghapus Item');
         });
     }
 };
 
-// Initialize when document loads
 document.addEventListener('DOMContentLoaded', function() {
     const yotasteTab = document.querySelector('#yotaste');
     if (yotasteTab && yotasteTab.classList.contains('active')) {
-        loadConcerts();
+        loadTastePlaces();
     }
 });
