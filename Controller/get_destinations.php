@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once('../Config/db_connect.php');
 
 try {
-    $section = $_GET['section'] ?? 'YoStay';
+    $section = $_GET['section'] ?? '';
     
     $query = "
         SELECT i.*, 

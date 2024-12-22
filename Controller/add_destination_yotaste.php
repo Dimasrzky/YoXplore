@@ -14,15 +14,15 @@ try {
     $conn->beginTransaction();
 
     try {
+        // Pastikan feature_type adalah 'YoTaste'
         $stmt = $conn->prepare("
             INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, 'YoTaste', ?, ?, ?)  -- Set langsung 'YoTaste' di sini
         ");
         
         $stmt->execute([
             $_POST['name'],
             $_POST['category'],
-            'YoConcert',
             $_POST['address'],
             $_POST['openTime'],
             $_POST['closeTime']
@@ -30,6 +30,7 @@ try {
         
         $item_id = $conn->lastInsertId();
         
+        // Handle image upload
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imageData = file_get_contents($_FILES['image']['tmp_name']);
             
