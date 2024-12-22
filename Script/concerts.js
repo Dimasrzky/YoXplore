@@ -45,16 +45,23 @@ window.loadConcerts = function(section = 'YoConcert') {
 };
 
 window.showAddConcertModal = function() {
+    const form = document.getElementById('addConcertForm');
+    // Reset form dan hapus input id jika ada
+    form.reset();
+    const idInput = form.querySelector('input[name="id"]');
+    if (idInput) idInput.remove();
+    
+    // Load categories
     loadConcertCategories();
+    // Show modal
     const modal = new bootstrap.Modal(document.getElementById('addConcertModal'));
     modal.show();
-};
+}
 
 function loadConcertCategories() {
     const categorySelect = document.querySelector('#addConcertForm select[name="category"]');
     if (!categorySelect) return;
 
-    // Tambahkan type=YoConcert di URL
     fetch('../Controller/get_categories.php?type=YoConcert')
         .then(response => response.json())
         .then(result => {
@@ -69,7 +76,6 @@ function loadConcertCategories() {
         })
         .catch(error => console.error('Error:', error));
 }
-
 window.saveConcert = function() {
     const form = document.getElementById('addConcertForm');
     if (!form.checkValidity()) {
@@ -78,7 +84,12 @@ window.saveConcert = function() {
     }
 
     const formData = new FormData(form);
-    const isEdit = formData.get('id') ? true : false;
+    // Cek apakah ini operasi edit atau add baru
+    const isEdit = form.querySelector('input[name="id"]') ? true : false;
+
+    // Log untuk debugging
+    console.log('Operation:', isEdit ? 'Edit' : 'Add New');
+    console.log('Form data:', Object.fromEntries(formData));
 
     fetch(isEdit ? '../Controller/update_destination.php' : '../Controller/add_destination_yoshow.php', {
         method: 'POST',
@@ -89,7 +100,12 @@ window.saveConcert = function() {
         if (result.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addConcertModal'));
             modal.hide();
+            
+            // Reset form dan hapus input id jika ada
             form.reset();
+            const idInput = form.querySelector('input[name="id"]');
+            if (idInput) idInput.remove();
+            
             loadConcerts();
             alert(isEdit ? 'Concert venue berhasil diupdate' : 'Concert venue berhasil ditambahkan');
         } else {
@@ -100,7 +116,7 @@ window.saveConcert = function() {
         console.error('Error:', error);
         alert(error.message);
     });
-};
+}
 
 window.editConcert = function(id) {
     fetch(`../Controller/get_destination_detail.php?id=${id}`)
