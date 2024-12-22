@@ -172,7 +172,7 @@
         };
 
         function loadTaste() {
-            fetch('../Controller/get_destinations.php?section=YoTrip')
+            fetch('../Controller/get_destinations.php?section=YoTaste')
                 .then(response => response.json())
                 .then(result => {
                     if (result.success && Array.isArray(result.data)) {
