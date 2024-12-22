@@ -171,43 +171,59 @@
             }
         };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            loadTastePlaces();
-        });
-        
-        function loadTastePlaces() {
-            const featureType = 'YoTaste'; // sesuaikan dengan halaman
-            
-            fetch(`../Controller/get_destinations.php?feature=${featureType}`)
+        function loadTaste() {
+            fetch('../Controller/get_destinations.php?section=YoTrip')
                 .then(response => response.json())
-                .then(data => {
-                    if(data.success) {
+                .then(result => {
+                    if (result.success && Array.isArray(result.data)) {
                         const container = document.querySelector('.popular-grid');
-                        container.innerHTML = '';
+                        container.innerHTML = ''; // Clear existing content
                         
-                        data.destinations.forEach(dest => {
-                            container.innerHTML += `
+                        result.data.forEach(item => {
+                            const itemHtml = `
                                 <div class="popular-item">
                                     <div class="image-container">
-                                        <a href="Item.html?id=${dest.id}">
-                                            <img src="${dest.main_image}" alt="${dest.name}">
+                                        <a href="Item.html?id=${item.id}">
+                                            <img src="data:image/jpeg;base64,${item.main_image || ''}" 
+                                                 alt="${item.name}"
+                                                 onerror="this.src='../Image/placeholder.jpg'">
                                             <div class="rating">
-                                                <span>★ ${dest.avg_rating || '0'}</span>
+                                                <span>★ ${item.rating || '0'}</span>
                                             </div>
                                         </a>
                                     </div>
                                     <div class="content">
-                                        <h3>${dest.name}</h3>
+                                        <h3>${item.name}</h3>
                                         <div class="location">
                                             <img src="../Image/location_brown.png" alt="Location Icon">
-                                            <span>${dest.address}</span>
+                                            <span>${item.address}</span>
                                         </div>
                                     </div>
                                 </div>
                             `;
+                            container.innerHTML += itemHtml;
                         });
+                    } else {
+                        console.error('Failed to load destinations:', result);
                     }
+                })
+                .catch(error => {
+                    console.error('Error loading destinations:', error);
                 });
         }
+        
+        // Load destinations when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTaste();
+            
+            // Handle category filter if needed
+            const sortOptions = document.getElementById('sort-options');
+            if (sortOptions) {
+                sortOptions.addEventListener('change', function() {
+                    const category = this.value;
+                    loadTaste(category);
+                });
+            }
+        });
     </script>
 </html>
