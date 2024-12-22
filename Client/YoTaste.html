@@ -11,7 +11,7 @@
                 <div class="nav-links">
                     <a href="../Client/Home.html"><img src="../Image/home.png" alt="Home Icon"> Home</a>
                     <a href="../Client/YoTrip.html"><img src="../Image/yotrip.png" alt="Trip Icon"> YoTrip</a>
-                    <a href="../Client/YoConcert.html"><img src="../Image/yoconcert.png" alt="Concert Icon"> YoConcert</a>
+                    <a href="../Client/YoConcert.html"><img src="../Image/yoconcert.png" alt="Concert Icon"> YoShow</a>
                     <a href="../Client/YoTaste.html" class="active"><img src="../Image/yotaste.png" alt="Taste Icon"> YoTaste</a>
                     <a href="../Client/YoStay.html"><img src="../Image/yostay.png" alt="Stay Icon"> YoStay</a>
                 </div>
@@ -62,95 +62,6 @@
                     </div>
                 </div>
                 <div class="popular-grid">
-                    <div class="popular-item">
-                        <div class="image-container">
-                            <a href="../Client/Item.html">
-                                <img src="https://tourezia.com/wp-content/uploads/2023/07/Snapinsta.app_347181399_210111078483887_4847221134072566665_n_1080-2.jpg.webp" alt="Candi Prambanan">
-                            <div class="rating">
-                                <span></span>
-                            </div>
-                            </a>
-                        </div>
-                        <div class="content">
-                            <h3>Candi Prambanan</h3>
-                            <div class="location">
-                                <img src="../Image/location_brown.png"  alt="Location Icon">
-                                <span>Sleman, Yogyakarta</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="popular-item">
-                        <div class="image-container">
-                            <a href="../Client/Item.html">
-                                <img src="https://tourezia.com/wp-content/uploads/2023/07/Snapinsta.app_347181399_210111078483887_4847221134072566665_n_1080-2.jpg.webp" alt="Candi Prambanan">
-                            <div class="rating">
-                                <span></span>
-                            </div>
-                            </a>
-                        </div>
-                        <div class="content">
-                            <h3>Candi Prambanan</h3>
-                            <div class="location">
-                                <img src="../Image/location_brown.png"  alt="Location Icon">
-                                <span>Sleman, Yogyakarta</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="popular-item">
-                        <div class="image-container">
-                            <a href="../Client/Item.html">
-                                <img src="https://tourezia.com/wp-content/uploads/2023/07/Snapinsta.app_347181399_210111078483887_4847221134072566665_n_1080-2.jpg.webp" alt="Candi Prambanan">
-                            <div class="rating">
-                                <span></span>
-                            </div>
-                            </a>
-                        </div>
-                        <div class="content">
-                            <h3>Candi Prambanan</h3>
-                            <div class="location">
-                                <img src="../Image/location_brown.png"  alt="Location Icon">
-                                <span>Sleman, Yogyakarta</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="popular-item">
-                        <div class="image-container">
-                            <a href="../Client/Item.html">
-                                <img src="https://tourezia.com/wp-content/uploads/2023/07/Snapinsta.app_347181399_210111078483887_4847221134072566665_n_1080-2.jpg.webp" alt="Candi Prambanan">
-                            <div class="rating">
-                                <span></span>
-                            </div>
-                            </a>
-                        </div>
-                        <div class="content">
-                            <h3>Candi Prambanan</h3>
-                            <div class="location">
-                                <img src="../Image/location_brown.png"  alt="Location Icon">
-                                <span>Sleman, Yogyakarta</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="popular-item">
-                        <div class="image-container">
-                            <a href="../Client/Item.html">
-                                <img src="https://tourezia.com/wp-content/uploads/2023/07/Snapinsta.app_347181399_210111078483887_4847221134072566665_n_1080-2.jpg.webp" alt="Candi Prambanan">
-                            <div class="rating">
-                                <span></span>
-                            </div>
-                            </a>
-                        </div>
-                        <div class="content">
-                            <h3>Candi Prambanan</h3>
-                            <div class="location">
-                                <img src="../Image/location_brown.png"  alt="Location Icon">
-                                <span>Sleman, Yogyakarta</span>
-                            </div>
-                        </div>
-                    </div>
     
                         </div>
                     </div>
@@ -265,7 +176,7 @@
         });
         
         function loadDestinations() {
-            const featureType = 'YoTrip'; // sesuaikan dengan halaman
+            const featureType = 'YoTaste'; // sesuaikan dengan halaman
             
             fetch(`../Controller/get_destinations.php?feature=${featureType}`)
                 .then(response => response.json())
