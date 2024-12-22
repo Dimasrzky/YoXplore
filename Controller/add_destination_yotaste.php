@@ -14,25 +14,24 @@ try {
     $conn->beginTransaction();
 
     try {
-        // Pastikan feature_type adalah 'YoTaste'
+        // Pastikan jumlah ? sesuai dengan jumlah parameter yang akan dieksekusi
         $stmt = $conn->prepare("
             INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours, phone)
-            VALUES (?, ?, 'YoTaste', ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
         
         $stmt->execute([
             $_POST['name'],
             $_POST['category'],
-            'YoTaste',
+            'YoTrip',
             $_POST['address'],
             $_POST['openTime'],
             $_POST['closeTime'],
-            $_POST['phone'] ?? null  
+            $_POST['phone'] ?? null
         ]);
         
         $item_id = $conn->lastInsertId();
         
-        // Handle image upload
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imageData = file_get_contents($_FILES['image']['tmp_name']);
             
