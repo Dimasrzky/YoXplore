@@ -26,9 +26,9 @@ window.loadConcerts = function(section = 'YoConcert') {
                         <td>${item.category_name}</td>
                         <td>${item.name}</td>
                         <td>${item.address}</td>
+                        <td>${item.phone || '-'}</td>
                         <td>${item.opening_hours || '-'}</td>
                         <td>${item.closing_hours || '-'}</td>
-                        <td>${item.phone || '-'}</td>
                         <td>
                             <button class="btn btn-warning btn-sm me-2" onclick="editConcert(${item.id})">
                                 <i class="fas fa-edit"></i> Edit

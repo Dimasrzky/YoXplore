@@ -36,9 +36,9 @@ window.loadTastePlaces = function(section = 'YoTaste') {
                         <td>${item.category_name}</td>
                         <td>${item.name}</td>
                         <td>${item.address}</td>
+                        <td>${item.phone || '-'}</td>
                         <td>${item.opening_hours || '-'}</td>
                         <td>${item.closing_hours || '-'}</td>
-                        <td>${item.phone || '-'}</td>
                         <td>
                             <button class="btn btn-warning btn-sm me-2" onclick="editTastePlace(${item.id})">
                                 <i class="fas fa-edit"></i> Edit
