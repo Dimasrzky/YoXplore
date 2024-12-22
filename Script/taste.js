@@ -88,31 +88,32 @@ window.saveTastePlace = function() {
     }
 
     const formData = new FormData(form);
-    formData.set('feature_type', 'YoTaste');
+    formData.set('feature_type', 'YoTaste'); // Pastikan feature_type terisi
 
-    fetch(isEdit ? '../Controller/update_destination.php' : '../Controller/add_destination_yotaste.php', {
+    // Debug log
+    console.log('Saving taste place...');
+    
+    fetch('../Controller/add_destination_yotaste.php', {
         method: 'POST',
         body: formData
     })
     .then(response => response.json())
     .then(result => {
+        console.log('Save result:', result);
         if (result.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addTastePlaceModal'));
             if (modal) modal.hide();
             
             form.reset();
-            const idInput = form.querySelector('input[name="id"]');
-            if (idInput) idInput.remove();
-            
-            loadTastePlaces('YoTaste'); // Reload tabel setelah berhasil
-            alert(isEdit ? 'Restaurant berhasil diupdate' : 'Restaurant berhasil ditambahkan');
+            loadTastePlaces('YoTaste');
+            alert('Restaurant berhasil ditambahkan');
         } else {
-            throw new Error(result.message || 'Gagal ' + (isEdit ? 'mengupdate' : 'menambahkan') + ' restaurant');
+            throw new Error(result.message || 'Gagal menambahkan restaurant');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert(error.message);
+        alert('Gagal menambahkan restaurant: ' + error.message);
     });
 };
 
