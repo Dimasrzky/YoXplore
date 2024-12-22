@@ -60,12 +60,38 @@ window.loadTrips = function(section = 'YoTrip') {
 };
 
 window.showAddTripModal = function() {
+    // Debug log
+    console.log('Opening Trip modal...');
+    
     const form = document.getElementById('addTripForm');
+    if (!form) {
+        console.error('Trip form not found!');
+        return;
+    }
+    
     form.reset();
     const idInput = form.querySelector('input[name="id"]');
     if (idInput) idInput.remove();
     
-    loadTripCategories();
+    // Load categories dengan YoTrip type
+    const categorySelect = form.querySelector('select[name="category"]');
+    if (categorySelect) {
+        fetch('../Controller/get_categories.php?type=YoTrip')
+            .then(response => response.json())
+            .then(result => {
+                console.log('Categories loaded:', result); // Debug log
+                if (result.success) {
+                    categorySelect.innerHTML = '<option value="">Select Category</option>';
+                    result.data.forEach(category => {
+                        categorySelect.innerHTML += `
+                            <option value="${category.id}">${category.name}</option>
+                        `;
+                    });
+                }
+            })
+            .catch(error => console.error('Error loading categories:', error));
+    }
+    
     const modal = new bootstrap.Modal(document.getElementById('addTripModal'));
     modal.show();
 };
