@@ -74,6 +74,7 @@ function loadTripCategories() {
     const categorySelect = document.querySelector('#addTripForm select[name="category"]');
     if (!categorySelect) return;
 
+    // Tambahkan type=YoTrip untuk memfilter kategori yang sesuai
     fetch('../Controller/get_categories.php?type=YoTrip')
         .then(response => response.json())
         .then(result => {
