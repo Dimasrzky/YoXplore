@@ -292,48 +292,51 @@
         }
 
         document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                await loadComponents();
-                console.log('Components loaded');
-                
-                // Event listeners for tabs
-                const tabs = document.querySelectorAll('[data-bs-toggle="pill"]');
-                tabs.forEach(tab => {
-                    tab.addEventListener('shown.bs.tab', function(event) {
-                        const target = event.target.getAttribute('href');
-                        switch(target) {
-                            case '#yostay':
-                                window.loadDestinations('YoStay');
-                                break;
-                            case '#yoconcert':
-                                window.loadConcerts('YoConcert');
-                                break;
-                            case '#yotaste':
-                                window.loadTastePlaces('YoTaste');
-                                break;
-                            case '#yotrip':
-                                window.loadTastePlaces('YoTrip');
-                                break;
-                        }
-                    });
-                });
-    
-                // Load initial data based on active tab
-                const activeTab = document.querySelector('.nav-link.active');
-                if (activeTab) {
-                    const target = activeTab.getAttribute('href');
-                    if (target === '#yotaste') {
-                        window.loadTastePlaces('YoTaste');
+            await loadComponents();
+            
+            // Inisialisasi event listener untuk tab
+            const triggerTabList = document.querySelectorAll('[data-bs-toggle="pill"]');
+            triggerTabList.forEach(triggerEl => {
+                triggerEl.addEventListener('shown.bs.tab', function(event) {
+                    const targetId = event.target.getAttribute('href').slice(1);
+                    switch(targetId) {
+                        case 'yostay':
+                            window.loadDestinations('YoStay');
+                            break;
+                        case 'yoconcert':
+                            window.loadConcerts('YoConcert');
+                            break;
+                        case 'yotaste':
+                            window.loadTastePlaces('YoTaste');
+                            break;
+                        case 'yotrip':
+                            window.loadTrips('YoTrip');
+                            break;
                     }
+                });
+            });
+        
+            // Load data berdasarkan tab yang aktif saat ini
+            const activeTab = document.querySelector('.tab-pane.active');
+            if (activeTab) {
+                switch(activeTab.id) {
+                    case 'yostay':
+                        window.loadDestinations('YoStay');
+                        break;
+                    case 'yoconcert':
+                        window.loadConcerts('YoConcert');
+                        break;
+                    case 'yotaste':
+                        window.loadTastePlaces('YoTaste');
+                        break;
+                    case 'yotrip':
+                        window.loadTrips('YoTrip');
+                        break;
                 }
-    
-            } catch (error) {
-                console.error('Error initializing:', error);
             }
         });
     </script>
 
-    <!-- Load component scripts after main initialization -->
     <script src="../Script/users.js"></script>
     <script src="../Script/stay.js"></script>
     <script src="../Script/concerts.js"></script>

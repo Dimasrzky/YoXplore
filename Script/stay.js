@@ -8,12 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDestinations('YoStay');
 });
 
-// Event listener saat dokumen dimuat
 document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener untuk tombol Add Destination
-    const addButton = document.querySelector('[data-action="addDestination"]');
-    if (addButton) {
-        addButton.addEventListener('click', showAddDestinationModal);
+    if (window.location.hash === '#yotrip' || document.querySelector('#yotrip.active')) {
+        window.loadTrips('YoTrip');
     }
 });
 

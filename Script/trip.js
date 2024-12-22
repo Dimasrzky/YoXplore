@@ -6,7 +6,7 @@ window.loadTrips = function(section = 'YoTrip') {
         console.error('Trip table body not found');
         return;
     }
- 
+
     fetch(`../Controller/get_destinations.php?section=${section}`)
         .then(response => response.json())
         .then(result => {
@@ -41,8 +41,11 @@ window.loadTrips = function(section = 'YoTrip') {
                 });
             }
         })
-        .catch(error => console.error('Error:', error));
- };
+        .catch(error => {
+            console.error('Error:', error);
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error loading data</td></tr>';
+        });
+};
  
  // Load saat halaman dibuka jika di tab YoTrip
  document.addEventListener('DOMContentLoaded', function() {
@@ -199,19 +202,7 @@ window.deleteTrip = function(id) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Load initial data jika tab YoTrip aktif
-    const yotripTab = document.querySelector('#yotrip');
-    if (yotripTab && yotripTab.classList.contains('show')) {
-        loadTrips('YoTrip');
+    if (window.location.hash === '#yotrip' || document.querySelector('#yotrip.active')) {
+        window.loadTrips('YoTrip');
     }
-
-    // Event listener untuk perubahan tab
-    const tabs = document.querySelectorAll('[data-bs-toggle="pill"]');
-    tabs.forEach(tab => {
-        tab.addEventListener('shown.bs.tab', function(event) {
-            if (event.target.getAttribute('href') === '#yotrip') {
-                loadTrips('YoTrip');
-            }
-        });
-    });
 });
