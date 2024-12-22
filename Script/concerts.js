@@ -119,6 +119,10 @@ window.saveConcert = function() {
 }
 
 window.editConcert = function(id) {
+    // Load categories terlebih dahulu
+    loadConcertCategories();  // Panggil ini dulu
+    
+    // Kemudian ambil data concert
     fetch(`../Controller/get_destination_detail.php?id=${id}`)
         .then(response => response.json())
         .then(result => {
@@ -126,19 +130,22 @@ window.editConcert = function(id) {
                 const data = result.data;
                 const form = document.getElementById('addConcertForm');
                 
-                form.querySelector('select[name="category"]').value = data.category_id;
-                form.querySelector('input[name="name"]').value = data.name;
-                form.querySelector('input[name="address"]').value = data.address;
-                form.querySelector('input[name="openTime"]').value = data.opening_hours;
-                form.querySelector('input[name="closeTime"]').value = data.closing_hours;
-                
-                if (!form.querySelector('input[name="id"]')) {
-                    const idInput = document.createElement('input');
-                    idInput.type = 'hidden';
-                    idInput.name = 'id';
-                    form.appendChild(idInput);
-                }
-                form.querySelector('input[name="id"]').value = id;
+                // Tunggu sebentar agar kategori selesai dimuat
+                setTimeout(() => {
+                    form.querySelector('select[name="category"]').value = data.category_id;
+                    form.querySelector('input[name="name"]').value = data.name;
+                    form.querySelector('input[name="address"]').value = data.address;
+                    form.querySelector('input[name="openTime"]').value = data.opening_hours;
+                    form.querySelector('input[name="closeTime"]').value = data.closing_hours;
+                    
+                    if (!form.querySelector('input[name="id"]')) {
+                        const idInput = document.createElement('input');
+                        idInput.type = 'hidden';
+                        idInput.name = 'id';
+                        form.appendChild(idInput);
+                    }
+                    form.querySelector('input[name="id"]').value = id;
+                }, 500);
                 
                 const modal = new bootstrap.Modal(document.getElementById('addConcertModal'));
                 modal.show();
