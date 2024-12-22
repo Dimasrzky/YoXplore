@@ -148,8 +148,7 @@ window.saveTrip = function() {
 };
 
 window.editTrip = function(id) {
-    // Load categories terlebih dahulu
-    loadTripCategories();  // Panggil ini dulu
+    loadTripCategories();
     
     fetch(`../Controller/get_destination_detail.php?id=${id}`)
         .then(response => response.json())
@@ -158,7 +157,6 @@ window.editTrip = function(id) {
                 const data = result.data;
                 const form = document.getElementById('addTripForm');
                 
-                // Tunggu sebentar agar kategori selesai dimuat
                 setTimeout(() => {
                     form.querySelector('select[name="category"]').value = data.category_id;
                     form.querySelector('input[name="name"]').value = data.name;
@@ -167,7 +165,6 @@ window.editTrip = function(id) {
                     form.querySelector('input[name="closeTime"]').value = data.closing_hours;
                     form.querySelector('input[name="phone"]').value = data.phone || '';
                     
-                    // Tambahkan input hidden untuk id jika belum ada
                     if (!form.querySelector('input[name="id"]')) {
                         const idInput = document.createElement('input');
                         idInput.type = 'hidden';

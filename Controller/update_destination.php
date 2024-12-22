@@ -20,7 +20,8 @@ try {
                 category_id = ?, 
                 address = ?, 
                 opening_hours = ?,
-                closing_hours = ?
+                closing_hours = ?,
+                phone = ?
             WHERE id = ?
         ");
         
@@ -30,18 +31,19 @@ try {
             $_POST['address'],
             $_POST['openTime'],
             $_POST['closeTime'],
+            $_POST['phone'] ?? null,
             $_POST['id']
         ]);
-        
+
         // Update image jika ada
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imageData = file_get_contents($_FILES['image']['tmp_name']);
             
-            // Delete existing main image
+            // Hapus image lama
             $stmt = $conn->prepare("DELETE FROM item_images WHERE item_id = ? AND is_main = 1");
             $stmt->execute([$_POST['id']]);
             
-            // Insert new image
+            // Insert image baru
             $stmt = $conn->prepare("
                 INSERT INTO item_images (item_id, image_url, is_main)
                 VALUES (?, ?, 1)
@@ -50,6 +52,7 @@ try {
         }
 
         $conn->commit();
+        
         echo json_encode([
             'success' => true,
             'message' => 'Data berhasil diupdate'
