@@ -5,13 +5,14 @@ try {
     $username = 'root';
     $password = '';
     
-    // Tambahkan opsi PDO untuk menangani timeout
+    // Opsi koneksi yang aman
     $options = array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_PERSISTENT => false,
         PDO::ATTR_TIMEOUT => 60,
         PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
-        PDO::ATTR_PERSISTENT => false,
-        PDO::MYSQL_ATTR_MAX_BUFFER_SIZE => 1024 * 1024 * 16  // 16MB buffer
+        PDO::ATTR_EMULATE_PREPARES => false,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     );
 
     $conn = new PDO(
@@ -20,6 +21,10 @@ try {
         $password,
         $options
     );
+
+    // Set timeouts melalui query
+    $conn->exec("SET SESSION wait_timeout=28800");
+    $conn->exec("SET SESSION interactive_timeout=28800");
 
 } catch(PDOException $e) {
     die(json_encode([
