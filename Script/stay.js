@@ -8,9 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDestinations('YoStay');
 });
 
+// Event listener saat dokumen dimuat
 document.addEventListener('DOMContentLoaded', function() {
-    if (window.location.hash === '#yotrip' || document.querySelector('#yotrip.active')) {
-        window.loadTrips('YoTrip');
+    // Add event listener untuk tombol Add Destination
+    const addButton = document.querySelector('[data-action="addDestination"]');
+    if (addButton) {
+        addButton.addEventListener('click', showAddDestinationModal);
     }
 });
 
@@ -45,6 +48,7 @@ window.loadDestinations = function(section = 'YoStay') {
                         <td>${item.address}</td>
                         <td>${item.opening_hours || '-'}</td>
                         <td>${item.closing_hours || '-'}</td>
+                        <td>${item.phone || '-'}</td>
                         <td>
                             <button class="btn btn-warning btn-sm me-2" onclick="editDestination(${item.id})">
                                 <i class="fas fa-edit"></i> Edit
@@ -162,6 +166,7 @@ window.editDestination = function(id) {
                 form.querySelector('input[name="address"]').value = data.address;
                 form.querySelector('input[name="openTime"]').value = data.opening_hours;
                 form.querySelector('input[name="closeTime"]').value = data.closing_hours;
+                form.querySelector('input[name="phone"]').value = data.phone || '';
                 
                 // Tambahkan ID untuk update
                 if (!form.querySelector('input[name="id"]')) {

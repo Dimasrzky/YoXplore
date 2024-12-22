@@ -18,8 +18,8 @@ try {
         try {
             // Insert data destinasi
             $stmt = $conn->prepare("
-                INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours, phone)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             ");
             
             $stmt->execute([
@@ -28,9 +28,9 @@ try {
                 'YoStay',
                 $_POST['address'],
                 $_POST['openTime'],
-                $_POST['closeTime']
+                $_POST['closeTime'],
+                $_POST['phone'] ?? null
             ]);
-            
             $item_id = $conn->lastInsertId();
             
             // Handle image upload

@@ -15,16 +15,18 @@ try {
 
     try {
         $stmt = $conn->prepare("
-            INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours)
-            VALUES (?, ?, 'YoTrip', ?, ?, ?)
+            INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours, phone)
+            VALUES (?, ?, 'YoTrip', ?, ?, ?, ?)
         ");
         
         $stmt->execute([
             $_POST['name'],
             $_POST['category'],
+            'YoTrip',
             $_POST['address'],
             $_POST['openTime'],
-            $_POST['closeTime']
+            $_POST['closeTime'],
+            $_POST['phone'] ?? null  
         ]);
         
         $item_id = $conn->lastInsertId();

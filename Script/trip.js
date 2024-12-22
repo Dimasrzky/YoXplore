@@ -28,6 +28,7 @@ window.loadTrips = function(section = 'YoTrip') {
                         <td>${item.address}</td>
                         <td>${item.opening_hours || '-'}</td>
                         <td>${item.closing_hours || '-'}</td>
+                        <td>${item.phone || '-'}</td>
                         <td>
                             <button class="btn btn-warning btn-sm me-2" onclick="editTrip(${item.id})">
                                 <i class="fas fa-edit"></i> Edit
@@ -164,6 +165,7 @@ window.editTrip = function(id) {
                     form.querySelector('input[name="address"]').value = data.address;
                     form.querySelector('input[name="openTime"]').value = data.opening_hours;
                     form.querySelector('input[name="closeTime"]').value = data.closing_hours;
+                    form.querySelector('input[name="phone"]').value = data.phone || '';
                     
                     // Tambahkan input hidden untuk id jika belum ada
                     if (!form.querySelector('input[name="id"]')) {

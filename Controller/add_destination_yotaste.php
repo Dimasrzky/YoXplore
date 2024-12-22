@@ -16,16 +16,18 @@ try {
     try {
         // Pastikan feature_type adalah 'YoTaste'
         $stmt = $conn->prepare("
-            INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours)
-            VALUES (?, ?, 'YoTaste', ?, ?, ?)  -- Set langsung 'YoTaste' di sini
+            INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours, phone)
+            VALUES (?, ?, 'YoTaste', ?, ?, ?, ?)
         ");
         
         $stmt->execute([
             $_POST['name'],
             $_POST['category'],
+            'YoTaste',
             $_POST['address'],
             $_POST['openTime'],
-            $_POST['closeTime']
+            $_POST['closeTime'],
+            $_POST['phone'] ?? null  
         ]);
         
         $item_id = $conn->lastInsertId();
