@@ -207,8 +207,19 @@ window.deleteTrip = function(id) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Load initial data jika tab YoTrip aktif
     const yotripTab = document.querySelector('#yotrip');
-    if (yotripTab && yotripTab.classList.contains('active')) {
-        loadTrips();
+    if (yotripTab && yotripTab.classList.contains('show')) {
+        loadTrips('YoTrip');
     }
+
+    // Event listener untuk perubahan tab
+    const tabs = document.querySelectorAll('[data-bs-toggle="pill"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(event) {
+            if (event.target.getAttribute('href') === '#yotrip') {
+                loadTrips('YoTrip');
+            }
+        });
+    });
 });
