@@ -172,10 +172,10 @@
         };
 
         document.addEventListener('DOMContentLoaded', function() {
-            loadDestinations();
+            loadTastePlaces();
         });
         
-        function loadDestinations() {
+        function loadTastePlaces() {
             const featureType = 'YoTaste'; // sesuaikan dengan halaman
             
             fetch(`../Controller/get_destinations.php?feature=${featureType}`)
