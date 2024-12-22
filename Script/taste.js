@@ -88,7 +88,7 @@ window.saveTastePlace = function() {
     }
 
     const formData = new FormData(form);
-    const isEdit = form.querySelector('input[name="id"]') ? true : false;
+    formData.set('feature_type', 'YoTaste');
 
     fetch(isEdit ? '../Controller/update_destination.php' : '../Controller/add_destination_yotaste.php', {
         method: 'POST',

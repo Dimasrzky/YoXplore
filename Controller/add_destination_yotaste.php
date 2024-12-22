@@ -23,7 +23,6 @@ try {
         $stmt->execute([
             $_POST['name'],
             $_POST['category'],
-            'YoTrip',
             $_POST['address'],
             $_POST['openTime'],
             $_POST['closeTime'],
