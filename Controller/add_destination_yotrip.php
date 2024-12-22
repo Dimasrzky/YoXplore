@@ -11,19 +11,27 @@ try {
         throw new Exception('Semua field harus diisi');
     }
 
+    // Cek apakah nama tempat sudah ada untuk YoTrip
+    $stmt = $conn->prepare("
+        SELECT id FROM items 
+        WHERE name = ? AND feature_type = 'YoTrip'
+    ");
+    $stmt->execute([$_POST['name']]);
+    if ($stmt->rowCount() > 0) {
+        throw new Exception('Destination dengan nama tersebut sudah ada');
+    }
+
     $conn->beginTransaction();
 
     try {
-        // Pastikan jumlah ? sesuai dengan jumlah parameter yang akan dieksekusi
         $stmt = $conn->prepare("
             INSERT INTO items (name, category_id, feature_type, address, opening_hours, closing_hours, phone)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, 'YoTrip', ?, ?, ?, ?)
         ");
         
         $stmt->execute([
             $_POST['name'],
             $_POST['category'],
-            'YoTrip',
             $_POST['address'],
             $_POST['openTime'],
             $_POST['closeTime'],
