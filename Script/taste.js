@@ -1,5 +1,5 @@
 window.loadTastePlaces = function(section = 'YoTaste') {
-    console.log('Loading taste places for:', section);
+    console.log('Loading taste places for:', section); // Debug log
     
     const tbody = document.querySelector('#tasteTable tbody');
     if (!tbody) {
@@ -8,8 +8,18 @@ window.loadTastePlaces = function(section = 'YoTaste') {
     }
 
     fetch(`../Controller/get_destinations.php?section=${section}`)
-        .then(response => response.json())
+        .then(async response => {
+            const text = await response.text();
+            console.log('Raw response:', text); // Debug log
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Invalid JSON:', text);
+                throw new Error('Invalid server response');
+            }
+        })
         .then(result => {
+            console.log('Parsed data:', result); // Debug log
             if (result.success && Array.isArray(result.data)) {
                 tbody.innerHTML = '';
                 
@@ -20,7 +30,7 @@ window.loadTastePlaces = function(section = 'YoTaste') {
                             <img src="data:image/jpeg;base64,${item.main_image || ''}" 
                                  alt="${item.name}" 
                                  class="img-thumbnail" 
-                                 style="width: 100px; height: 100px; object-fit: cover;"
+                                 style="width: 50px; height: 50px; object-fit: cover;"
                                  onerror="this.src='../Image/placeholder.jpg'">
                         </td>
                         <td>${item.category_name}</td>
@@ -39,9 +49,14 @@ window.loadTastePlaces = function(section = 'YoTaste') {
                     `;
                     tbody.appendChild(tr);
                 });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No data available</td></tr>';
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error loading taste places:', error);
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Error: ${error.message}</td></tr>`;
+        });
 };
 
 window.showAddTastePlaceModal = function() {
