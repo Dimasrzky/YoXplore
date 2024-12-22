@@ -65,10 +65,18 @@ window.loadDestinations = function(section = 'YoStay') {
 };
 
 window.showAddDestinationModal = function() {
-    const modal = new bootstrap.Modal(document.getElementById('addDestinationModal'));
+    const form = document.getElementById('addDestinationForm');
+    // Reset form dan hapus input id jika ada
+    form.reset();
+    const idInput = form.querySelector('input[name="id"]');
+    if (idInput) idInput.remove();
+    
+    // Load categories
     loadCategories();
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('addDestinationModal'));
     modal.show();
-};
+}
 
 window.saveDestination = function() {
     const form = document.getElementById('addDestinationForm');
@@ -78,7 +86,12 @@ window.saveDestination = function() {
     }
 
     const formData = new FormData(form);
-    const isEdit = formData.get('id') ? true : false;
+    // Cek apakah ini operasi edit atau add baru
+    const isEdit = form.querySelector('input[name="id"]') ? true : false;
+
+    // Log untuk debugging
+    console.log('Operation:', isEdit ? 'Edit' : 'Add New');
+    console.log('Form data:', Object.fromEntries(formData));
 
     fetch(isEdit ? '../Controller/update_destination.php' : '../Controller/add_destination_yostay.php', {
         method: 'POST',
@@ -89,8 +102,13 @@ window.saveDestination = function() {
         if (result.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addDestinationModal'));
             modal.hide();
+            
+            // Reset form dan hapus input id jika ada
             form.reset();
-            loadDestinations('YoStay');
+            const idInput = form.querySelector('input[name="id"]');
+            if (idInput) idInput.remove();
+            
+            loadDestinations();
             alert(isEdit ? 'Destinasi berhasil diupdate' : 'Destinasi berhasil ditambahkan');
         } else {
             throw new Error(result.message || 'Gagal ' + (isEdit ? 'mengupdate' : 'menambahkan') + ' destinasi');
