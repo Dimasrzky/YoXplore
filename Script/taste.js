@@ -1,5 +1,5 @@
 window.loadTastePlaces = function(section = 'YoTaste') {
-    console.log('Loading taste places for:', section); // Debug log
+    console.log('Loading taste places for:', section);
     
     const tbody = document.querySelector('#tasteTable tbody');
     if (!tbody) {
@@ -8,18 +8,8 @@ window.loadTastePlaces = function(section = 'YoTaste') {
     }
 
     fetch(`../Controller/get_destinations.php?section=${section}`)
-        .then(async response => {
-            const text = await response.text();
-            console.log('Raw response:', text); // Debug log
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Invalid JSON:', text);
-                throw new Error('Invalid server response');
-            }
-        })
+        .then(response => response.json())
         .then(result => {
-            console.log('Parsed data:', result); // Debug log
             if (result.success && Array.isArray(result.data)) {
                 tbody.innerHTML = '';
                 
@@ -30,7 +20,7 @@ window.loadTastePlaces = function(section = 'YoTaste') {
                             <img src="data:image/jpeg;base64,${item.main_image || ''}" 
                                  alt="${item.name}" 
                                  class="img-thumbnail" 
-                                 style="width: 100px; height: 100px; object-fit: cover;"
+                                 style="width: 50px; height: 50px; object-fit: cover;"
                                  onerror="this.src='../Image/placeholder.jpg'">
                         </td>
                         <td>${item.category_name}</td>
@@ -51,12 +41,12 @@ window.loadTastePlaces = function(section = 'YoTaste') {
                     tbody.appendChild(tr);
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No data available</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No data available</td></tr>';
             }
         })
         .catch(error => {
             console.error('Error loading taste places:', error);
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Error: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Error: ${error.message}</td></tr>`;
         });
 };
 
@@ -100,9 +90,6 @@ window.saveTastePlace = function() {
     const formData = new FormData(form);
     const isEdit = form.querySelector('input[name="id"]') ? true : false;
 
-    console.log('Operation:', isEdit ? 'Edit' : 'Add New');
-    console.log('Form data:', Object.fromEntries(formData));
-
     fetch(isEdit ? '../Controller/update_destination.php' : '../Controller/add_destination_yotaste.php', {
         method: 'POST',
         body: formData
@@ -111,13 +98,13 @@ window.saveTastePlace = function() {
     .then(result => {
         if (result.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('addTastePlaceModal'));
-            modal.hide();
+            if (modal) modal.hide();
             
             form.reset();
             const idInput = form.querySelector('input[name="id"]');
             if (idInput) idInput.remove();
             
-            loadTastePlaces();
+            loadTastePlaces('YoTaste'); // Reload tabel setelah berhasil
             alert(isEdit ? 'Restaurant berhasil diupdate' : 'Restaurant berhasil ditambahkan');
         } else {
             throw new Error(result.message || 'Gagal ' + (isEdit ? 'mengupdate' : 'menambahkan') + ' restaurant');
@@ -191,8 +178,15 @@ window.deleteTastePlace = function(id) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    const yotasteTab = document.querySelector('#yotaste');
-    if (yotasteTab && yotasteTab.classList.contains('active')) {
-        loadTastePlaces();
+    const yotasteTab = document.querySelector('a[href="#yotaste"]');
+    if (yotasteTab) {
+        yotasteTab.addEventListener('shown.bs.tab', function() {
+            loadTastePlaces('YoTaste');
+        });
+    }
+    
+    // Load data jika sedang di tab YoTaste
+    if (document.querySelector('#yotaste.active')) {
+        loadTastePlaces('YoTaste');
     }
 });
