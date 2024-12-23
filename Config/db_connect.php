@@ -1,7 +1,7 @@
 <?php
-$servername = "db";
+$servername = "localhost";
 $username = "root"; 
-$password = "yoxplore123";      
+$password = " ";      
 $dbname = "yoxplore";
 
 try {
