@@ -3,108 +3,87 @@ header('Content-Type: application/json');
 require_once('../Config/db_connect.php');
 
 try {
-    if (!isset($_GET['id'])) {
-        throw new Exception('ID tidak ditemukan');
-    }
-
-    // Get main item details
-    $stmt = $conn->prepare("
+    $section = $_GET['section'] ?? null;
+    $query = "
         SELECT i.*, 
+               COALESCE(im.image_url, '') as main_image,
                c.name as category_name,
-               COALESCE(AVG(r.rating), 0) as avg_rating,
-               COUNT(DISTINCT r.id) as review_count
+               COALESCE(AVG(r.rating), 0) as avg_rating
         FROM items i
+        LEFT JOIN (
+            SELECT item_id, image_url 
+            FROM item_images 
+            WHERE is_main = 1
+        ) im ON i.id = im.item_id
         LEFT JOIN categories c ON i.category_id = c.id
         LEFT JOIN reviews r ON i.id = r.item_id
-        WHERE i.id = ?
-        GROUP BY i.id
-    ");
+        WHERE 1=1
+    ";
     
-    $stmt->execute([$_GET['id']]);
-    $item = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Hanya tambahkan kondisi section jika parameter ada
+    if ($section) {
+        $query .= " AND i.feature_type = :section";
+    }
     
-    if (!$item) {
-        throw new Exception('Item tidak ditemukan');
+    // Group by untuk menghindari duplikasi karena JOIN dengan reviews
+    $query .= " GROUP BY i.id";
+    $query .= " ORDER BY i.id DESC";
+    
+    $stmt = $conn->prepare($query);
+    
+    // Bind parameter hanya jika section ada
+    if ($section) {
+        $stmt->bindParam(':section', $section, PDO::PARAM_STR);
     }
-
-    // Get all images for this item
-    $stmt = $conn->prepare("
-        SELECT image_url, is_main
-        FROM item_images
-        WHERE item_id = ?
-        ORDER BY is_main DESC, id ASC
-    ");
-    $stmt->execute([$_GET['id']]);
-    $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Get reviews with user info
-    $stmt = $conn->prepare("
-        SELECT 
-            r.*,
-            u.username,
-            u.profile_image,
-            GROUP_CONCAT(ri.image_url) as review_images
-        FROM reviews r
-        LEFT JOIN users u ON r.user_id = u.id
-        LEFT JOIN review_images ri ON r.id = ri.review_id
-        WHERE r.item_id = ?
-        GROUP BY r.id
-        ORDER BY r.created_at DESC
-    ");
-    $stmt->execute([$_GET['id']]);
-    $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Convert main item image to base64 if exists
-    if (!empty($item['main_image'])) {
-        $item['main_image'] = base64_encode($item['main_image']);
-    }
-
-    // Convert additional images to base64
-    foreach ($images as &$img) {
-        if (!empty($img['image_url'])) {
-            $img['image_url'] = base64_encode($img['image_url']);
+    
+    $stmt->execute();
+    $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Konversi gambar ke base64 dan format rating
+    $data = array_map(function($item) {
+        // Format gambar
+        if (!empty($item['main_image'])) {
+            $item['main_image'] = base64_encode($item['main_image']);
         }
+        
+        // Format rating
+        $item['avg_rating'] = number_format($item['avg_rating'], 1);
+        
+        return $item;
+    }, $items);
+    
+    // Generate HTML untuk setiap item
+    $html = '';
+    foreach ($data as $item) {
+        $html .= sprintf('
+            <a href="Item.html?id=%d" class="recommendation-card">
+                <div class="card">
+                    <div class="image-container">
+                        <img src="data:image/jpeg;base64,%s" alt="%s">
+                        <div class="rating">⭐ %.1f</div>
+                    </div>
+                    <div class="info">
+                        <h3>%s</h3>
+                        <p class="location">
+                            <i class="location-icon"></i> %s
+                        </p>
+                    </div>
+                </div>
+            </a>
+        ',
+        $item['id'],
+        $item['main_image'],
+        htmlspecialchars($item['name']),
+        $item['avg_rating'],
+        htmlspecialchars($item['name']),
+        htmlspecialchars($item['address'])
+        );
     }
-
-    // Convert review images and profile images to base64
-    foreach ($reviews as &$review) {
-        if (!empty($review['profile_image'])) {
-            $review['profile_image'] = base64_encode($review['profile_image']);
-        }
-        if (!empty($review['review_images'])) {
-            $reviewImagesArray = explode(',', $review['review_images']);
-            $review['images'] = array_map('base64_encode', $reviewImagesArray);
-        }
-    }
-
-    // Get similar items (same category)
-    $stmt = $conn->prepare("
-        SELECT i.id, i.name, i.address,
-               COALESCE(im.image_url, '') as main_image
-        FROM items i
-        LEFT JOIN item_images im ON i.id = im.item_id AND im.is_main = 1
-        WHERE i.category_id = ? 
-        AND i.id != ?
-        LIMIT 4
-    ");
-    $stmt->execute([$item['category_id'], $item['id']]);
-    $similarItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Convert similar items images to base64
-    foreach ($similarItems as &$similarItem) {
-        if (!empty($similarItem['main_image'])) {
-            $similarItem['main_image'] = base64_encode($similarItem['main_image']);
-        }
-    }
-
+    
     echo json_encode([
         'success' => true,
-        'data' => [
-            'item' => $item,
-            'images' => $images,
-            'reviews' => $reviews,
-            'similar_items' => $similarItems
-        ]
+        'html' => $html,
+        'data' => $data  // Include raw data juga untuk debugging
     ]);
 
 } catch(Exception $e) {
