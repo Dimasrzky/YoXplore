@@ -13,7 +13,7 @@ class Auth {
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'login') {
             $email = trim($_POST['email']);
             $password = $_POST['password'];
-
+    
             try {
                 $stmt = $this->conn->prepare("SELECT * FROM client WHERE email = ?");
                 $stmt->execute([$email]);
@@ -22,14 +22,31 @@ class Auth {
                 if ($user && password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
-                    header('Location: ../Client/Home.html');
+                    
+                    // Kirim response JSON sukses
+                    echo json_encode([
+                        'success' => true,
+                        'userData' => [
+                            'id' => $user['id'],
+                            'username' => $user['username'],
+                            'profile_image' => $user['profile_image'] ?? null
+                        ]
+                    ]);
                     exit();
                 } else {
-                    header('Location: ../Client/Login.html?error=invalid');
+                    // Kirim response JSON gagal
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Email atau password salah'
+                    ]);
                     exit();
                 }
             } catch(PDOException $e) {
-                header('Location: ../Client/Login.html?error=system');
+                // Kirim response JSON error
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan sistem'
+                ]);
                 exit();
             }
         }
