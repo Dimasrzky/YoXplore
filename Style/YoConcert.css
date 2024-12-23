@@ -552,27 +552,11 @@ nav {
 }
 
 @media screen and (max-width: 1400px) {
-    /* Hero Section */
-    .hero .text {
-        width: 90%;
-        margin-left: 0;
-        margin-top: 190px;
-        text-align: center;
-    }
-    
-    .hero .text h2 {
-        font-size: 3.8rem;
-    }
-    
-    .hero .text p {
-        font-size: 1.1rem;
-    }
-
     .search-bar {
       min-width: unset;
       width: 60%;
       margin: 54px auto;
-      margin-top: 114px;
+      margin-top: 98px;
     }
   
     .search-bar input {
@@ -663,23 +647,23 @@ nav {
     .hero .text {
       width: 90%;
       margin-left: 0;
-      margin-top: 150px;
+      margin-top: 195px;
       text-align: center;
     }
   
     .hero .text h2 {
-      font-size: 3rem;
+      font-size: 3.5rem;
     }
   
     .hero .text p {
-      font-size: 0.9rem;
+      font-size: 1.1rem;
     }
   
     .search-bar {
       min-width: unset;
       width: 60%;
       margin: 54px auto;
-      margin-top: 125px;
+      margin-top: 126px;
     }
   
     .search-bar input {
