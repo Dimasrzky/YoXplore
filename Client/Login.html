@@ -53,13 +53,7 @@
     document.getElementById("loginForm").addEventListener("submit", function(event) {
         event.preventDefault();
         
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        
-        const formData = new FormData();
-        formData.append('email', email);
-        formData.append('password', password);
-        formData.append('action', 'login');
+        const formData = new FormData(this);
         
         fetch("/YoXplore/Controller/Auth.php", {
             method: "POST",
@@ -67,31 +61,20 @@
         })
         .then(response => response.text())
         .then(text => {
-            console.log('Response dari server:', text); // Untuk debugging
             const data = JSON.parse(text);
-            
-            if (data.success === true) { // Pastikan menggunakan === true
-                console.log('Login berhasil, mencoba redirect...'); // Untuk debugging
+            if (data.success) {
                 sessionStorage.setItem('user_id', data.userData.id);
                 sessionStorage.setItem('username', data.userData.username);
-                
-                // Coba dengan berbagai cara redirect
-                window.location.replace('/YoXplore/Client/Home.html');
-                // Jika cara di atas tidak berhasil, coba ini:
-                // window.location.href = '/YoXplore/Client/Home.html';
-                
-                return false; // Hentikan eksekusi lebih lanjut
+                window.location.href = '../Client/Home.html';
             } else {
-                const alertDiv = document.getElementById("alert-message");
-                alertDiv.textContent = data.message || "Login gagal";
-                alertDiv.style.display = "block";
+                document.getElementById("alert-message").textContent = data.message;
+                document.getElementById("alert-message").style.display = "block";
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            const alertDiv = document.getElementById("alert-message");
-            alertDiv.textContent = "Terjadi kesalahan. Silakan coba lagi.";
-            alertDiv.style.display = "block";
+            document.getElementById("alert-message").textContent = "Terjadi kesalahan";
+            document.getElementById("alert-message").style.display = "block";
         });
     });
 </html>
