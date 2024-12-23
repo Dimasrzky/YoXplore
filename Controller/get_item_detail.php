@@ -1,46 +1,75 @@
-// Controller/get_item_detail.php
 <?php
+header('Content-Type: application/json');
 require_once('../Config/db_connect.php');
 
-$item_id = $_GET['id'];
-
 try {
-    // Query untuk mendapatkan detail item
-    $stmt = $conn->prepare("
-        SELECT i.*, c.name as category_name,
-        GROUP_CONCAT(DISTINCT img.image_url) as images,
-        AVG(r.rating) as avg_rating,
-        COUNT(r.id) as total_reviews
+    $item_id = $_GET['id'] ?? null;
+    
+    if (!$item_id) {
+        throw new Exception('ID item tidak ditemukan');
+    }
+
+    // Query untuk mengambil detail item
+    $query = "
+        SELECT i.*, 
+               c.name as category_name,
+               COALESCE(AVG(r.rating), 0) as avg_rating,
+               COUNT(r.id) as review_count
         FROM items i
         LEFT JOIN categories c ON i.category_id = c.id
-        LEFT JOIN item_images img ON i.id = img.item_id
         LEFT JOIN reviews r ON i.id = r.item_id
-        WHERE i.id = ?
+        WHERE i.id = :item_id
         GROUP BY i.id
-    ");
-    $stmt->execute([$item_id]);
+    ";
+    
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':item_id', $item_id, PDO::PARAM_INT);
+    $stmt->execute();
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Query untuk mendapatkan review
-    $stmt = $conn->prepare("
-        SELECT r.*, c.username as reviewer_name, c.profile_image as reviewer_image,
-        GROUP_CONCAT(ri.image_url) as review_images
+    // Query untuk mengambil gambar item
+    $query_images = "
+        SELECT image_url, is_main 
+        FROM item_images 
+        WHERE item_id = :item_id
+    ";
+    
+    $stmt = $conn->prepare($query_images);
+    $stmt->bindParam(':item_id', $item_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Query untuk mengambil review
+    $query_reviews = "
+        SELECT r.*, u.username, u.profile_image 
         FROM reviews r
-        JOIN client c ON r.user_id = c.id
-        LEFT JOIN review_images ri ON r.id = ri.review_id
-        WHERE r.item_id = ?
-        GROUP BY r.id
+        JOIN users u ON r.user_id = u.id
+        WHERE r.item_id = :item_id
         ORDER BY r.created_at DESC
-    ");
-    $stmt->execute([$item_id]);
+        LIMIT 5
+    ";
+    
+    $stmt = $conn->prepare($query_reviews);
+    $stmt->bindParam(':item_id', $item_id, PDO::PARAM_INT);
+    $stmt->execute();
     $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Konversi gambar ke base64
+    foreach ($images as &$image) {
+        if (!empty($image['image_url'])) {
+            $image['image_url'] = base64_encode($image['image_url']);
+        }
+    }
 
     echo json_encode([
         'success' => true,
         'item' => $item,
+        'images' => $images,
         'reviews' => $reviews
     ]);
-} catch(PDOException $e) {
+
+} catch(Exception $e) {
+    http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
