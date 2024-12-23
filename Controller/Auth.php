@@ -113,6 +113,46 @@ class Auth {
             exit();
         }
     }
+
+    
+    public function forgotPassword() {
+        header('Content-Type: application/json');
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $username = trim($_POST['username']);
+            $newPassword = $_POST['password'];
+            
+            try {
+                // Cek username exist
+                $stmt = $this->conn->prepare("SELECT id FROM client WHERE username = ?");
+                $stmt->execute([$username]);
+                
+                if ($stmt->rowCount() > 0) {
+                    // Hash password baru
+                    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                    
+                    // Update password
+                    $updateStmt = $this->conn->prepare("UPDATE client SET password = ? WHERE username = ?");
+                    $updateStmt->execute([$hashedPassword, $username]);
+                    
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Password berhasil diubah'
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false, 
+                        'message' => 'Username tidak ditemukan'
+                    ]);
+                }
+            } catch(PDOException $e) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan sistem'
+                ]);
+            }
+            exit();
+        }
+    }
 }
 
 if (isset($_POST['action']) && $_POST['action'] === 'login') {
