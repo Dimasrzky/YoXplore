@@ -164,4 +164,9 @@ if (isset($_POST['username'])) {
     $auth = new Auth($conn);
     $auth->register();
 }
+
+if(isset($_POST['action']) && $_POST['action'] === 'forgot') {
+    $auth = new Auth($conn);
+    $auth->forgotPassword();
+}
 ?>
