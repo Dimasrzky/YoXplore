@@ -118,12 +118,12 @@ class Auth {
     public function forgotPassword() {
         header('Content-Type: application/json');
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $username = trim($_POST['username']);
+            $username = trim($_POST['email']);
             $newPassword = $_POST['password'];
             
             try {
                 // Cek username exist
-                $stmt = $this->conn->prepare("SELECT id FROM client WHERE username = ?");
+                $stmt = $this->conn->prepare("SELECT id FROM client WHERE email = ?");
                 $stmt->execute([$username]);
                 
                 if ($stmt->rowCount() > 0) {
@@ -131,7 +131,7 @@ class Auth {
                     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                     
                     // Update password
-                    $updateStmt = $this->conn->prepare("UPDATE client SET password = ? WHERE username = ?");
+                    $updateStmt = $this->conn->prepare("UPDATE client SET password = ? WHERE email = ?");
                     $updateStmt->execute([$hashedPassword, $username]);
                     
                     echo json_encode([
