@@ -205,7 +205,7 @@ nav {
   }
   
   .search-bar input {
-    width: 90%;
+    width: 85%;
     flex: 1;
     border: none;
     padding: 15px 5px;
@@ -229,7 +229,7 @@ nav {
     align-items: center;
     justify-content: center;
     margin-right: -5px;
-    padding-right: 25px;
+    padding-right: 22px;
     gap: 8px;
   }
   
@@ -567,6 +567,7 @@ nav {
   
     .search-bar a {
       margin-top: -1px;
+      padding: 1px 1px 1px 5px;
     }
   
     .most-popular {
