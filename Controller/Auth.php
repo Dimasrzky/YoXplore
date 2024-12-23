@@ -10,45 +10,48 @@ class Auth {
     }
 
     public function login() {
+        header('Content-Type: application/json'); // Tambahkan header JSON
+        
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'login') {
             $email = trim($_POST['email']);
             $password = $_POST['password'];
+            
+            // Log untuk debugging
+            error_log("Login attempt - Email: $email");
     
             try {
                 $stmt = $this->conn->prepare("SELECT * FROM client WHERE email = ?");
                 $stmt->execute([$email]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
                 
+                // Log untuk debugging
+                error_log("User found: " . ($user ? "yes" : "no"));
+                
                 if ($user && password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     
-                    // Kirim response JSON sukses
                     echo json_encode([
                         'success' => true,
                         'userData' => [
                             'id' => $user['id'],
-                            'username' => $user['username'],
-                            'profile_image' => $user['profile_image'] ?? null
+                            'username' => $user['username']
                         ]
                     ]);
-                    exit();
                 } else {
-                    // Kirim response JSON gagal
                     echo json_encode([
                         'success' => false,
                         'message' => 'Email atau password salah'
                     ]);
-                    exit();
                 }
             } catch(PDOException $e) {
-                // Kirim response JSON error
+                error_log("Database error: " . $e->getMessage());
                 echo json_encode([
                     'success' => false,
                     'message' => 'Terjadi kesalahan sistem'
                 ]);
-                exit();
             }
+            exit();
         }
     }
 
