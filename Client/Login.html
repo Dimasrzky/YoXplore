@@ -14,7 +14,7 @@
         <div class="login-section">
             <h2>Login your account</h2>
             <div class="error-message" id="alert-message" style="display: none;"></div>
-            <form method="POST" action="/YoXplore/Controller/Auth.php">
+            <form id="loginForm" method="POST" action="/YoXplore/Controller/Auth.php">
                 <input type="hidden" name="action" value="login">
 
                 <div class="input-group">
@@ -32,12 +32,12 @@
                 <button type="submit" class="login-button">Login</button>
             </form>    
 
-            <div id="g_id_onload"
+            <!-- <div id="g_id_onload"
                 data-client_id="YOUR_GOOGLE_CLIENT_ID"
                 data-login_uri="YOUR_BACKEND_LOGIN_URI"
                 data-auto_prompt="false">
             </div>
-            <!-- <div class="g_id_signin"
+            <div class="g_id_signin"
                 data-type="standard"
                 data-shape="rectangular"
                 data-theme="outline"
@@ -52,7 +52,6 @@
 <script>
     document.getElementById("loginForm").addEventListener("submit", function(event) {
         event.preventDefault();
-        console.log('Form submitted'); 
         
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
@@ -68,31 +67,22 @@
         })
         .then(response => response.text())
         .then(text => {
-            console.log('Raw response:', text); 
-            return JSON.parse(text);
-        })
-        .then(data => {
-            if (data.success) {
-                sessionStorage.setItem('user_id', data.userData.id);
-                sessionStorage.setItem('username', data.userData.username);
-                window.location.href = '/YoXplore/Client/Home.html';
-            } else {
-                const alertDiv = document.getElementById("alert-message");
-                alertDiv.textContent = data.message || "Login gagal";
-                alertDiv.style.display = "block";
-                alertDiv.style.color = "red";
-                alertDiv.style.marginBottom = "10px";
+            try {
+                const data = JSON.parse(text);
+                if (data.success) {
+                    sessionStorage.setItem('user_id', data.userData.id);
+                    sessionStorage.setItem('username', data.userData.username);
+                    if (data.userData.profile_image) {
+                        localStorage.setItem(`profileImage_${data.userData.id}`, data.userData.profile_image);
+                    }
+                    window.location.href = '/YoXplore/Client/Home.html';
+                } else {
+                    throw new Error(data.message || "Login gagal");
+                }
+            } catch (error) {
+                throw new Error("Login gagal: " + text);
             }
         })
-
-        function handleLogin(userData) {
-            sessionStorage.setItem('user_id', userData.id);
-            sessionStorage.setItem('username', userData.username);
-            if (userData.profile_image) {
-                localStorage.setItem(`profileImage_${userData.id}`, userData.profile_image);
-            }
-        }
-    })
 
         
         .catch(error => {
@@ -103,5 +93,6 @@
             alertDiv.style.color = "red";
             alertDiv.style.marginBottom = "10px";
         });
+    });
 </script>
 </html>
