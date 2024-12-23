@@ -5,6 +5,7 @@ require_once('../Config/db_connect.php');
 try {
     $section = $_GET['section'] ?? null;
     $category = $_GET['category'] ?? null;
+    $search = $_GET['search'] ?? null;
     
     $query = "
         SELECT i.*, 
@@ -20,6 +21,11 @@ try {
         WHERE i.feature_type = :section
     ";
     
+    // Tambahkan kondisi pencarian jika ada
+    if ($search) {
+        $query .= " AND (i.name LIKE :search OR i.address LIKE :search)";
+    }
+    
     // Tambahkan filter kategori jika ada
     if ($category && $category !== 'Semua Kategori') {
         $query .= " AND c.name = :category";
@@ -29,6 +35,11 @@ try {
     
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':section', $section, PDO::PARAM_STR);
+    
+    if ($search) {
+        $searchTerm = "%{$search}%";
+        $stmt->bindParam(':search', $searchTerm, PDO::PARAM_STR);
+    }
     
     if ($category && $category !== 'Semua Kategori') {
         $stmt->bindParam(':category', $category, PDO::PARAM_STR);
