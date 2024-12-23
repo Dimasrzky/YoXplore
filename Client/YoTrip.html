@@ -55,10 +55,7 @@
                     <div class="shorted-by">
                         <label for="sort-options">Shorted by:</label>
                         <select id="sort-options">
-                            <option value="popularity">Popularity</option>
-                            <option value="rating">Mountain</option>
-                            <option value="distance">Beach</option>
-                            <option value="distance">City</option>
+                            <option value="">All</option>
                         </select>
                     </div>
                 </div>
@@ -175,13 +172,16 @@
             }
         };
 
-        function loadDestinations() {
-            fetch('../Controller/get_destinations.php?section=YoTrip')
+       // Fungsi untuk memuat destinasi dengan filter
+        function loadDestinations(category = '') {
+            const url = `../Controller/get_destinations.php?section=YoTrip${category ? '&category=' + encodeURIComponent(category) : ''}`;
+            
+            fetch(url)
                 .then(response => response.json())
                 .then(result => {
                     if (result.success && Array.isArray(result.data)) {
                         const container = document.querySelector('.popular-grid');
-                        container.innerHTML = ''; // Clear existing content
+                        container.innerHTML = ''; // Bersihkan konten yang ada
                         
                         result.data.forEach(item => {
                             const itemHtml = `
@@ -189,8 +189,8 @@
                                     <div class="image-container">
                                         <a href="Item.html?id=${item.id}">
                                             <img src="data:image/jpeg;base64,${item.main_image || ''}" 
-                                                 alt="${item.name}"
-                                                 onerror="this.src='../Image/placeholder.jpg'">
+                                                alt="${item.name}"
+                                                onerror="this.src='../Image/placeholder.jpg'">
                                             <div class="rating">
                                                 <span>★ ${item.rating || '0'}</span>
                                             </div>
@@ -199,35 +199,55 @@
                                     <div class="content">
                                         <h3>${item.name}</h3>
                                         <div class="location">
-                                            <img src="../Image/location_brown.png" alt="Location Icon">
+                                            <img src="../Image/location_brown.png" alt="Ikon Lokasi">
                                             <span>${item.address}</span>
+                                        </div>
+                                        <div class="category">
+                                            <span>${item.category_name}</span>
                                         </div>
                                     </div>
                                 </div>
                             `;
                             container.innerHTML += itemHtml;
                         });
-                    } else {
-                        console.error('Failed to load destinations:', result);
                     }
                 })
-                .catch(error => {
-                    console.error('Error loading destinations:', error);
-                });
+                .catch(error => console.error('Error saat memuat destinasi:', error));
         }
-        
-        // Load destinations when page loads
+
+        // Fungsi untuk mengisi opsi kategori
+        function updateCategoryOptions() {
+            const sortOptions = document.getElementById('sort-options');
+            if (sortOptions) {
+                const categories = [
+                    { value: '', text: 'All' },
+                    { value: 'Historical', text: 'Historical' },
+                    { value: 'Nature', text: 'Nature' },
+                    { value: 'Beach', text: 'Beach' },
+                    { value: 'Adventure', text: 'Adventure' }
+                ];
+                
+                sortOptions.innerHTML = categories.map(category => 
+                    `<option value="${category.value}">${category.text}</option>`
+                ).join('');
+            }
+        }
+
+        // Event listener saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
-            loadDestinations();
+            // Update opsi kategori
+            updateCategoryOptions();
             
-            // Handle category filter if needed
+            // Tambahkan event listener untuk filter
             const sortOptions = document.getElementById('sort-options');
             if (sortOptions) {
                 sortOptions.addEventListener('change', function() {
-                    const category = this.value;
-                    loadDestinations(category);
+                    loadDestinations(this.value);
                 });
             }
+            
+            // Muat data awal
+            loadDestinations();
         });
 
         // Load YoTrip destinations
