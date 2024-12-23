@@ -567,7 +567,7 @@ nav {
   
     .search-bar a {
       margin-top: -1px;
-      padding-right: 10px;
+      padding: 2px 0px 2px 5px;
     }
   
     .most-popular {
