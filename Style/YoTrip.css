@@ -215,7 +215,7 @@ nav {
   }
   
   .search-bar a {
-    font-size: 15px;
+    font-size: 20px;
     background: #91553d;
     color: white;
     padding: 15px 10px;
@@ -567,7 +567,6 @@ nav {
   
     .search-bar a {
       margin-top: -1px;
-      padding: 2px 0px 2px 5px;
     }
   
     .most-popular {
