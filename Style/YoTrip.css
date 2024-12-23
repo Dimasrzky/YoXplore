@@ -228,7 +228,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: -5px;
+    margin-right: 0px;
     padding-right: 22px;
     gap: 8px;
   }
