@@ -153,3 +153,122 @@ button:hover {
     color: #047481;
     border: 1px solid #81e6d9;
 }
+
+@media screen and (max-width: 1000px) {
+    body,
+    html {
+      height: 100%;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+    }
+  
+    .container {
+      flex-direction: column;
+      min-height: 100vh;
+      height: 100%;
+      padding: 20px;
+      box-shadow: none;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: relative;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+  
+    .background-section {
+      width: 100%;
+      height: auto;
+      background: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      position: static; /* Changed to static */
+    }
+  
+    .background-section img {
+      width: 150px;
+      height: auto;
+      display: block;
+      margin-left: auto; /* Force center */
+      margin-right: auto; /* Force center */
+      margin-top: 40px;
+      margin-bottom: 40px;
+      position: static; /* Remove any positioning */
+      left: unset; /* Remove left positioning */
+      transform: none; /* Remove any transforms */
+    }
+  
+    .login-section {
+      width: 90%;
+      max-width: 400px;
+      padding: 20px;
+      margin: 0;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+  
+    /* Remove any margins or positioning that might interfere */
+    .background-section::before,
+    .background-section::after {
+      display: none;
+    }
+  
+    .login-section h2 {
+      margin-top: -20px;
+      margin-bottom: 40px;
+      text-align: center;
+      width: 100%;
+    }
+  
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .input-group {
+      width: 100%;
+      margin-top: 5px;
+    }
+  
+    .input-group input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  
+    button {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 20px 0;
+    }
+  
+    .forgot-password {
+      width: 100%;
+      text-align: left;
+      margin: 3px 0 5px 0;
+    }
+  
+    .create-account,
+    .g_id_signin {
+      width: 100%;
+      margin: 10px 0;
+      text-align: center;
+    }
+  
+    .g_id_signin {
+      justify-content: center;
+      display: flex;
+      margin-top: -10px;
+    }
+  }
+  

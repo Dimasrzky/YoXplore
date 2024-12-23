@@ -10,12 +10,30 @@
         <header>
             <nav class="container">
                 <a href="../Client/Home.html"><img class="logo" src="../Image/Yoxplore logo text.png" alt="Yoxplore Logo"></a>
+                <button class="hamburger-menu" aria-label="Menu" onclick="toggleNav()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
                 <div class="nav-links">
                     <a href="../Client/Home.html"><img src="../Image/home.png" alt="Home Icon"> Home</a>
                     <a href="../Client/Yotrip.html"><img src="../Image/yotrip.png" alt="Trip Icon"> YoTrip</a>
                     <a href="../Client/Yoconcert.html"><img src="../Image/yoconcert.png" alt="Concert Icon"> YoConcert</a>
                     <a href="../Client/YoTaste.html"><img src="../Image/yotaste.png" alt="Taste Icon"> YoTaste</a>
                     <a href="../Client/YoStay.html"><img src="../Image/yostay.png" alt="Stay Icon"> YoStay</a>
+                
+                    <!-- menu account khusus mobile -->
+                    <div class="menu-account">
+                        <div class="nav-divider"></div>
+                        <a href="/Client/Profile.html" class="menu-item">
+                            <img src="../Image/navbar/settings.png" alt="Settings Icon">
+                            Account
+                        </a>
+                        <a href="/Client/Logout.html" class="menu-item logout">
+                            <img src="../Image/navbar/logout.png" alt="Logout Icon">
+                            Logout
+                        </a>
+                      </div>
                 </div>
                 <div class="user-profile">
                     <span id="usernameDisplay"></span></div>
@@ -365,6 +383,36 @@
         
             const observer = new IntersectionObserver(observerCallback, observerOptions);
             observer.observe(popularGrid);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger-menu');
+            const navLinks = document.querySelector('.nav-links');
+            
+            hamburger.addEventListener('click', function() {
+                // Toggle active class for both hamburger and nav-links
+                this.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+        
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const isClickInsideNav = navLinks.contains(event.target);
+                const isClickInsideHamburger = hamburger.contains(event.target);
+                
+                if (!isClickInsideNav && !isClickInsideHamburger && navLinks.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navLinks.classList.remove('active');
+                }
+            });
+        
+            // Close menu when window is resized beyond tablet breakpoint
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 1024) {
+                    hamburger.classList.remove('active');
+                    navLinks.classList.remove('active');
+                }
+            });
         });
 
         function toggleDropdown() {
