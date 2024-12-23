@@ -557,7 +557,7 @@
             });
 
             document.addEventListener('DOMContentLoaded', function() {
-                // Ambil item_id dari URL
+                // Get item ID from URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const itemId = urlParams.get('id');
                 
@@ -566,115 +566,17 @@
                     return;
                 }
             
-                // Load detail item
+                // Load item details
                 fetch(`../Controller/get_item_detail.php?id=${itemId}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            const item = data.item;
-                            const images = data.images;
-                            const reviews = data.reviews;
-            
-                            // Update informasi dasar
-                            document.querySelector('h1').textContent = item.name;
-                            document.querySelector('.rating-score').textContent = 
-                                parseFloat(item.avg_rating).toFixed(1);
-                            document.querySelector('.location-info p').textContent = item.address;
-                            document.querySelector('.info-item:nth-child(2) p').textContent = 
-                                item.opening_hours || 'Tidak tersedia';
-                            document.querySelector('.info-item:nth-child(3) p').textContent = 
-                                item.phone || 'Tidak tersedia';
-            
-                            // Update gallery
-                            const galleryContainer = document.querySelector('.gallery');
-                            let galleryHTML = '';
-                            
-                            images.forEach((img, index) => {
-                                if (index === 0) {
-                                    // Main image
-                                    galleryHTML += `
-                                        <div class="gallery-item parent">
-                                            <img src="data:image/jpeg;base64,${img.image_url}" 
-                                                 alt="${item.name}">
-                                        </div>
-                                    `;
-                                } else if (index < 6) {
-                                    // Regular images
-                                    galleryHTML += `
-                                        <div class="gallery-item child">
-                                            <img src="data:image/jpeg;base64,${img.image_url}" 
-                                                 alt="${item.name} ${index + 1}">
-                                        </div>
-                                    `;
-                                }
-                            });
-            
-                            // Add "See All Photos" last item
-                            galleryHTML += `
-                                <div class="gallery-item child last-item">
-                                    <img src="data:image/jpeg;base64,${images[images.length-1].image_url}" 
-                                         alt="${item.name}">
-                                    <a href="javascript:void(0)" onclick="openGallery()" class="overlay-link">
-                                        <div class="overlay-content">
-                                            <div class="image-icon">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" 
-                                                     xmlns="http://www.w3.org/2000/svg">
-                                                    <rect x="3" y="3" width="18" height="18" rx="2" 
-                                                          stroke="white" stroke-width="2"/>
-                                                    <circle cx="8.5" cy="8.5" r="1.5" fill="white"/>
-                                                    <path d="M3 15L8 10L13 15L21 7" stroke="white" 
-                                                          stroke-width="2"/>
-                                                </svg>
-                                            </div>
-                                            <span>Lihat Semua Foto</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            `;
-            
-                            galleryContainer.innerHTML = galleryHTML;
-            
-                            // Update reviews
-                            const reviewsContainer = document.querySelector('.reviews-container');
-                            let reviewsHTML = '';
-                            
-                            reviews.forEach(review => {
-                                reviewsHTML += `
-                                    <div class="review-card">
-                                        <div class="review-header">
-                                            <div class="reviewer-info">
-                                                <img src="${review.profile_image || '../Image/user.png'}" 
-                                                     alt="User Profile" class="reviewer-pic">
-                                                <div class="reviewer-details">
-                                                    <h4>${review.username}</h4>
-                                                </div>
-                                            </div>
-                                            <div class="review-rating">
-                                                <div class="star-rating">
-                                                    <i class='bx bxs-star'></i>
-                                                </div>
-                                                <span class="rating-score">${review.rating}</span>
-                                                <span class="rating-max">/5</span>
-                                            </div>
-                                        </div>
-                                        <p class="review-text">${review.comment}</p>
-                                        ${review.images ? `
-                                            <div class="review-images">
-                                                ${review.images.map(img => `
-                                                    <img src="data:image/jpeg;base64,${img}" 
-                                                         alt="Review Image">
-                                                `).join('')}
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                `;
-                            });
-            
-                            reviewsContainer.innerHTML = reviewsHTML;
-            
-                            // Update Google Maps
-                            const mapContainer = document.querySelector('.map iframe');
-                            mapContainer.src = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.115726227853!2d${item.longitude}!3d${item.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a5ae3dbd859d1%3A0x19e7a03b25955a2d!2s${encodeURIComponent(item.name)}!5e0!3m2!1sen!2sid!4v1708181669044!5m2!1sen!2sid`;
+                            updateItemDetails(data.data);
+                            setupGallery(data.data.images);
+                            setupReviews(data.data.reviews);
+                            setupMap(data.data.item);
+                        } else {
+                            throw new Error(data.message);
                         }
                     })
                     .catch(error => {
@@ -708,6 +610,165 @@
                         alert('Review berhasil ditambahkan!');
                         location.reload();
                     }
+                });
+            });
+
+            function updateItemDetails(data) {
+                const item = data.item;
+                
+                // Update basic info
+                document.querySelector('h1').textContent = item.name;
+                document.querySelector('.rating-score').textContent = 
+                    parseFloat(item.avg_rating).toFixed(1);
+                
+                // Update location info
+                document.querySelector('.location-info p').textContent = item.address;
+                document.querySelector('.info-item:nth-child(2) p').textContent = 
+                    item.opening_hours || 'Tidak tersedia';
+                document.querySelector('.info-item:nth-child(3) p').textContent = 
+                    item.phone || 'Tidak tersedia';
+            }
+
+            function setupGallery(images) {
+                const galleryContainer = document.querySelector('.gallery');
+                let galleryHTML = '';
+                
+                images.forEach((img, index) => {
+                    if (index === 0) {
+                        galleryHTML += `
+                            <div class="gallery-item parent">
+                                <img src="data:image/jpeg;base64,${img.image_url}" 
+                                     alt="Main Image">
+                            </div>
+                        `;
+                    } else if (index < 6) {
+                        galleryHTML += `
+                            <div class="gallery-item child">
+                                <img src="data:image/jpeg;base64,${img.image_url}" 
+                                     alt="Gallery Image ${index}">
+                            </div>
+                        `;
+                    }
+                });
+            
+                // Add see all photos button
+                galleryHTML += `
+                    <div class="gallery-item child last-item">
+                        <img src="data:image/jpeg;base64,${images[images.length-1].image_url}" 
+                             alt="Last Image">
+                        <a href="javascript:void(0)" onclick="openGallery()" class="overlay-link">
+                            <div class="overlay-content">
+                                <div class="image-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" 
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" 
+                                              stroke="white" stroke-width="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5" fill="white"/>
+                                        <path d="M3 15L8 10L13 15L21 7" stroke="white" 
+                                              stroke-width="2"/>
+                                    </svg>
+                                </div>
+                                <span>See All Photos</span>
+                            </div>
+                        </a>
+                    </div>
+                `;
+            
+                galleryContainer.innerHTML = galleryHTML;
+                setupModalGallery(images);
+            }
+
+            function setupModalGallery(images) {
+                const modalGallery = document.querySelector('.modal-gallery');
+                modalGallery.innerHTML = images.map(img => `
+                    <img src="data:image/jpeg;base64,${img.image_url}" 
+                         alt="Gallery Image">
+                `).join('');
+            }
+
+            function setupReviews(reviews) {
+                const reviewsContainer = document.querySelector('.reviews-container');
+                let reviewsHTML = '';
+                
+                reviews.forEach(review => {
+                    reviewsHTML += `
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <img src="${review.profile_image ? 
+                                        `data:image/jpeg;base64,${review.profile_image}` : 
+                                        '../Image/user.png'}" 
+                                         alt="User Profile" class="reviewer-pic">
+                                    <div class="reviewer-details">
+                                        <h4>${review.username}</h4>
+                                    </div>
+                                </div>
+                                <div class="review-rating">
+                                    <div class="star-rating">
+                                        <i class='bx bxs-star'></i>
+                                    </div>
+                                    <span class="rating-score">${review.rating}</span>
+                                    <span class="rating-max">/5</span>
+                                </div>
+                            </div>
+                            <p class="review-text">${review.comment}</p>
+                            ${review.images ? `
+                                <div class="review-images">
+                                    ${review.images.map(img => `
+                                        <img src="data:image/jpeg;base64,${img}" 
+                                             alt="Review Image">
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+            
+                reviewsContainer.innerHTML = reviewsHTML;
+            }
+
+            function setupMap(item) {
+                const mapContainer = document.querySelector('.map iframe');
+                mapContainer.src = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.115726227853!2d${item.longitude}!3d${item.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a5ae3dbd859d1%3A0x19e7a03b25955a2d!2s${encodeURIComponent(item.name)}!5e0!3m2!1sen!2sid!4v1708181669044!5m2!1sen!2sid`;
+            }
+
+            document.querySelector('.submit').addEventListener('click', function() {
+                const rating = document.querySelector('[name="rating"]').value;
+                const comment = document.querySelector('textarea').value;
+                const fileInput = document.getElementById('file-input');
+                const itemId = new URLSearchParams(window.location.search).get('id');
+                
+                if (!rating || !comment) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('item_id', itemId);
+                formData.append('rating', rating);
+                formData.append('comment', comment);
+                
+                // Append images if any
+                Array.from(fileInput.files).forEach(file => {
+                    formData.append('images[]', file);
+                });
+            
+                fetch('../Controller/save_review.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Review berhasil ditambahkan!');
+                        location.reload();
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error saving review:', error);
+                    alert('Gagal menyimpan review');
                 });
             });
     </script>

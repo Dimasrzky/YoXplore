@@ -1,65 +1,47 @@
+// Controller/save_review.php
 <?php
 header('Content-Type: application/json');
 require_once('../Config/db_connect.php');
 
 try {
-    // Validasi input
-    $item_id = $_POST['item_id'] ?? null;
-    $user_id = $_SESSION['user_id'] ?? null;
-    $rating = $_POST['rating'] ?? null;
-    $comment = $_POST['comment'] ?? null;
-    
-    if (!$item_id || !$user_id || !$rating) {
-        throw new Exception('Data tidak lengkap');
+    if (!isset($_POST['item_id']) || !isset($_POST['rating']) || !isset($_POST['comment'])) {
+        throw new Exception('Missing required fields');
     }
 
-    // Mulai transaksi
     $conn->beginTransaction();
 
-    // Simpan review
-    $query = "
+    // Insert review
+    $stmt = $conn->prepare("
         INSERT INTO reviews (item_id, user_id, rating, comment)
-        VALUES (:item_id, :user_id, :rating, :comment)
-    ";
-    
-    $stmt = $conn->prepare($query);
-    $stmt->bindParam(':item_id', $item_id);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->bindParam(':rating', $rating);
-    $stmt->bindParam(':comment', $comment);
-    $stmt->execute();
-    
-    $review_id = $conn->lastInsertId();
+        VALUES (?, ?, ?, ?)
+    ");
+    $stmt->execute([
+        $_POST['item_id'],
+        $_SESSION['user_id'],
+        $_POST['rating'],
+        $_POST['comment']
+    ]);
+    $reviewId = $conn->lastInsertId();
 
-    // Upload dan simpan gambar review jika ada
-    if (!empty($_FILES['images'])) {
+    // Handle images if any
+    if (isset($_FILES['images'])) {
         foreach ($_FILES['images']['tmp_name'] as $key => $tmp_name) {
-            $image_data = file_get_contents($tmp_name);
-            
-            $query = "
+            $imageData = file_get_contents($tmp_name);
+            $stmt = $conn->prepare("
                 INSERT INTO review_images (review_id, image_url)
-                VALUES (:review_id, :image_url)
-            ";
-            
-            $stmt = $conn->prepare($query);
-            $stmt->bindParam(':review_id', $review_id);
-            $stmt->bindParam(':image_url', $image_data);
-            $stmt->execute();
+                VALUES (?, ?)
+            ");
+            $stmt->execute([$reviewId, $imageData]);
         }
     }
 
     $conn->commit();
-    
-    echo json_encode([
-        'success' => true,
-        'message' => 'Review berhasil disimpan'
-    ]);
+    echo json_encode(['success' => true]);
 
 } catch(Exception $e) {
-    if ($conn) {
+    if ($conn->inTransaction()) {
         $conn->rollBack();
     }
-    
     http_response_code(500);
     echo json_encode([
         'success' => false,
