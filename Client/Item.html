@@ -306,6 +306,7 @@
     </body>
 
     <script>
+        
         function logout() {
             // Clear semua data
             sessionStorage.clear();
@@ -545,31 +546,47 @@
             });
 
             document.addEventListener('DOMContentLoaded', function() {
-                // Get item ID from URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const itemId = urlParams.get('id');
+                const gallery = document.querySelector('.gallery');
+                
+                if (gallery) {  // Check if element exists before observing
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('visible');
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, {
+                        threshold: 0.1
+                    });
+                    
+                    observer.observe(gallery);
+                }
                 
                 if (!itemId) {
-                    alert('ID item tidak ditemukan');
+                    showError('ID item tidak ditemukan');
                     return;
                 }
             
-                // Load item details
                 fetch(`../Controller/get_item_detail.php?id=${itemId}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.success) {
-                            updateItemDetails(data.data);
-                            setupGallery(data.data.images);
-                            setupReviews(data.data.reviews);
-                            setupMap(data.data.item);
+                            updatePageContent(data.data);
                         } else {
-                            throw new Error(data.message);
+                            throw new Error(data.message || 'Failed to load item details');
                         }
                     })
                     .catch(error => {
-                        console.error('Error loading item details:', error);
-                        alert('Gagal memuat detail item');
+                        console.error('Error:', error);
+                        showError('Gagal memuat detail item');
                     });
             });
             // Handle submit review
@@ -759,5 +776,65 @@
                     alert('Gagal menyimpan review');
                 });
             });
+
+            function updatePageContent(data) {
+                // Update basic info
+                document.querySelector('h1').textContent = data.name || 'Candi Prambanan';
+                document.querySelector('.rating-score').textContent = data.rating || '4.3';
+                
+                // Update location info
+                const addressElement = document.querySelector('[data-info="address"]');
+                if (addressElement) {
+                    addressElement.textContent = data.address || 'Jl. Raya Solo - Yogyakarta No.16, Kranggan, Bokoharjo, Kec. Prambanan';
+                }
+                
+                const hoursElement = document.querySelector('[data-info="hours"]');
+                if (hoursElement) {
+                    hoursElement.textContent = data.opening_hours || '06:30 - 17:00';
+                }
+                
+                const phoneElement = document.querySelector('[data-info="phone"]');
+                if (phoneElement) {
+                    phoneElement.textContent = data.phone || '(0274) 519548';
+                }
+                
+                // Update gallery if images exist
+                if (data.images && data.images.length > 0) {
+                    updateGallery(data.images);
+                }
+            }
+
+            function showError(message) {
+                const errorDialog = document.createElement('div');
+                errorDialog.className = 'error-dialog';
+                errorDialog.innerHTML = `
+                    <div class="error-content">
+                        <p>${message}</p>
+                        <button onclick="this.parentElement.parentElement.remove()">OK</button>
+                    </div>
+                `;
+                document.body.appendChild(errorDialog);
+            }
     </script>
+
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_ACTUAL_API_KEY&callback=initMap">
+    </script>
+
+    <script>
+        let map;
+        function initMap() {
+            const location = { lat: -7.752016, lng: 110.4914674 }; // Prambanan coordinates
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: location,
+                zoom: 15,
+            });
+            
+            new google.maps.Marker({
+                position: location,
+                map,
+                title: "Candi Prambanan"
+            });
+        }
+        </script>
 </html>
