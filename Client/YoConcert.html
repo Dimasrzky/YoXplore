@@ -170,13 +170,16 @@
             }
         };
 
-        function loadConcerts() {
-            fetch('../Controller/get_destinations.php?section=YoConcert')
+        // Fungsi untuk memuat destinasi dengan filter
+        function loadShow(category = '') {
+            const url = `../Controller/get_destinations.php?section=YoConcert${category ? '&category=' + encodeURIComponent(category) : ''}`;
+            
+            fetch(url)
                 .then(response => response.json())
                 .then(result => {
                     if (result.success && Array.isArray(result.data)) {
                         const container = document.querySelector('.popular-grid');
-                        container.innerHTML = ''; // Clear existing content
+                        container.innerHTML = ''; // Bersihkan konten yang ada
                         
                         result.data.forEach(item => {
                             const itemHtml = `
@@ -184,8 +187,8 @@
                                     <div class="image-container">
                                         <a href="Item.html?id=${item.id}">
                                             <img src="data:image/jpeg;base64,${item.main_image || ''}" 
-                                                 alt="${item.name}"
-                                                 onerror="this.src='../Image/placeholder.jpg'">
+                                                alt="${item.name}"
+                                                onerror="this.src='../Image/placeholder.jpg'">
                                             <div class="rating">
                                                 <span>★ ${item.rating || '0'}</span>
                                             </div>
@@ -194,7 +197,7 @@
                                     <div class="content">
                                         <h3>${item.name}</h3>
                                         <div class="location">
-                                            <img src="../Image/location_brown.png" alt="Location Icon">
+                                            <img src="../Image/location_brown.png" alt="Ikon Lokasi">
                                             <span>${item.address}</span>
                                         </div>
                                     </div>
@@ -202,27 +205,68 @@
                             `;
                             container.innerHTML += itemHtml;
                         });
-                    } else {
-                        console.error('Failed to load concerts:', result);
                     }
                 })
-                .catch(error => {
-                    console.error('Error loading concerts:', error);
-                });
+                .catch(error => console.error('Error saat memuat destinasi:', error));
         }
-        
-        // Load concerts when page loads
+
+        // Fungsi untuk mengisi opsi kategori
+        function updateCategoryOptions() {
+            const sortOptions = document.getElementById('sort-options');
+            if (sortOptions) {
+                const categories = [
+                    { value: '', text: 'All' },
+                    { value: 'Traditional', text: 'Traditional' },
+                    { value: 'Modern', text: 'Modern' },
+                    { value: 'Festival', text: 'Festival' }
+                ];
+                
+                sortOptions.innerHTML = categories.map(category => 
+                    `<option value="${category.value}">${category.text}</option>`
+                ).join('');
+            }
+        }
+
+        // Event listener saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
-            loadConcerts();
+            // Update opsi kategori
+            updateCategoryOptions();
             
-            // Handle category filter
+            // Tambahkan event listener untuk filter
             const sortOptions = document.getElementById('sort-options');
             if (sortOptions) {
                 sortOptions.addEventListener('change', function() {
-                    const category = this.value;
-                    loadConcerts(category);
+                    loadShow(this.value);
                 });
             }
+            
+            // Muat data awal
+            loadShow();
         });
+
+        // Load YoTrip destinations
+function loadYoShow(filter = '') {
+    fetch('../Controller/get_destinations.php?section=YoConcert&filter=' + encodeURIComponent(filter))
+        .then(response => response.json())
+        .then(result => {
+            // Proses data hasil fetch dan tampilkan ke halaman
+        })
+        .catch(error => {
+            console.error('Error loading YoShow destinations:', error);
+        });
+}
+
+// Panggil fungsi saat halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    loadYoShow();
+
+    const sortOptions = document.getElementById('sort-options');
+    if (sortOptions) {
+        sortOptions.addEventListener('change', function() {
+            const filter = this.value;
+            loadYoShow(filter);
+        });
+    }
+});
     </script>
 </html>
