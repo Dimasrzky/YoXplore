@@ -56,10 +56,6 @@
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         
-        // Log nilai untuk debugging
-        console.log('Email:', email);
-        console.log('Password:', password);
-        
         const formData = new FormData();
         formData.append('email', email);
         formData.append('password', password);
@@ -71,41 +67,31 @@
         })
         .then(response => response.text())
         .then(text => {
-            console.log('Server response:', text); // Tambahkan log untuk melihat response server
+            console.log('Response dari server:', text); // Untuk debugging
+            const data = JSON.parse(text);
             
-            const alertDiv = document.getElementById("alert-message");
-            try {
-                const data = JSON.parse(text);
-                if (data.success) {
-                    sessionStorage.setItem('user_id', data.userData.id);
-                    sessionStorage.setItem('username', data.userData.username);
-                    window.location.href = '/YoXplore/Client/Home.html';
-                } else {
-                    alertDiv.textContent = data.message;
-                    alertDiv.style.display = "block";
-                }
-            } catch (error) {
-                console.error('Error parsing JSON:', error);
-                alertDiv.textContent = "Email atau password salah";
+            if (data.success === true) { // Pastikan menggunakan === true
+                console.log('Login berhasil, mencoba redirect...'); // Untuk debugging
+                sessionStorage.setItem('user_id', data.userData.id);
+                sessionStorage.setItem('username', data.userData.username);
+                
+                // Coba dengan berbagai cara redirect
+                window.location.replace('/YoXplore/Client/Home.html');
+                // Jika cara di atas tidak berhasil, coba ini:
+                // window.location.href = '/YoXplore/Client/Home.html';
+                
+                return false; // Hentikan eksekusi lebih lanjut
+            } else {
+                const alertDiv = document.getElementById("alert-message");
+                alertDiv.textContent = data.message || "Login gagal";
                 alertDiv.style.display = "block";
             }
         })
-        .catch(error => {
-            console.error('Network error:', error);
-            const alertDiv = document.getElementById("alert-message");
-            alertDiv.textContent = "Terjadi kesalahan. Silakan coba lagi.";
-            alertDiv.style.display = "block";
-        });
-    });
-
-        
         .catch(error => {
             console.error('Error:', error);
             const alertDiv = document.getElementById("alert-message");
             alertDiv.textContent = "Terjadi kesalahan. Silakan coba lagi.";
             alertDiv.style.display = "block";
-            alertDiv.style.color = "red";
-            alertDiv.style.marginBottom = "10px";
         });
-</script>
+    });
 </html>
