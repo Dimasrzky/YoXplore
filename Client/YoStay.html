@@ -346,7 +346,7 @@
 
     // Tambahkan fungsi search
 function searchDestinations(searchTerm) {
-    const url = `../Controller/get_destinations.php?section=YoTaste&search=${encodeURIComponent(searchTerm)}`;
+    const url = `../Controller/get_destinations.php?section=YoStay&search=${encodeURIComponent(searchTerm)}`;
     
     fetch(url)
         .then(response => response.json())
@@ -393,7 +393,15 @@ function searchDestinations(searchTerm) {
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.querySelector('.search-bar input');
     const searchButton = document.querySelector('.search-bar a');
-
+    loadYoStay();
+    
+    const sortOptions = document.getElementById('sort-options');
+    if (sortOptions) {
+        sortOptions.addEventListener('change', function() {
+            const filter = this.value;
+            loadYoStay(filter);
+        });
+    }
     // Event untuk tombol search
     searchButton.addEventListener('click', function(e) {
         e.preventDefault();
@@ -414,18 +422,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-    
-    // Panggil fungsi saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', function() {
-    loadYoStay();
-    
-    const sortOptions = document.getElementById('sort-options');
-    if (sortOptions) {
-        sortOptions.addEventListener('change', function() {
-            const filter = this.value;
-            loadYoStay(filter);
-        });
-    }
-    });
     </script>
 </html>
