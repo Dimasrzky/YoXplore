@@ -29,7 +29,7 @@ class Auth {
                         'userData' => [
                             'id' => $user['id'],
                             'username' => $user['username'],
-                            'profile_image' => $user['profile_image'] ?? null
+                            'profile_image' => $user['profile_image']
                         ]
                     ]);
                     exit();
