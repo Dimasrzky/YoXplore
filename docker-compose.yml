@@ -27,7 +27,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./yoxplore.sql:/docker-entrypoint-initdb.d/yoxplore.sql  # Ubah ini
     ports:
       - "3306:3306"
     networks:
