@@ -144,50 +144,67 @@ session_start();
             </div>
         </footer>
     </body>
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-            // Get item ID from URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const itemId = urlParams.get('id');
+        <script>
+           document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemId = urlParams.get('id');
 
-            console.log("Item ID:", itemId); // Debug
+    if (!itemId) {
+        showError('ID tidak ditemukan');
+        return;
+    }
 
-            if (!itemId) {
-                showError('Item ID not found');
-                return;
+    fetch(`../Controller/get_item_detail.php?id=${itemId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(text => {
+            try {
+                // Log raw response for debugging
+                console.log('Raw response:', text);
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Parse error:', e);
+                throw new Error('Invalid JSON response');
+            }
+        })
+        .then(data => {
+            console.log('Parsed data:', data);
+            
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to load data');
             }
 
-            fetch(`../Controller/get_item_detail.php?id=${itemId}`)
-    .then(response => {
-        console.log('Response status:', response.status); // Debug
-        return response.text();
-    })
-    .then(text => {
-        console.log('Raw response:', text); // Debug
-        try {
-            return JSON.parse(text);
-        } catch (e) {
-            console.error('JSON Parse Error:', e);
-            console.log('Failed text:', text);
-            throw new Error('Invalid JSON response');
-        }
-    })
-    .then(data => {
-        console.log('Parsed data:', data); // Debug
-        if (!data.success) {
-            throw new Error(data.message);
-        }
+            // Update UI
+            const item = data.item;
+            document.querySelector('h1').textContent = item.name || '';
+            document.querySelector('.rating-score').textContent = item.rating || '0.0';
+            
+            document.querySelector('.info-item:nth-child(1) p').textContent = item.address || '';
+            document.querySelector('.info-item:nth-child(2) p').textContent = item.opening_hours || '';
+            document.querySelector('.info-item:nth-child(3) p').textContent = item.phone || '';
 
-        // Update the UI
-        const item = data.item;
-        document.querySelector('h1').textContent = item.name;
-        // ... rest of your UI updates
-    })
-    .catch(error => {
-        console.error('Fetch Error:', error);
-        showError('Failed to load item details: ' + error.message);
-    });
+            if (data.images && data.images.length > 0) {
+                updateGallery(data.images);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError(error.message);
+        });
 });
+
+function showError(message) {
+    console.error('Error:', message);
+    // Tambahkan visual feedback untuk user
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-error';
+    errorDiv.textContent = message;
+    document.querySelector('.main').prepend(errorDiv);
+} 
 
         function updateGallery(images) {
             const gallery = document.querySelector('.gallery');
@@ -278,12 +295,6 @@ session_start();
                 </div>
             `).join('');
         }
-
-        function showError(message) {
-            // Add error message display logic here
-            console.error(message);
-            // You could add a toast notification or alert box
-        } 
         </script>
         <script src="../Script/item.js"></script>
 </html>
