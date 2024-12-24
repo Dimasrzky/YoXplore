@@ -1,75 +1,52 @@
 <?php
-header('Content-Type: application/json');
+header('Content-Type: application/json'); 
 require_once('../Config/db_connect.php');
 
 try {
-    if (!$conn) {
-        throw new Exception("Database connection failed");
-    }
-
+    // Validasi input
     if (!isset($_GET['id'])) {
         throw new Exception('ID tidak ditemukan');
     }
 
-    $itemId = $_GET['id'];
+    $itemId = intval($_GET['id']);
     
-    // Debug output
-    error_log("Processing request for ID: $itemId");
-
+    // Query utama
     $stmt = $conn->prepare("
-        SELECT i.* 
-        FROM items i 
-        WHERE i.id = ?
+        SELECT * FROM items WHERE id = ?
     ");
-    
-    if (!$stmt->execute([$itemId])) {
-        throw new Exception("Query execution failed");
-    }
-    
+    $stmt->execute([$itemId]);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    // Debug output
-    error_log("Item data: " . print_r($item, true));
 
     if (!$item) {
-        throw new Exception("Item dengan ID $itemId tidak ditemukan");
+        throw new Exception("Item tidak ditemukan");
     }
 
-    // Get images
+    // Query gambar
     $imgStmt = $conn->prepare("
         SELECT image_url, is_main 
         FROM item_images 
         WHERE item_id = ?
     ");
-    
-    if (!$imgStmt->execute([$itemId])) {
-        throw new Exception("Image query execution failed");
-    }
-    
+    $imgStmt->execute([$itemId]);
     $images = $imgStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Ensure we're only outputting once and with proper JSON format
+    // Format response
     $response = [
         'success' => true,
         'item' => $item,
         'images' => $images
     ];
 
-    // Debug output
-    error_log("Sending response: " . json_encode($response));
-
+    // Send response
     echo json_encode($response);
-    exit;
+    exit();
 
 } catch(Exception $e) {
-    error_log("Error in get_item_detail: " . $e->getMessage());
-    
-    $errorResponse = [
+    $response = [
         'success' => false,
         'message' => $e->getMessage()
     ];
-    
-    echo json_encode($errorResponse);
-    exit;
+    echo json_encode($response);
+    exit();
 }
 ?>
