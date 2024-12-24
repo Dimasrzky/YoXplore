@@ -1,16 +1,40 @@
 <?php
-$servername = "localhost";  // Docker service name
-$username = "root";
-$password = "";      // Empty password
-$dbname = "yoxplore";
+class DatabaseConnection {
+    private $host;
+    private $username;
+    private $password;
+    private $database;
+    private $conn;
 
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
-} catch(PDOException $e) {
-    error_log("Database Connection Error: " . $e->getMessage());
-    die("Connection failed: " . $e->getMessage());
+    public function __construct() {
+        // Check if running in Docker
+        if (getenv('DOCKER_ENV')) {
+            $this->host = 'db';        // nama service di docker-compose
+            $this->username = 'root';
+            $this->password = '';
+            $this->database = 'yoxplore';
+        } else {
+            // XAMPP configuration
+            $this->host = 'localhost';
+            $this->username = 'root';
+            $this->password = '';
+            $this->database = 'yoxplore';
+        }
+    }
+
+    public function connect() {
+        try {
+            $this->conn = new PDO(
+                "mysql:host=$this->host;dbname=$this->database",
+                $this->username,
+                $this->password
+            );
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $this->conn;
+        } catch(PDOException $e) {
+            error_log("Connection failed: " . $e->getMessage());
+            return false;
+        }
+    }
 }
 ?>
