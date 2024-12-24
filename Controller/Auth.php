@@ -10,6 +10,8 @@ class Auth {
     }
 
     public function login() {
+        header('Content-Type: application/json');
+        
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'login') {
             $email = trim($_POST['email']);
             $password = $_POST['password'];
@@ -139,6 +141,7 @@ class Auth {
                         'message' => 'Password berhasil diubah'
                     ]);
                 } else {
+                    
                     echo json_encode([
                         'success' => false, 
                         'message' => 'Username tidak ditemukan'
