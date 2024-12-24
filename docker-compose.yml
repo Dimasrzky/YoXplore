@@ -23,13 +23,14 @@ services:
       - NET_ADMIN
   
   db:
-    image: mariadb:latest
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
     environment:
-      MARIADB_ROOT_PASSWORD: ''
-      MARIADB_DATABASE: yoxplore
-      MARIADB_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: ''
+      MYSQL_DATABASE: yoxplore
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3306:3306"
@@ -42,20 +43,6 @@ services:
       timeout: 5s
       retries: 20
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: ''
-    ports:
-      - "8080:80"
-    networks:
-      yoxplore-network:
-        ipv4_address: 172.22.0.4
-    depends_on:
-      - db
-
 networks:
   yoxplore-network:
     driver: bridge
@@ -65,4 +52,4 @@ networks:
           gateway: 172.22.0.1
 
 volumes:
-  mariadb_data:
+  mysql_data:
