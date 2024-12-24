@@ -153,45 +153,40 @@
                 return;
             }
 
-            // Fetch item details
             fetch(`../Controller/get_item_detail.php?id=${itemId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        throw new Error(data.message);
-                    }
+    .then(response => response.json())
+    .then(data => {
+        console.log('Response data:', data); // Debug log
+        if (!data.success) {
+            throw new Error(data.message);
+        }
 
-                    // Update UI with item details
-                    const item = data.data.item;
-                    
-                    // Update title and rating
-                    document.querySelector('h1').textContent = item.name;
-                    document.querySelector('.rating-score').textContent = item.rating;
-                    
-                    // Update info
-                    const addressElement = document.querySelector('.location-info p');
-                    const hoursElement = document.querySelector('.info-item:nth-child(2) p');
-                    const phoneElement = document.querySelector('.info-item:nth-child(3) p');
+        // Update UI with item details
+        const item = data.item; // Diubah dari data.data.item
+        
+        // Update title and rating
+        document.querySelector('h1').textContent = item.name;
+        document.querySelector('.rating-score').textContent = item.rating || '0.0';
+        
+        // Update info
+        const addressElement = document.querySelector('.info-item:nth-child(1) p');
+        const hoursElement = document.querySelector('.info-item:nth-child(2) p');
+        const phoneElement = document.querySelector('.info-item:nth-child(3) p');
 
-                    if (addressElement) addressElement.textContent = item.address;
-                    if (hoursElement) hoursElement.textContent = item.opening_hours;
-                    if (phoneElement) phoneElement.textContent = item.phone;
+        if (addressElement) addressElement.textContent = item.address || '';
+        if (hoursElement) hoursElement.textContent = item.opening_hours || '';
+        if (phoneElement) phoneElement.textContent = item.phone || '';
 
-                    // Update gallery
-                    if (item.images && item.images.length > 0) {
-                        updateGallery(item.images);
-                    }
-
-                    // Update reviews if available
-                    if (data.data.reviews) {
-                        updateReviews(data.data.reviews);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showError('Failed to load item details');
-                });
-        });
+        // Update gallery
+        if (data.images && data.images.length > 0) {
+            updateGallery(data.images);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showError('Failed to load item details');
+    });
+});
 
         function updateGallery(images) {
             const gallery = document.querySelector('.gallery');
