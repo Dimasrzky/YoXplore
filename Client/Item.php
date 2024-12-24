@@ -146,6 +146,8 @@
             const urlParams = new URLSearchParams(window.location.search);
             const itemId = urlParams.get('id');
 
+            console.log("Item ID:", itemId); // Debug
+
             if (!itemId) {
                 showError('Item ID not found');
                 return;

@@ -7,7 +7,9 @@ try {
         throw new Exception('ID tidak ditemukan');
     }
 
-    // Get main item details
+    // Debug: print received ID
+    error_log("Received ID: " . $_GET['id']);
+
     $stmt = $conn->prepare("
         SELECT i.*, 
                i.id as item_id,
@@ -24,6 +26,9 @@ try {
     $stmt->execute([$_GET['id']]);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
     
+    // Debug: print query result
+    error_log("Query result: " . print_r($item, true));
+
     if (!$item) {
         throw new Exception('Item tidak ditemukan');
     }
@@ -33,51 +38,21 @@ try {
         SELECT image_url, is_main 
         FROM item_images 
         WHERE item_id = ?
-        ORDER BY is_main DESC
     ");
     $imgStmt->execute([$_GET['id']]);
     $images = $imgStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Get reviews
-    $reviewStmt = $conn->prepare("
-        SELECT r.*, u.username, u.profile_image
-        FROM reviews r
-        JOIN users u ON r.user_id = u.id
-        WHERE r.item_id = ?
-        ORDER BY r.created_at DESC
-    ");
-    $reviewStmt->execute([$_GET['id']]);
-    $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Get review images
-    $reviewImagesStmt = $conn->prepare("
-        SELECT review_id, image_url
-        FROM review_images
-        WHERE review_id IN (SELECT id FROM reviews WHERE item_id = ?)
-    ");
-    $reviewImagesStmt->execute([$_GET['id']]);
-    $reviewImages = $reviewImagesStmt->fetchAll(PDO::FETCH_GROUP);
-
-    // Add images to reviews
-    foreach ($reviews as &$review) {
-        $review['images'] = isset($reviewImages[$review['id']]) ? $reviewImages[$review['id']] : [];
-    }
-
-    // Format the response
-    $response = [
+    echo json_encode([
         'success' => true,
         'item' => $item,
-        'images' => $images,
-        'reviews' => $reviews
-    ];
-
-    echo json_encode($response);
+        'images' => $images
+    ]);
 
 } catch(Exception $e) {
+    error_log("Error in get_item_detail: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]);
 }
-?>
