@@ -145,66 +145,74 @@ session_start();
         </footer>
     </body>
         <script>
-           document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const itemId = urlParams.get('id');
+           document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const itemId = urlParams.get('id');
 
-    if (!itemId) {
-        showError('ID tidak ditemukan');
-        return;
-    }
+        if (!itemId) {
+            throw new Error('ID tidak ditemukan');
+        }
 
-    fetch(`../Controller/get_item_detail.php?id=${itemId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(text => {
-            try {
-                // Log raw response for debugging
-                console.log('Raw response:', text);
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Parse error:', e);
-                throw new Error('Invalid JSON response');
-            }
-        })
-        .then(data => {
-            console.log('Parsed data:', data);
-            
-            if (!data.success) {
-                throw new Error(data.message || 'Failed to load data');
-            }
+        const response = await fetch(`../Controller/get_item_detail.php?id=${itemId}`);
+        const rawText = await response.text();
+        
+        console.log('Raw response:', rawText); // Debug log
+        
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            console.error('JSON parse error:', e);
+            console.log('Failed text:', rawText);
+            throw new Error('Invalid JSON response');
+        }
 
-            // Update UI
-            const item = data.item;
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to load data');
+        }
+
+        // Update UI
+        const item = data.item;
+        if (item) {
             document.querySelector('h1').textContent = item.name || '';
             document.querySelector('.rating-score').textContent = item.rating || '0.0';
             
-            document.querySelector('.info-item:nth-child(1) p').textContent = item.address || '';
-            document.querySelector('.info-item:nth-child(2) p').textContent = item.opening_hours || '';
-            document.querySelector('.info-item:nth-child(3) p').textContent = item.phone || '';
+            const addressElem = document.querySelector('.info-item:nth-child(1) p');
+            const hoursElem = document.querySelector('.info-item:nth-child(2) p');
+            const phoneElem = document.querySelector('.info-item:nth-child(3) p');
 
-            if (data.images && data.images.length > 0) {
-                updateGallery(data.images);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showError(error.message);
-        });
+            if (addressElem) addressElem.textContent = item.address || '';
+            if (hoursElem) hoursElem.textContent = item.opening_hours || '';
+            if (phoneElem) phoneElem.textContent = item.phone || '';
+        }
+
+        // Update gallery if images exist
+        if (data.images && data.images.length > 0) {
+            updateGallery(data.images);
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        showError(error.message || 'Failed to load item details');
+    }
 });
 
 function showError(message) {
     console.error('Error:', message);
-    // Tambahkan visual feedback untuk user
+    const mainDiv = document.querySelector('.main');
     const errorDiv = document.createElement('div');
-    errorDiv.className = 'alert alert-error';
+    errorDiv.style.cssText = `
+        background-color: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #991b1b;
+        padding: 1rem;
+        margin: 1rem;
+        border-radius: 0.375rem;
+    `;
     errorDiv.textContent = message;
-    document.querySelector('.main').prepend(errorDiv);
-} 
+    mainDiv.prepend(errorDiv);
+}
 
         function updateGallery(images) {
             const gallery = document.querySelector('.gallery');
