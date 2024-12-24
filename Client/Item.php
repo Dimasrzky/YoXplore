@@ -154,39 +154,46 @@
             }
 
             fetch(`../Controller/get_item_detail.php?id=${itemId}`)
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text().then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Error parsing JSON:', text);
+                throw new Error('Invalid JSON response');
+            }
+        });
+    })
     .then(data => {
         console.log('Response data:', data); // Debug log
+        
         if (!data.success) {
-            throw new Error(data.message);
+            throw new Error(data.message || 'Failed to load data');
         }
 
-        // Update UI with item details
-        const item = data.item; // Diubah dari data.data.item
+        const item = data.item;
         
-        // Update title and rating
-        document.querySelector('h1').textContent = item.name;
+        // Update UI
+        document.querySelector('h1').textContent = item.name || '';
         document.querySelector('.rating-score').textContent = item.rating || '0.0';
         
         // Update info
-        const addressElement = document.querySelector('.info-item:nth-child(1) p');
-        const hoursElement = document.querySelector('.info-item:nth-child(2) p');
-        const phoneElement = document.querySelector('.info-item:nth-child(3) p');
+        document.querySelector('.info-item:nth-child(1) p').textContent = item.address || '';
+        document.querySelector('.info-item:nth-child(2) p').textContent = item.opening_hours || '';
+        document.querySelector('.info-item:nth-child(3) p').textContent = item.phone || '';
 
-        if (addressElement) addressElement.textContent = item.address || '';
-        if (hoursElement) hoursElement.textContent = item.opening_hours || '';
-        if (phoneElement) phoneElement.textContent = item.phone || '';
-
-        // Update gallery
+        // Update gallery if images exist
         if (data.images && data.images.length > 0) {
             updateGallery(data.images);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showError('Failed to load item details');
+        showError(error.message || 'Failed to load item details');
     });
-});
 
         function updateGallery(images) {
             const gallery = document.querySelector('.gallery');
