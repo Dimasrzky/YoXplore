@@ -4,95 +4,76 @@ require_once('../Config/db_connect.php');
 
 try {
     if (!isset($_GET['id'])) {
-        throw new Exception('ID tidak ditemukan');
+        throw new Exception('ID not found');
     }
 
     // Get main item details
     $stmt = $conn->prepare("
         SELECT i.*, 
-               c.name as category_name,
-               COALESCE(AVG(r.rating), 0) as avg_rating,
-               COUNT(DISTINCT r.id) as review_count
+               i.id as item_id,
+               i.name as item_name,
+               i.address,
+               i.opening_hours,
+               i.phone,
+               i.rating,
+               i.description
         FROM items i
-        LEFT JOIN categories c ON i.category_id = c.id
-        LEFT JOIN reviews r ON i.id = r.item_id
         WHERE i.id = ?
-        GROUP BY i.id
     ");
     
     $stmt->execute([$_GET['id']]);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$item) {
-        throw new Exception('Item tidak ditemukan');
+        throw new Exception('Item not found');
     }
 
-    // Get all images for this item
-    $stmt = $conn->prepare("
-        SELECT image_url, is_main
-        FROM item_images
+    // Get item images
+    $imgStmt = $conn->prepare("
+        SELECT image_url, is_main 
+        FROM item_images 
         WHERE item_id = ?
-        ORDER BY is_main DESC, id ASC
+        ORDER BY is_main DESC
     ");
-    $stmt->execute([$_GET['id']]);
-    $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $imgStmt->execute([$_GET['id']]);
+    $images = $imgStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Get reviews with user info
-    $stmt = $conn->prepare("
-        SELECT 
-            r.*,
-            u.username,
-            u.profile_image,
-            GROUP_CONCAT(ri.image_url) as review_images
+    // Get reviews
+    $reviewStmt = $conn->prepare("
+        SELECT r.*, u.username, u.profile_image
         FROM reviews r
-        LEFT JOIN users u ON r.user_id = u.id
-        LEFT JOIN review_images ri ON r.id = ri.review_id
+        JOIN users u ON r.user_id = u.id
         WHERE r.item_id = ?
-        GROUP BY r.id
         ORDER BY r.created_at DESC
-        LIMIT 3
     ");
-    $stmt->execute([$_GET['id']]);
-    $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $reviewStmt->execute([$_GET['id']]);
+    $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Prepare data for response
-    $responseData = array(
+    // Get review images
+    $reviewImagesStmt = $conn->prepare("
+        SELECT review_id, image_url
+        FROM review_images
+        WHERE review_id IN (SELECT id FROM reviews WHERE item_id = ?)
+    ");
+    $reviewImagesStmt->execute([$_GET['id']]);
+    $reviewImages = $reviewImagesStmt->fetchAll(PDO::FETCH_GROUP);
+
+    // Add images to reviews
+    foreach ($reviews as &$review) {
+        $review['images'] = $reviewImages[$review['id']] ?? [];
+    }
+
+    echo json_encode([
         'success' => true,
-        'data' => array(
-            'item' => array(
-                'name' => $item['name'],
-                'address' => $item['address'],
-                'phone' => $item['phone'],
-                'opening_hours' => $item['opening_hours'],
-                'avg_rating' => number_format($item['avg_rating'], 1),
-                'latitude' => $item['latitude'],
-                'longitude' => $item['longitude']
-            ),
-            'images' => array_map(function($img) {
-                return array(
-                    'url' => base64_encode($img['image_url']),
-                    'is_main' => $img['is_main']
-                );
-            }, $images),
-            'reviews' => array_map(function($review) {
-                return array(
-                    'username' => $review['username'],
-                    'rating' => $review['rating'],
-                    'comment' => $review['comment'],
-                    'profile_image' => $review['profile_image'] ? base64_encode($review['profile_image']) : null,
-                    'images' => $review['review_images'] ? array_map('base64_encode', explode(',', $review['review_images'])) : array()
-                );
-            }, $reviews)
-        )
-    );
-
-    echo json_encode($responseData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        'item' => $item,
+        'images' => $images,
+        'reviews' => $reviews
+    ]);
 
 } catch(Exception $e) {
     http_response_code(500);
-    echo json_encode(array(
+    echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
-    ));
+    ]);
 }
-?>
