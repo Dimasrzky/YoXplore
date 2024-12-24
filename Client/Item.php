@@ -16,7 +16,7 @@
         <div class="container2">
             <div class="column">
                 <div class="column-right">
-                    <h1>Loading...</h1>
+                    <h1></h1>
                     <div class="review-rating-head">
                         <div class="star-rating">
                             <i class='bx bxs-star'></i>
@@ -29,15 +29,15 @@
                         <div class="location-info">
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/location.png" alt=""></span>
-                                <p>Loading address...</p>
+                                <p></p>
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/clock.png" alt=""></span>
-                                <p>Loading hours...</p>
+                                <p></p>
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/call.png" alt=""></span>
-                                <p>Loading phone...</p>
+                                <p></p>
                             </div>
                         </div>
                     </div>
