@@ -321,7 +321,7 @@
                             const itemHtml = `
                                 <div class="popular-item">
                                     <div class="image-container">
-                                        <a href="Item.html?id=${item.id}">
+                                        <a href="Item.php?id=${item.id}">
                                             <img src="data:image/jpeg;base64,${item.main_image || ''}" 
                                                 alt="${item.name}"
                                                 onerror="this.src='../Image/placeholder.jpg'">
@@ -412,7 +412,7 @@ function searchDestinations(searchTerm) {
                     const itemHtml = `
                         <div class="popular-item">
                             <div class="image-container">
-                                <a href="Item.html?id=${item.id}">
+                                <a href="Item.php?id=${item.id}">
                                     <img src="data:image/jpeg;base64,${item.main_image || ''}" 
                                          alt="${item.name}"
                                          onerror="this.src='../Image/placeholder.jpg'">
