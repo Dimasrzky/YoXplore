@@ -8,22 +8,22 @@
 <body>
     <div class="container"> 
         <div class="background-section">
-            <img src="../Image/Yoxplore logo text.png">
+            <img src="../Image/Yoxplore logo text.png" alt="Yoxplore Logo">
         </div>
 
         <div class="login-section">
             <h2>Login your account</h2>
             <div class="error-message" id="alert-message" style="display: none;"></div>
-            <form id="loginForm" method="POST" action="/YoXplore/Controller/Auth.php">
+            <form id="loginForm" method="POST">
                 <input type="hidden" name="action" value="login">
 
                 <div class="input-group">
-                    <input type="text" id="email" name="email" placeholder=" ">
+                    <input type="text" id="email" name="email" placeholder=" " required>
                     <label for="email">Email</label>
                 </div>
 
                 <div class="input-group">
-                    <input type="password" id="password" name="password" placeholder=" ">
+                    <input type="password" id="password" name="password" placeholder=" " required>
                     <label for="password">Password</label>
                 </div>
 
@@ -32,24 +32,11 @@
                 <button type="submit" class="login-button">Login</button>
             </form>    
 
-            <!-- <div id="g_id_onload"
-                data-client_id="YOUR_GOOGLE_CLIENT_ID"
-                data-login_uri="YOUR_BACKEND_LOGIN_URI"
-                data-auto_prompt="false">
-            </div>
-            <div class="g_id_signin"
-                data-type="standard"
-                data-shape="rectangular"
-                data-theme="outline"
-                data-text="sign_in_with"
-                data-size="large"
-                data-logo_alignment="left">
-            </div> -->
             <a href="Register.html" class="create-account">Create Account</a>        
         </div>
     </div>
-</body>
-<script>
+
+    <script>
     document.getElementById("loginForm").addEventListener("submit", function(event) {
         event.preventDefault();
         
@@ -59,23 +46,35 @@
             method: "POST",
             body: formData
         })
-        .then(response => response.text())
-        .then(text => {
-            const data = JSON.parse(text);
+        .then(response => {
+            // First check if the response is ok
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // Try to parse as JSON
+            return response.json();
+        })
+        .then(data => {
             if (data.success) {
+                // Store user data in session storage
                 sessionStorage.setItem('user_id', data.userData.id);
                 sessionStorage.setItem('username', data.userData.username);
+                // Redirect to home page
                 window.location.href = '../Client/Home.html';
             } else {
-                document.getElementById("alert-message").textContent = data.message;
-                document.getElementById("alert-message").style.display = "block";
+                // Show error message
+                const alertMessage = document.getElementById("alert-message");
+                alertMessage.textContent = data.message || "Login failed";
+                alertMessage.style.display = "block";
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            document.getElementById("alert-message").textContent = "Terjadi kesalahan";
-            document.getElementById("alert-message").style.display = "block";
+            const alertMessage = document.getElementById("alert-message");
+            alertMessage.textContent = "An error occurred during login. Please try again.";
+            alertMessage.style.display = "block";
         });
     });
     </script>
+</body>
 </html>
