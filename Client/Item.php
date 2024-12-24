@@ -149,43 +149,42 @@ session_start();
     try {
         const urlParams = new URLSearchParams(window.location.search);
         const itemId = urlParams.get('id');
+        
+        console.log('Fetching item ID:', itemId); // Debug log
 
         if (!itemId) {
             throw new Error('ID tidak ditemukan');
         }
 
         const response = await fetch(`../Controller/get_item_detail.php?id=${itemId}`);
-        const rawText = await response.text();
         
-        console.log('Raw response:', rawText); // Debug log
-        
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (e) {
-            console.error('JSON parse error:', e);
-            console.log('Failed text:', rawText);
-            throw new Error('Invalid JSON response');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        const text = await response.text();
+        console.log('Raw response:', text); // Debug log
+        
+        const data = JSON.parse(text);
+        console.log('Parsed data:', data); // Debug log
 
         if (!data.success) {
-            throw new Error(data.message || 'Failed to load data');
+            throw new Error(data.message);
         }
 
-        // Update UI
         const item = data.item;
-        if (item) {
-            document.querySelector('h1').textContent = item.name || '';
-            document.querySelector('.rating-score').textContent = item.rating || '0.0';
-            
-            const addressElem = document.querySelector('.info-item:nth-child(1) p');
-            const hoursElem = document.querySelector('.info-item:nth-child(2) p');
-            const phoneElem = document.querySelector('.info-item:nth-child(3) p');
+        
+        // Update UI
+        document.querySelector('h1').textContent = item.name || '';
+        document.querySelector('.rating-score').textContent = item.rating || '0.0';
+        
+        const addressElem = document.querySelector('.info-item:nth-child(1) p');
+        const hoursElem = document.querySelector('.info-item:nth-child(2) p');
+        const phoneElem = document.querySelector('.info-item:nth-child(3) p');
 
-            if (addressElem) addressElem.textContent = item.address || '';
-            if (hoursElem) hoursElem.textContent = item.opening_hours || '';
-            if (phoneElem) phoneElem.textContent = item.phone || '';
-        }
+        if (addressElem) addressElem.textContent = item.address || '';
+        if (hoursElem) hoursElem.textContent = item.opening_hours || '';
+        if (phoneElem) phoneElem.textContent = item.phone || '';
 
         // Update gallery if images exist
         if (data.images && data.images.length > 0) {
@@ -193,8 +192,8 @@ session_start();
         }
 
     } catch (error) {
-        console.error('Error:', error);
-        showError(error.message || 'Failed to load item details');
+        console.error('Fetch error:', error);
+        showError(error.message);
     }
 });
 
