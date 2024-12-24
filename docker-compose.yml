@@ -6,21 +6,17 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
-      - "53:53/udp"  # DNS port
     volumes:
       - .:/var/www/html
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
-      yoxplore-network:
-        ipv4_address: 172.22.0.2
-    dns:
-      - 127.0.0.1
-    extra_hosts:
-      - "yoxplore.id:127.0.0.1"
-    cap_add:
-      - NET_ADMIN
+      - yoxplore-network
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=yoxplore
+      - DB_USERNAME=root
+      - DB_PASSWORD=
   
   db:
     image: mysql:8.0
@@ -35,21 +31,23 @@ services:
     ports:
       - "3306:3306"
     networks:
-      yoxplore-network:
-        ipv4_address: 172.22.0.3
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
+      - yoxplore-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    ports:
+      - "8080:80"
+    networks:
+      - yoxplore-network
+    depends_on:
+      - db
 
 networks:
   yoxplore-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.22.0.0/16
-          gateway: 172.22.0.1
 
 volumes:
   mysql_data:
