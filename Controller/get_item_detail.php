@@ -4,7 +4,7 @@ require_once('../Config/db_connect.php');
 
 try {
     if (!isset($_GET['id'])) {
-        throw new Exception('ID not found');
+        throw new Exception('ID tidak ditemukan');
     }
 
     // Get main item details
@@ -25,7 +25,7 @@ try {
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$item) {
-        throw new Exception('Item not found');
+        throw new Exception('Item tidak ditemukan');
     }
 
     // Get item images
@@ -60,15 +60,18 @@ try {
 
     // Add images to reviews
     foreach ($reviews as &$review) {
-        $review['images'] = $reviewImages[$review['id']] ?? [];
+        $review['images'] = isset($reviewImages[$review['id']]) ? $reviewImages[$review['id']] : [];
     }
 
-    echo json_encode([
+    // Format the response
+    $response = [
         'success' => true,
         'item' => $item,
         'images' => $images,
         'reviews' => $reviews
-    ]);
+    ];
+
+    echo json_encode($response);
 
 } catch(Exception $e) {
     http_response_code(500);
@@ -77,3 +80,4 @@ try {
         'message' => $e->getMessage()
     ]);
 }
+?>
