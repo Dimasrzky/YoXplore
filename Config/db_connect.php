@@ -1,5 +1,5 @@
 <?php
-$servername = "db";  // Docker service name
+$servername = "localhost";  // Docker service name
 $username = "root";
 $password = "";      // Empty password
 $dbname = "yoxplore";
