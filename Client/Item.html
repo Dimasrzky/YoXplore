@@ -39,21 +39,22 @@
             </nav>
         </header>
 
-        <div class="main">
-          <div class="container2">
-            <div class="column">
-                <div class="column-right">
-                    <h1></h1>
-                    <div class="review-rating-head">
-                        <div class="star-rating">
-                            <i class='bx bxs-star'></i>
+        <div class="main" id="contentState">
+            <div id="loadingState" style="display: none;">Loading...</div>
+            <div id="errorState" style="display: none;"></div>
+         
+            <div class="container2">
+                <div class="column">
+                    <div class="column-right">
+                        <h1 id="itemName"></h1>
+                        <div class="review-rating-head">
+                            <div class="star-rating"></div>
+                            <span class="rating-score"></span>
+                            <span class="rating-max">/5</span>
+                            <span class="rating-user"></span>
                         </div>
-                          <span class="rating-score"></span>
-                          <span class="rating-max">/5</span>
-                          <span class="rating-user">From users</span>
-                      </div>
-                    <div class="info-section">
-                        <div class="location-info">
+                        <div class="info-section">
+                            <div class="location-info">
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/location.png" alt=""></span>
                                 <p></p>
