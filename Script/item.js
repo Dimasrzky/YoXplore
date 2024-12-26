@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Fetch item details
-    fetch(`../Controller/get_destination_detail.php?id=${itemId}`)
+    fetch(`../Controller/get_item_detail.php?id=${itemId}`)
         .then(response => response.json())
         .then(data => {
             const item = data.item;
