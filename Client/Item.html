@@ -350,55 +350,6 @@
                     navbarProfileIcon.style.objectFit = 'cover';
                 }
             }
-
-            // Script pada Item.html
-    document.addEventListener('DOMContentLoaded', function() {
-        // Ambil ID dari URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const itemId = urlParams.get('id');
-        
-        if (!itemId) {
-            showError('ID item tidak ditemukan');
-            return;
-        }
-
-        // Load detail item berdasarkan ID
-        fetch(`../Controller/get_item_detail.php?id=${itemId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update konten halaman
-                    document.querySelector('h1').textContent = data.item.name;
-                    document.querySelector('[data-info="address"]').textContent = data.item.address;
-                    document.querySelector('[data-info="hours"]').textContent = data.item.opening_hours;
-                    document.querySelector('[data-info="phone"]').textContent = data.item.phone;
-                    
-                    // Update rating jika ada
-                    if (data.item.rating) {
-                        document.querySelector('.rating-score').textContent = 
-                            parseFloat(data.item.rating).toFixed(1);
-                    }
-
-                    // Update galeri foto jika ada
-                    if (data.images && data.images.length > 0) {
-                        updateGallery(data.images);
-                    }
-
-                    // Update peta
-                    updateMap(data.item);
-                } else {
-                    throw new Error(data.message || 'Gagal memuat detail item');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showError('Gagal memuat detail item');
-            });
-    });
-
-    function updateMap(item) {
-        const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.115726227853!2d${item.longitude}!3d${item.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2zM!5e0!3m2!1sen!2sid!4v1624442830000!5m2!1sen!2sid`;
-        document.querySelector('iframe').src = mapUrl;
-    }
     </script>
+    <script src="../Script/item.js"></script>
 </html>

@@ -1,141 +1,173 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Get item ID from URL
+// Function to load item details
+function loadItemDetails() {
     const urlParams = new URLSearchParams(window.location.search);
     const itemId = urlParams.get('id');
-
+    
     if (!itemId) {
         showError('Item ID not found');
         return;
     }
 
-    // Fetch item details
-    fetchItemDetails(itemId);
-});
-
-async function fetchItemDetails(itemId) {
-    try {
-        const response = await fetch(`../Controller/get_item_detail.php?id=${itemId}`);
-        const data = await response.json();
-
-        if (!data.success) {
-            throw new Error(data.message);
-        }
-
-        updateUI(data);
-    } catch (error) {
-        showError('Failed to load item details: ' + error.message);
-    }
+    fetch(`../Controller/get_item_detail.php?id=${itemId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updatePageContent(data);
+            } else {
+                showError(data.message || 'Failed to load item details');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Failed to load item details');
+        });
 }
 
-function updateUI(data) {
+// Function to update page content
+function updatePageContent(data) {
     const { item, images, reviews } = data;
-
-    // Update header
-    document.querySelector('.item-title').textContent = item.item_name;
-    document.querySelector('.rating').textContent = item.rating.toFixed(1);
-
-    // Update info
-    document.querySelector('.info-item:nth-child(1) p').textContent = item.address;
-    document.querySelector('.info-item:nth-child(2) p').textContent = item.opening_hours;
-    document.querySelector('.info-item:nth-child(3) p').textContent = item.phone;
-
+    
+    // Update basic information
+    document.querySelector('h1').textContent = item.name;
+    document.querySelector('.rating-score').textContent = item.rating.toFixed(1);
+    
+    // Update location info
+    const locationInfo = document.querySelector('.location-info');
+    locationInfo.querySelector('p').textContent = item.address;
+    locationInfo.querySelectorAll('p')[1].textContent = item.opening_hours;
+    locationInfo.querySelectorAll('p')[2].textContent = item.phone;
+    
     // Update gallery
     updateGallery(images);
-
+    
     // Update reviews
     updateReviews(reviews);
+    
+    // Update map
+    updateMap(item);
 }
 
+// Function to update gallery
 function updateGallery(images) {
-    const mainImage = images.find(img => img.is_main) || images[0];
-    const galleryContainer = document.querySelector('.gallery-container');
+    const gallery = document.querySelector('.gallery');
+    gallery.innerHTML = ''; // Clear existing images
     
-    // Set main image
-    document.querySelector('.main-image img').src = mainImage.image_url;
-
-    // Update thumbnails
-    const thumbnailsContainer = document.querySelector('.thumbnail-grid');
-    thumbnailsContainer.innerHTML = '';
-
-    images.slice(1, 5).forEach((image, index) => {
-        const thumbnail = document.createElement('div');
-        thumbnail.className = `thumbnail ${index === 3 ? 'last-thumbnail' : ''}`;
+    images.forEach((image, index) => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = `gallery-item ${index === 0 ? 'parent' : 'child'}`;
         
         const img = document.createElement('img');
         img.src = image.image_url;
-        img.alt = `Gallery image ${index + 2}`;
+        img.alt = `Gallery Image ${index + 1}`;
         
-        thumbnail.appendChild(img);
-
-        if (index === 3) {
-            const overlay = document.createElement('div');
-            overlay.className = 'see-all-overlay';
-            overlay.innerHTML = '<span>See All Photos</span>';
-            overlay.onclick = () => openPhotoModal(images);
-            thumbnail.appendChild(overlay);
-        }
-
-        thumbnailsContainer.appendChild(thumbnail);
+        galleryItem.appendChild(img);
+        gallery.appendChild(galleryItem);
     });
 }
 
+// Function to update reviews
 function updateReviews(reviews) {
     const reviewsContainer = document.querySelector('.reviews-container');
-    reviewsContainer.innerHTML = '';
-
+    reviewsContainer.innerHTML = ''; // Clear existing reviews
+    
     reviews.forEach(review => {
-        const reviewCard = createReviewCard(review);
+        const reviewCard = document.createElement('div');
+        reviewCard.className = 'review-card';
+        
+        reviewCard.innerHTML = `
+            <div class="review-header">
+                <div class="reviewer-info">
+                    <img src="${review.profile_image || '../Image/user.png'}" alt="User Profile" class="reviewer-pic">
+                    <div class="reviewer-details">
+                        <h4>${review.username}</h4>
+                    </div>
+                </div>
+                <div class="review-rating">
+                    <div class="star-rating">
+                        <i class='bx bxs-star'></i>
+                    </div>
+                    <span class="rating-score">${review.rating}</span>
+                    <span class="rating-max">/5</span>
+                </div>
+            </div>
+            <p class="review-text">${review.comment}</p>
+            ${review.images.length > 0 ? `
+                <div class="review-images">
+                    ${review.images.map(img => `<img src="${img}" alt="Review Image">`).join('')}
+                </div>
+            ` : ''}
+        `;
+        
         reviewsContainer.appendChild(reviewCard);
     });
 }
 
-function createReviewCard(review) {
-    const card = document.createElement('div');
-    card.className = 'review-card';
-    
-    card.innerHTML = `
-        <div class="review-header">
-            <div class="reviewer-info">
-                <div class="profile-pic">
-                    <img src="${review.profile_image || '../Image/user.png'}" alt="User Profile">
-                </div>
-                <div class="reviewer-name">
-                    <h4>${review.username}</h4>
-                </div>
-            </div>
-            <div class="review-rating">
-                <div class="stars">
-                    <i class='bx bxs-star'></i>
-                </div>
-                <span class="rating">${review.rating.toFixed(1)}</span>
-                <span class="rating-max">/5</span>
-            </div>
-        </div>
-        <p class="review-text">${review.review_text}</p>
-        ${review.images.length > 0 ? `
-            <div class="review-images">
-                ${review.images.map(img => `
-                    <img src="${img.image_url}" alt="Review image">
-                `).join('')}
-            </div>
-        ` : ''}
-    `;
-
-    return card;
+// Function to update map
+function updateMap(item) {
+    const mapIframe = document.querySelector('.map iframe');
+    const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.115726227853!2d${item.longitude}!3d${item.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2zM!5e0!3m2!1sen!2sid!4v1624442830000!5m2!1sen!2sid`;
+    mapIframe.src = mapUrl;
 }
 
-function openPhotoModal(images) {
-    const modal = document.getElementById('photoModal');
-    const gallery = modal.querySelector('.modal-gallery');
-    
-    gallery.innerHTML = images.map(img => `
-        <img src="${img.image_url}" alt="Gallery photo">
-    `).join('');
+// Function to handle add review
+function handleAddReview() {
+    const modal = document.getElementById('modal');
+    const stars = document.querySelectorAll('.star');
+    const submitBtn = modal.querySelector('.submit');
+    let rating = 0;
 
-    modal.style.display = 'block';
+    stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+            rating = index + 1;
+            stars.forEach((s, i) => {
+                s.classList.toggle('bxs-star', i <= index);
+                s.classList.toggle('bx-star', i > index);
+            });
+        });
+    });
+
+    submitBtn.addEventListener('click', () => {
+        const comment = modal.querySelector('textarea').value;
+        const fileInput = modal.querySelector('#file-input');
+        const formData = new FormData();
+        
+        formData.append('rating', rating);
+        formData.append('comment', comment);
+        
+        if (fileInput.files.length > 0) {
+            Array.from(fileInput.files).forEach(file => {
+                formData.append('images[]', file);
+            });
+        }
+        
+        submitReview(formData);
+    });
 }
 
-function showError(message) {
-    // Add error handling UI as needed
-    console.error(message);
+// Function to submit review
+async function submitReview(formData) {
+    try {
+        const response = await fetch('../Controller/add_review.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            closeModal();
+            loadItemDetails(); // Reload the page content
+        } else {
+            showError(data.message || 'Failed to submit review');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Failed to submit review');
+    }
 }
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', () => {
+    loadItemDetails();
+    handleAddReview();
+});
