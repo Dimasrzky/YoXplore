@@ -2,51 +2,34 @@
 session_start();
 require_once '../Config/db_connect.php';
 
-// Debug mode
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Validasi ID
+$itemId = isset($_GET['id']) ? $_GET['id'] : null;
 
 try {
-    // Validasi ID
-    if (!isset($_GET['id'])) {
-        header('Location: YoTrip.php');
-        exit;
-    }
-
-    $itemId = $_GET['id'];
-
-    // Basic query untuk item
-    $query = "SELECT * FROM items WHERE id = :id";
+    // Query untuk mengambil detail item
+    $query = "SELECT * FROM items WHERE id = ?";
     $stmt = $conn->prepare($query);
-    $stmt->execute(['id' => $itemId]);
+    $stmt->execute([$itemId]);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$item) {
-        header('Location: YoTrip.php');
-        exit;
+        throw new Exception("Item not found");
     }
 
     // Query untuk gambar
-    $imageQuery = "SELECT * FROM item_images WHERE item_id = :item_id ORDER BY is_main DESC";
+    $imageQuery = "SELECT * FROM item_images WHERE item_id = ?";
     $imageStmt = $conn->prepare($imageQuery);
-    $imageStmt->execute(['item_id' => $itemId]);
+    $imageStmt->execute([$itemId]);
     $images = $imageStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Query untuk review dan rating
-    $reviewQuery = "SELECT COUNT(*) as total_reviews, COALESCE(AVG(rating), 0) as avg_rating 
-                   FROM reviews 
-                   WHERE item_id = :item_id";
-    $reviewStmt = $conn->prepare($reviewQuery);
-    $reviewStmt->execute(['item_id' => $itemId]);
-    $reviewData = $reviewStmt->fetch(PDO::FETCH_ASSOC);
-
     // Format waktu
+    date_default_timezone_set('Asia/Jakarta');
     $openingHours = !empty($item['opening_hours']) ? date('H:i', strtotime($item['opening_hours'])) : '-';
     $closingHours = !empty($item['closing_hours']) ? date('H:i', strtotime($item['closing_hours'])) : '-';
 
-} catch (PDOException $e) {
-    error_log("Database Error: " . $e->getMessage());
-    header('Location: YoTrip.php');
+} catch (Exception $e) {
+    error_log($e->getMessage());
+    header('Location: home.php?error=1');
     exit;
 }
 ?>
@@ -56,7 +39,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($item['name']) ?> - YoXplore</title>
+    <title><?= $item['name'] ?> - YoXplore</title>
     <link rel="icon" href="../Image/Logo Yoxplore.png" type="image/png">
     <link rel="stylesheet" href="../Style/Item.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -68,22 +51,20 @@ try {
         <div class="container2">
             <div class="column">
                 <div class="column-right">
-                    <h1><?= htmlspecialchars($item['name']) ?></h1>
+                    <h1><?= $item['name'] ?></h1>
                     <div class="review-rating-head">
                         <div class="star-rating">
-                            <?php for($i = 1; $i <= 5; $i++): ?>
-                                <i class='bx <?= $i <= round($reviewData['avg_rating']) ? 'bxs-star' : 'bx-star' ?>'></i>
-                            <?php endfor; ?>
+                            <i class='bx bxs-star'></i>
                         </div>
-                        <span class="rating-score"><?= number_format($reviewData['avg_rating'], 1) ?></span>
+                        <span class="rating-score"><?= number_format($item['rating'], 1) ?></span>
                         <span class="rating-max">/5</span>
-                        <span class="rating-user">From <?= $reviewData['total_reviews'] ?> users</span>
+                        <span class="rating-user">From users</span>
                     </div>
                     <div class="info-section">
                         <div class="location-info">
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/location.png" alt=""></span>
-                                <p><?= htmlspecialchars($item['address']) ?></p>
+                                <p><?= $item['address'] ?></p>
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/clock.png" alt=""></span>
@@ -91,7 +72,7 @@ try {
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/call.png" alt=""></span>
-                                <p><?= htmlspecialchars($item['phone'] ?? '-') ?></p>
+                                <p><?= $item['phone'] ?: '-' ?></p>
                             </div>
                         </div>
                     </div>
@@ -101,25 +82,19 @@ try {
             <!-- Gallery Section -->
             <div class="gallery">
                 <?php if (!empty($images)): ?>
-                    <!-- Main large image -->
                     <div class="gallery-item parent">
-                        <img src="<?= htmlspecialchars($images[0]['image_url']) ?>" 
-                             alt="Main Image">
+                        <img src="<?= $images[0]['image_url'] ?>" alt="Main Image">
                     </div>
                     
-                    <!-- Smaller images -->
                     <?php for($i = 1; $i < min(6, count($images)); $i++): ?>
                         <div class="gallery-item child">
-                            <img src="<?= htmlspecialchars($images[$i]['image_url']) ?>" 
-                                 alt="Image <?= $i + 1 ?>">
+                            <img src="<?= $images[$i]['image_url'] ?>" alt="Image <?= $i + 1 ?>">
                         </div>
                     <?php endfor; ?>
                     
-                    <!-- Last item with overlay -->
                     <?php if(count($images) > 6): ?>
                         <div class="gallery-item child last-item">
-                            <img src="<?= htmlspecialchars($images[6]['image_url']) ?>" 
-                                 alt="Image 7">
+                            <img src="<?= $images[6]['image_url'] ?>" alt="Image 7">
                             <a href="javascript:void(0)" onclick="openGallery()" class="overlay-link">
                                 <div class="overlay-content">
                                     <div class="image-icon">
@@ -141,13 +116,16 @@ try {
         <!-- Map Section -->
         <?php if (!empty($item['maps_url'])): ?>
         <div class="map">
-            <iframe src="<?= htmlspecialchars($item['maps_url']) ?>"
-                    width="90%" height="400"
-                    style="border:0; border-radius:10px;"
-                    allowfullscreen="" loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
+            <iframe 
+                src="<?= $item['maps_url'] ?>"
+                width="90%" 
+                height="400" 
+                style="border:0; border-radius:10px;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
             </iframe>
-            <button class="route-btn" onclick="window.open('<?= htmlspecialchars($item['maps_url']) ?>', '_blank')">
+            <button class="route-btn" onclick="window.open('<?= $item['maps_url'] ?>', '_blank')">
                 Get Direction
             </button>
         </div>
@@ -163,8 +141,7 @@ try {
             </div>
             <div class="modal-gallery">
                 <?php foreach($images as $image): ?>
-                    <img src="<?= htmlspecialchars($image['image_url']) ?>" 
-                         alt="<?= htmlspecialchars($item['name']) ?>">
+                    <img src="<?= $image['image_url'] ?>" alt="<?= $item['name'] ?>">
                 <?php endforeach; ?>
             </div>
         </div>
