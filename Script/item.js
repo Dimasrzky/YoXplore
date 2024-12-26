@@ -4,269 +4,187 @@ document.addEventListener('DOMContentLoaded', function() {
     const itemId = urlParams.get('id');
 
     if (!itemId) {
-        window.location.href = 'Home.html';
+        showError('No item ID provided');
         return;
     }
+
+    // Show loading state
+    showLoading();
 
     // Fetch item details
     fetch(`../Controller/get_destination_detail.php?id=${itemId}`)
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();  // First get the raw text
-        })
-        .then(text => {
-            try {
-                return JSON.parse(text);  // Then try to parse it as JSON
-            } catch (e) {
-                console.error('Error parsing JSON:', text);
-                throw new Error('Invalid JSON response');
-            }
+            console.log('Response status:', response.status);
+            return response.text().then(text => {
+                try {
+                    // Try to parse as JSON
+                    console.log('Raw response:', text);
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error('JSON parse error:', e);
+                    console.log('Response text:', text);
+                    throw new Error('Invalid JSON response');
+                }
+            });
         })
         .then(data => {
+            console.log('Parsed data:', data);
+            
             if (!data || !data.item) {
                 throw new Error('Invalid data structure');
             }
 
-            const item = data.item;
-            
-            // Update page title
-            document.title = `${item.name} - YoXplore`;
-            
-            // Update basic information
-            document.getElementById('itemName').textContent = item.name;
-            document.getElementById('ratingScore').textContent = data.rating.average || '0.0';
-            document.getElementById('totalReviews').textContent = 
-                `From ${data.rating.total || '0'} users`;
-            document.getElementById('itemAddress').textContent = item.address || 'Address not available';
-            document.getElementById('itemHours').textContent = 
-                `${item.opening_hours || '00:00'} - ${item.closing_hours || '00:00'}`;
-            document.getElementById('itemPhone').textContent = item.phone || 'Not available';
-
-            // Update map if maps_url exists
-            if (item.maps_url) {
-                const mapFrame = document.getElementById('mapFrame');
-                const directionBtn = document.getElementById('directionBtn');
-                
-                if (mapFrame) {
-                    mapFrame.src = item.maps_url;
-                }
-                
-                if (directionBtn) {
-                    directionBtn.onclick = () => window.open(item.maps_url, '_blank');
-                }
-            }
-
-            // Update gallery images
-            const gallery = document.getElementById('imageGallery');
-            if (gallery && data.images && Array.isArray(data.images)) {
-                // Clear existing content
-                gallery.innerHTML = '';
-                
-                // Add new images
-                data.images.forEach((imageUrl, index) => {
-                    const galleryItem = document.createElement('div');
-                    galleryItem.className = `gallery-item ${index === 0 ? 'parent' : 'child'}`;
-                    
-                    const img = document.createElement('img');
-                    img.src = imageUrl;
-                    img.alt = `${item.name} Image ${index + 1}`;
-                    
-                    // Add error handling for images
-                    img.onerror = function() {
-                        this.src = '../Image/placeholder.png'; // Use a placeholder image
-                        this.alt = 'Image not available';
-                    };
-                    
-                    galleryItem.appendChild(img);
-                    gallery.appendChild(galleryItem);
-                });
-            }
-
-            // Update reviews
-            const reviewsContainer = document.getElementById('reviewsContainer');
-            if (reviewsContainer && data.reviews && Array.isArray(data.reviews)) {
-                // Clear existing reviews
-                reviewsContainer.innerHTML = '';
-                
-                // Add new reviews
-                data.reviews.forEach(review => {
-                    const reviewCard = createReviewCard(review);
-                    reviewsContainer.appendChild(reviewCard);
-                });
-
-                // Show message if no reviews
-                if (data.reviews.length === 0) {
-                    reviewsContainer.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review!</p>';
-                }
-            }
+            hideLoading();
+            updateUI(data);
         })
         .catch(error => {
-            console.error('Error fetching item details:', error);
-            // Show user-friendly error message
-            const mainContainer = document.querySelector('.main');
-            if (mainContainer) {
-                mainContainer.innerHTML = `
-                    <div class="error-message" style="text-align: center; padding: 20px;">
-                        <h2>Oops! Something went wrong</h2>
-                        <p>We couldn't load the item details. Please try again later.</p>
-                        <button onclick="location.reload()" style="padding: 10px 20px; margin-top: 10px;">
-                            Retry
-                        </button>
-                    </div>
-                `;
-            }
+            console.error('Error:', error);
+            showError(error.message);
         });
 });
 
-// Function to create review card
-function createReviewCard(review) {
-    const card = document.createElement('div');
-    card.className = 'review-card';
+// UI Helper Functions
+function showLoading() {
+    const main = document.querySelector('.main');
+    if (main) {
+        main.innerHTML = `
+            <div class="loading" style="text-align: center; padding: 40px;">
+                <p>Loading item details...</p>
+            </div>
+        `;
+    }
+}
+
+function hideLoading() {
+    const loading = document.querySelector('.loading');
+    if (loading) {
+        loading.remove();
+    }
+}
+
+function showError(message) {
+    const main = document.querySelector('.main');
+    if (main) {
+        main.innerHTML = `
+            <div class="error-message" style="text-align: center; padding: 40px;">
+                <h2>Oops! Something went wrong</h2>
+                <p>${message}</p>
+                <button onclick="location.reload()" style="
+                    padding: 10px 20px;
+                    margin-top: 20px;
+                    background-color: #8B4513;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                ">
+                    Try Again
+                </button>
+            </div>
+        `;
+    }
+}
+
+function updateUI(data) {
+    const item = data.item;
     
-    card.innerHTML = `
-        <div class="review-header">
-            <div class="reviewer-info">
-                <img src="../Image/user.png" alt="User Profile" class="reviewer-pic">
-                <div class="reviewer-details">
-                    <h4>${escapeHtml(review.username || 'Anonymous')}</h4>
-                    <span>${formatDate(review.created_at)}</span>
+    // Update page title
+    document.title = `${item.name} - YoXplore`;
+    
+    // Main content container
+    const main = document.querySelector('.main');
+    if (!main) return;
+
+    main.innerHTML = `
+        <div class="container2">
+            <div class="column">
+                <div class="column-right">
+                    <h1>${item.name}</h1>
+                    <div class="review-rating-head">
+                        <div class="star-rating">
+                            <i class='bx bxs-star'></i>
+                        </div>
+                        <span class="rating-score">${data.rating.average}</span>
+                        <span class="rating-max">/5</span>
+                        <span class="rating-user">From ${data.rating.total} users</span>
+                    </div>
+                    <div class="info-section">
+                        <div class="location-info">
+                            <div class="info-item">
+                                <span class="icon"><img src="../Image/location.png" alt=""></span>
+                                <p>${item.address || 'Address not available'}</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon"><img src="../Image/clock.png" alt=""></span>
+                                <p>${item.opening_hours || '00:00'} - ${item.closing_hours || '00:00'}</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon"><img src="../Image/call.png" alt=""></span>
+                                <p>${item.phone || 'Not available'}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="review-rating">
-                <div class="star-rating">
-                    ${generateStars(review.rating)}
-                </div>
-                <span class="rating-score">${review.rating}</span>
-                <span class="rating-max">/5</span>
+
+            <div class="gallery" id="imageGallery">
+                ${createGalleryHTML(data.images)}
             </div>
         </div>
-        <p class="review-text">${escapeHtml(review.review_text || '')}</p>
-        ${createReviewImages(review.image_urls)}
     `;
-    
-    return card;
-}
 
-// Helper function to escape HTML
-function escapeHtml(unsafe) {
-    if (!unsafe) return '';
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-// Function to format date
-function formatDate(dateString) {
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    } catch (e) {
-        return 'Date not available';
+    // Add map if available
+    if (item.maps_url) {
+        addMap(item.maps_url);
     }
+
+    // Add reviews section
+    addReviewsSection(data.reviews);
 }
 
-// Function to generate star rating
-function generateStars(rating) {
-    const fullStars = Math.floor(rating || 0);
-    const halfStar = (rating % 1) >= 0.5;
-    const emptyStars = 5 - Math.ceil(rating || 0);
-    
-    return '★'.repeat(fullStars) +
-           (halfStar ? '½' : '') +
-           '☆'.repeat(emptyStars);
-}
-
-// Function to create review images
-function createReviewImages(imageUrls) {
-    if (!imageUrls || !Array.isArray(imageUrls) || imageUrls.length === 0) {
-        return '';
+function createGalleryHTML(images) {
+    if (!images || !images.length) {
+        return '<div class="gallery-item parent"><img src="../Image/placeholder.png" alt="No image available"></div>';
     }
-    
-    const images = imageUrls.map(url => `
-        <img src="${escapeHtml(url)}" 
-             alt="Review Image"
-             onerror="this.src='../Image/placeholder.png';this.alt='Image not available';">
+
+    return images.map((url, index) => `
+        <div class="gallery-item ${index === 0 ? 'parent' : 'child'}">
+            <img src="${url}" alt="Item image ${index + 1}" onerror="this.src='../Image/placeholder.png'">
+        </div>
     `).join('');
-    
-    return `<div class="review-images">${images}</div>`;
 }
 
-// Modal handling
-const modal = document.getElementById('modal');
-const openModalBtn = document.getElementById('openModal');
-const closeModalBtn = document.getElementById('closeModal');
-
-if (openModalBtn && modal) {
-    openModalBtn.addEventListener('click', () => {
-        modal.style.display = 'block';
-    });
+function addMap(mapsUrl) {
+    const mapHTML = `
+        <div class="map">
+            <iframe 
+                src="${mapsUrl}"
+                width="90%" 
+                height="400" 
+                style="border:0; border-radius:10px;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+            <button class="route-btn" onclick="window.open('${mapsUrl}', '_blank')">
+                Get Direction
+            </button>
+        </div>
+    `;
+    document.querySelector('.container2').insertAdjacentHTML('afterend', mapHTML);
 }
 
-if (closeModalBtn && modal) {
-    closeModalBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-}
-
-// Star rating handling in modal
-const stars = document.querySelectorAll('.modal .star');
-const ratingInput = document.querySelector('.modal input[name="rating"]');
-
-if (stars && ratingInput) {
-    stars.forEach((star, index) => {
-        star.addEventListener('click', () => {
-            ratingInput.value = index + 1;
-            stars.forEach((s, i) => {
-                s.classList.toggle('active', i <= index);
-            });
-        });
-    });
-}
-
-// Handle form submission
-const reviewForm = document.getElementById('reviewForm');
-if (reviewForm) {
-    reviewForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const urlParams = new URLSearchParams(window.location.search);
-        formData.append('item_id', urlParams.get('id'));
-        
-        try {
-            const response = await fetch('../Controller/add_review.php', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const text = await response.text();
-            let result;
-            try {
-                result = JSON.parse(text);
-            } catch (e) {
-                console.error('Error parsing response:', text);
-                throw new Error('Invalid server response');
-            }
-            
-            if (result.success) {
-                alert('Review submitted successfully!');
-                modal.style.display = 'none';
-                location.reload();
-            } else {
-                alert(result.message || 'Failed to submit review');
-            }
-        } catch (error) {
-            console.error('Error submitting review:', error);
-            alert('Failed to submit review. Please try again later.');
-        }
-    });
+function addReviewsSection(reviews) {
+    const reviewsHTML = `
+        <div class="reviews-section">
+            <div class="reviews-header">
+                <h2>Users Review</h2>
+                <button class="add-review-btn" id="openModal">+ Add Review</button>
+            </div>
+            <div class="reviews-container">
+                ${reviews.length ? createReviewsHTML(reviews) : '<p class="no-reviews">No reviews yet. Be the first to review!</p>'}
+            </div>
+        </div>
+    `;
+    document.querySelector('.map').insertAdjacentHTML('afterend', reviewsHTML);
 }
