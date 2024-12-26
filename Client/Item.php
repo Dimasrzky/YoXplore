@@ -2,6 +2,10 @@
 session_start();
 require_once '../Config/db_connect.php';
 
+
+if (!$conn) {
+    die("Database connection failed");
+}
 // Redirect ke login jika belum login
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -9,9 +13,9 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Validasi dan sanitasi item ID
-$itemId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$itemId = isset($_GET['id']) ? filter_var($_GET['id'], FILTER_VALIDATE_INT) : null;
 if (!$itemId) {
-    header('Location: home.php?error=invalid_id');
+    header('Location: Home.html');
     exit;
 }
 
