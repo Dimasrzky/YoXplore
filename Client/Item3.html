@@ -1,0 +1,569 @@
+<html>
+    <head>
+        <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY" async defer></script>
+        <title>Item page</title>
+        <link rel="icon" href="../Image/Logo Yoxplore.png" type="image/png">
+        <link rel="stylesheet" href="../Style/Item.css">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    </head>
+    <body>
+        <header>
+            <nav class="container">
+                <a href="../Client/Home.html"><img class="logo" src="../Image/Yoxplore logo text.png" alt="Yoxplore Logo"></a>
+                <div class="nav-links">
+                    <a href="../Client/Home.html"><img src="../Image/home.png" alt="Home Icon"> Home</a>
+                    <a href="../Client/Yotrip.html"><img src="../Image/yotrip.png" alt="Trip Icon"> YoTrip</a>
+                    <a href="../Client/Yoconcert.html"><img src="../Image/yoconcert.png" alt="Concert Icon"> YoConcert</a>
+                    <a href="../Client/YoTaste.html"><img src="../Image/yotaste.png" alt="Taste Icon"> YoTaste</a>
+                    <a href="../Client/YoStay.html"><img src="../Image/yostay.png" alt="Stay Icon"> YoStay</a>
+    
+                </div>
+                <div class="user-profile">
+                    <span id="usernameDisplay"></span></div>
+                <div class="profile-dropdown">
+                    <div class="profile-icon" onclick="toggleDropdown()">
+                        <img src="../Image/user.png" alt="Profile Icon">
+                    </div>
+                    <div id="dropdown-menu" class="dropdown-menu">
+                        <a href="../Client/Profile.html" class="menu-item">
+                            <img src="../Image/navbar/settings.png" alt="Settings Icon">
+                            Account 
+                        </a>
+                        <a href="../Client/Login.html"  onclick="logout()" class="menu-item logout">
+                            <img src="../Image/navbar/logout.png" alt="Logout Icon">
+                            Logout
+                        </a>
+                    </div>
+                </div>                                
+            </nav>
+        </header>
+
+        <div class="main">
+          <div class="container2">
+            <div class="column">
+                <div class="column-right">
+                    <h1>Gudeg Yu Djum</h1>
+                    <div class="review-rating-head">
+                        <div class="star-rating">
+                            <i class='bx bxs-star'></i>
+                        </div>
+                          <span class="rating-score">4.9</span>
+                          <span class="rating-max">/5</span>
+                          <span class="rating-user">From users</span>
+                      </div>
+                    <div class="info-section">
+                        <div class="location-info">
+                            <div class="info-item">
+                                <span class="icon"><img src="../Image/location.png" alt=""></span>
+                                <p>Jl. Kaliurang Km. 4,5 , Sleman, Yogyakarta</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon"><img src="../Image/clock.png" alt=""></span>
+                                <p>05:30 - 17:00</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon"><img src="../Image/call.png" alt=""></span>
+                                <p>(0274) 515968</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+  
+            <div class="gallery">
+              <div class="gallery-item parent">
+                  <img src="https://paxelmarket.co/wp-content/uploads/2022/11/Screenshot_20221110_172036.jpg" alt="Main Hotel Image">
+              </div>
+              <div class="gallery-item child">
+                  <img src="https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/jawapos/2018/12/64999_84105_Yuk-Djum.jpg" alt="Hotel Image 2">
+              </div>
+              <div class="gallery-item child">
+                  <img src="https://cdn1-production-images-kly.akamaized.net/lB14zMAhSQ9mnC33Fke_UGO4e7E=/1200x900/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/2327952/original/037300600_1534141139-GUDEG_YU_DJUM_gudegyudjumpusat_dot_com.jpg" alt="Hotel Image 3">
+              </div>
+              <div class="gallery-item child">
+                  <img src="https://rentalmobiljogja.id/wp-content/uploads/2017/08/gudeg-yu-djum-03-1080x1080.jpg" alt="Hotel Image 4">
+              </div>
+              <div class="gallery-item child">
+                  <img src="https://gudeg.net/cni-content/uploads/modules/direktori/logo/20160405043418.jpg" alt="Hotel Image 5">
+              </div>
+              <div class="gallery-item child">
+                <img src="https://asset.kompas.com/crops/o_mhpqciiXY0sEI16blBtE4SvH0=/0x0:1000x667/1200x800/data/photo/2020/08/26/5f4611136f5a0.jpg" alt="Hotel Image 4">
+              </div>
+              <div class="gallery-item child last-item">
+                <img src="https://www.gudeg.net/cni-content/uploads/modules/gallery_direktori/20160831044003.JPG" alt="Hotel Image 5">
+                <a href="javascript:void(0)" onclick="openGallery()" class="overlay-link">
+                    <div class="overlay-content">
+                        <div class="image-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke="white" stroke-width="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5" fill="white"/>
+                                <path d="M3 15L8 10L13 15L21 7" stroke="white" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <span>See All Photos</span>
+                    </div>
+                </a>
+            </div>
+            </div>
+        </div>
+      </div>
+
+      <div id="gallery-modal" class="gallery-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>All Photos</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-gallery">
+                <img src="https://prambanan.injourneydestination.id/wp-content/uploads/2024/11/WhatsApp-Image-2024-11-05-at-2.26.30-PM.jpeg" alt="Photo 1">
+                <img src="https://img.antaranews.com/cache/1200x800/2024/11/12/Upacara-Abhiseka-Prambanan-121124-hnd-02.jpg.webp" alt="Photo 2">
+                <img src="https://radartasiktv.disway.id/upload/69ba1b33354765875e2d049315063429.png" alt="Photo 3">
+                <img src="https://pariwisata.slemankab.go.id/wp-content/uploads/2017/04/A_Guide-Mengantarkan-Wisatawan_-Prambanan-Sleman_0817268588-49.jpg" alt="Photo 4">
+                <img src="https://tourezia.com/wp-content/uploads/2023/07/Snapinsta.app_347181399_210111078483887_4847221134072566665_n_1080-2-1024x617.jpg.webp" alt="Photo 5">
+                <img src="https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p3/29/2024/03/25/Screenshot_2024-03-25-17-12-43-30_1c337646f29875672b5a61192b9010f9-341519883.jpg" alt="Photo 6">
+                <img src="https://cdn.idntimes.com/content-images/community/2022/09/fromandroid-61f460ca21f1f17c54d547b47d5eeb1d.jpg" alt="Photo 7">
+                <img src="https://cdn.getyourguide.com/img/tour/e93ac512104d74ff8e6054629e6cf66d5135743eaf29f842ce72cfc05b96e94c.jpg/146.jpg" alt="Photo 8">
+                <img src="https://assets-a1.kompasiana.com/items/album/2024/06/30/pexels-lan-yao-324969-19579190-6680c1b434777c6a0948b434.jpg?t=o&v=1200" alt="Photo 9">
+                <!-- Add more images as needed -->
+            </div>
+        </div>
+    </div>
+            
+        <div class="map">
+            <iframe 
+              src="https://www.google.com/maps/dir/-7.6884005,110.4111567/Gudeg+Yu+Djum+Wijilan+31+Cabang+Umbulmartani,+8CF8%2B6VP,+Kledokan,+Umbulmartani,+Kec.+Ngemplak,+Kabupaten+Sleman,+Daerah+Istimewa+Yogyakarta+55584/@-7.687196,110.4102575,16.25z/data=!4m10!4m9!1m1!4e1!1m5!1m1!1s0x2e7a5fe3d610657d:0xaa3b1eb95fccfbbc!2m2!1d110.4172003!2d-7.6768917!3e9?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D" 
+              width="90%" 
+              height="400" 
+              style="border:0; border-radius:10px;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+              <button class="route-btn" onclick="window.open('https://www.google.com/maps/dir/-7.6884005,110.4111567/Gudeg+Yu+Djum+Wijilan+31+Cabang+Umbulmartani,+8CF8%2B6VP,+Kledokan,+Umbulmartani,+Kec.+Ngemplak,+Kabupaten+Sleman,+Daerah+Istimewa+Yogyakarta+55584/@-7.687196,110.4102575,16.25z/data=!4m10!4m9!1m1!4e1!1m5!1m1!1s0x2e7a5fe3d610657d:0xaa3b1eb95fccfbbc!2m2!1d110.4172003!2d-7.6768917!3e9?entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D')">Get Direction</button>
+        </div>
+
+        <!-- Add this after the map div and before the footer -->
+        <div class="reviews-section">
+          <div class="reviews-header">
+            <h2>Users Review</h2>
+            <button class="add-review-btn" id="openModal">
+                + Add Review
+            </button>
+        </div>
+          <div class="reviews-container">
+              <div class="review-card">
+                  <div class="review-header">
+                      <div class="reviewer-info">
+                          <img src="../Image/user.png" alt="User Profile" class="reviewer-pic">
+                          <div class="reviewer-details">
+                              <h4>John Smith</h4>
+                          </div>
+                      </div>
+                      <div class="review-rating">
+                        <div class="star-rating">
+                            <i class='bx bxs-star'></i>
+                        </div>
+                          <span class="rating-score">4</span>
+                          <span class="rating-max">/5</span>
+                      </div>
+                  </div>
+                  <p class="review-text">The temple is even more stunning in person! Despite the crowds, the experience was still magical. The intricate stone carvings and the way the temples align is remarkable. Best to visit during sunrise or sunset for amazing photos!</p>
+                  <div class="review-images">
+                      <img src="https://www.yogyes.com/id/yogyakarta-tourism-object/candi/prambanan/1.jpg" alt="Food Review 1">
+                      <img src="https://nagantour.com/wp-content/uploads/2023/06/wisata-jogja.webp" alt="Food Review 2">
+                      <img src="https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/kabarbumn/4/7/4/2/4742.jpeg" alt="Food Review 3">
+                  </div>
+              </div>
+
+              <div class="review-card">
+                  <div class="review-header">
+                      <div class="reviewer-info">
+                          <img src="../Image/user.png" alt="User Profile" class="reviewer-pic">
+                          <div class="reviewer-details">
+                              <h4>Sarah Chen</h4>
+                          </div>
+                      </div>
+                      <div class="review-rating">
+                        <div class="star-rating">
+                            <i class='bx bxs-star'></i>
+                        </div>
+                          <span class="rating-score">5</span>
+                          <span class="rating-max">/5</span>
+                      </div>
+                  </div>
+                  <p class="review-text">Candi Prambanan is absolutely magnificent! The architectural details are breathtaking and the historical significance is profound. I've visited multiple times and each time I discover something new about this incredible temple!</p>
+                  <div class="review-images">
+                      <img src="https://i0.wp.com/joglosemarnews.com/images/2024/07/2307-relief.jpeg?resize=640%2C467&ssl=1" alt="Restaurant Review 1">
+                      <img src="https://garasijogja.com/wp-content/uploads/2018/09/neschafebi2.jpg" alt="Restaurant Review 2">
+                      <img src="https://img.harianjogja.com/posts/2024/02/29/1166433/prambanan.jpg" alt="Restaurant Review 2">
+                  </div>
+              </div>
+
+              <div class="review-card">
+                  <div class="review-header">
+                      <div class="reviewer-info">
+                          <img src="../Image/user.png" alt="User Profile" class="reviewer-pic">
+                          <div class="reviewer-details">
+                              <h4>Ahmad Rasyid</h4>
+                          </div>
+                      </div>
+                      <div class="review-rating">
+                        <div class="star-rating">
+                            <i class='bx bxs-star'></i>
+                        </div>
+                          <span class="rating-score">4</span>
+                          <span class="rating-max">/5</span>
+                      </div>
+                  </div>
+                  <p class="review-text">A true architectural masterpiece and UNESCO World Heritage site! The Ramayana Ballet performance with the temples as backdrop was spectacular. The restoration work is impressive and the whole complex is well-maintained.</p>
+                  <div class="review-images">
+                      <img src="https://blue.kumparan.com/image/upload/fl_progressive,fl_lossy,c_fill,q_auto:best,w_640/v1634025439/01hk1rcccw45ngm7gj7xkp5dw2.jpg" alt="Atmosphere Review 1">
+                      <img src="https://mmc.tirto.id/image/otf/640x0/2020/06/02/antarafoto-percobaan-pembukaan-candi-prambanan-020620-hnd-3_ratio-16x9.jpg" alt="Food Review 4">
+                      <img src="https://akcdn.detik.net.id/visual/2020/10/21/candi-prambanan_169.jpeg?w=650" alt="Restaurant Review 2">
+                  </div>
+              </div>
+          </div>
+        </div>
+
+        <div id="modal" class="modal">
+            <div class="wrapper">
+              <h3>Leave a Review</h3>
+              
+              <!-- Rating -->
+              <div class="rating">
+                <input type="number" name="rating" hidden>
+                <i class='bx bx-star star' style="--i: 0;"></i>
+                <i class='bx bx-star star' style="--i: 1;"></i>
+                <i class='bx bx-star star' style="--i: 2;"></i>
+                <i class='bx bx-star star' style="--i: 3;"></i>
+                <i class='bx bx-star star' style="--i: 4;"></i>
+              </div>
+    
+              <!-- Kolom Komentar -->
+              <textarea rows="4" placeholder="Write your comment here..."></textarea>
+    
+              <!-- Input Upload Gambar -->
+              <div class="image-upload">
+                <label for="file-input" class="upload-label">
+                  <i class='bx bx-image-add'></i> Upload Image
+                </label>
+                <input type="file" id="file-input" accept="image/*" hidden>
+                <div id="image-preview" class="image-preview"></div>
+              </div>
+    
+              <!-- Button Group -->
+              <div class="btn-group">
+                <button class="btn submit">Submit</button>
+                <button class="btn cancel" id="closeModal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        
+        <footer class="footer">
+            <div class="contact-info">
+                <h3>Contact us</h3>
+                <ul>
+                    <li><img src="../Image/footer/clock.png" alt="Clock" class="icon"> Monday - Friday, 09:00 - 17:00</li>
+                    <li><img src="../Image/footer/email.png" alt="Email" class="icon"> Email: <a href="mailto:yoxplore@gmail.com">yoxplore@gmail.com</a></li>
+                    <li><img src="../Image/footer/phone-call.png" alt="Phone" class="icon"> Phone: 08123456789</li>
+                    <li><img src="../Image/yotrip.png" alt="Location" class="icon"> Universitas Islam Indonesia,</li>
+                    <div class="alamat">
+                        Gedung K.H. Mas Mansyur, <br>
+                        Daerah Istimewa Yogyakarta 55584
+                    </div>
+                </ul>
+            </div>
+            
+            <div class="products">
+                <h3>Products</h3>
+                <ul>
+                    <li><a href="../Client/Yotrip.html">YoTrip</a></li>
+                    <li><a href="../Client/Yotaste.html">YoTaste</a></li>
+                    <li><a href="../Client/Yoconcert.html">YoConcert</a></li>
+                    <li><a href="../Client/Yostay.html">YoStay</a></li>
+                </ul>
+            </div>
+            <div class="social-media">
+                <h3>Follow us on</h3>
+                <ul>
+                    <li class="icon"><img src="../Image/footer/sosmed/instagram.png" alt="Instagram">Instagram</li>
+                    <li class="icon"><img src="../Image/footer/sosmed/tik-tok.png" alt="TikTok">TikTok</li>
+                    <li class="icon"><img src="../Image/footer/sosmed/twitter.png" alt="Twitter">X</li>
+                    <li class="icon"><img src="../Image/footer/sosmed/youtube.png" alt="YouTube">YouTube</li>
+                    <li class="icon"><img src="../Image/footer/sosmed/facebook.png" alt="Facebook">Facebook</li>
+                    <li class="icon"><img src="../Image/footer/sosmed/telegram.png" alt="Telegram">Telegram</li>
+                </ul>
+            </div>
+            <div class="copyright">
+                Copyright &copy; 2024 Yoxplore. All rights reserved
+            </div>
+        </footer>
+        <script src="../Script/item.js"></script>
+    </body>
+    <script>
+        
+        function logout() {
+            // Clear semua data
+            sessionStorage.clear();
+            localStorage.clear();
+            window.location.href = '../Client/Login.html';
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameDisplay = document.getElementById('usernameDisplay');
+            fetch('/YoXplore/Controller/get_user_data.php')
+                .then(response => response.json())
+                .then(data => {
+                    if(data.username) {
+                        usernameDisplay.textContent = data.username;
+
+                        if (data.profileImage) {
+                            const navbarProfileIcon = document.querySelector('.profile-icon img');
+                            if (navbarProfileIcon) {
+                                navbarProfileIcon.src = data.profileImage;
+                                navbarProfileIcon.style.borderRadius = '50%';
+                                navbarProfileIcon.style.width = '40px';
+                                navbarProfileIcon.style.height = '40px';
+                                navbarProfileIcon.style.objectFit = 'cover';
+                            }
+                        }
+                    }
+                });
+        });
+        
+            // Load profile image berdasarkan user_id
+            const userId = sessionStorage.getItem('user_id');
+            const profileImage = localStorage.getItem(`profileImage_${userId}`);
+            
+            if (profileImage) {
+                const navbarProfileIcon = document.querySelector('.profile-icon img');
+                if (navbarProfileIcon) {
+                    navbarProfileIcon.src = profileImage;
+                    navbarProfileIcon.style.borderRadius = '50%';
+                    navbarProfileIcon.style.width = '40px';
+                    navbarProfileIcon.style.height = '40px';
+                    navbarProfileIcon.style.objectFit = 'cover';
+                }
+            }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const popularGrid = document.querySelector('.popular-grid');
+        
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            };
+        
+            const observerCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        popularGrid.classList.add('items-visible');
+                        // Stop observing once animation is triggered
+                        observer.unobserve(entry.target);
+                    }
+                });
+            };
+        
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+            observer.observe(popularGrid);
+        });
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown-menu');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }     
+    
+        // Menutup dropdown jika klik di luar area
+        window.onclick = function (event) {
+            if (!event.target.closest('.profile-dropdown')) {
+                const dropdown = document.getElementById('dropdown-menu');
+                if (dropdown) {
+                    dropdown.style.display = 'none';
+                }
+            }
+        };
+
+          // Initialize Street View
+            function initStreetView() {
+                // Coordinates for Gudeg Yu Djum (example coordinates)
+                const yuDjumLocation = { lat: -7.765828, lng: 110.377842 };
+                
+                const streetViewOptions = {
+                position: yuDjumLocation,
+                pov: { heading: 165, pitch: 0 },
+                zoom: 1
+                };
+                
+                const streetView = new google.maps.StreetViewPanorama(
+                document.getElementById('street-view'),
+                streetViewOptions
+                );
+            }
+            
+            // Function to open Google Maps directions
+            function openGoogleMaps() {
+                // Coordinates for Gudeg Yu Djum
+                const destination = "-7.765828,110.377842";
+                const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
+                window.open(url, '_blank');
+            }
+            
+            // Load Google Maps API
+            function loadGoogleMapsAPI() {
+                const script = document.createElement('script');
+                script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initStreetView`;
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            }
+
+            function openGallery() {
+              const modal = document.getElementById('gallery-modal');
+              modal.style.display = 'block';
+              document.body.style.overflow = 'hidden'; // Prevent scrolling of background
+          }
+          
+          // Close button functionality
+          document.addEventListener('DOMContentLoaded', function() {
+              const modal = document.getElementById('gallery-modal');
+              const closeBtn = document.querySelector('.close');
+          
+              closeBtn.onclick = function() {
+                  modal.style.display = 'none';
+                  document.body.style.overflow = 'auto'; // Re-enable scrolling
+              }
+          
+              // Close modal when clicking outside of modal content
+              window.onclick = function(event) {
+                  if (event.target === modal) {
+                      modal.style.display = 'none';
+                      document.body.style.overflow = 'auto';
+                  }
+              }
+          
+              // Close modal when pressing ESC key
+              document.addEventListener('keydown', function(event) {
+                  if (event.key === 'Escape' && modal.style.display === 'block') {
+                      modal.style.display = 'none';
+                      document.body.style.overflow = 'auto';
+                  }
+              });
+          });
+          
+          const openModal = document.getElementById("openModal");
+            const closeModal = document.getElementById("closeModal");
+            const modal = document.getElementById("modal");
+            const allStar = document.querySelectorAll('.rating .star');
+            const ratingValue = document.querySelector('.rating input');
+            const fileInput = document.getElementById("file-input");
+            const imagePreview = document.getElementById("image-preview");
+
+            // Fungsi untuk mereset bintang dan nilai rating
+            function resetStars() {
+              ratingValue.value = ""; // Reset input rating
+              allStar.forEach(star => {
+                star.classList.replace('bxs-star', 'bx-star'); // Kembalikan ke warna putih
+                star.classList.remove('active'); // Hapus kelas aktif
+              });
+            }
+
+            // Event untuk membuka modal
+            openModal.addEventListener("click", () => {
+              modal.classList.add("open");
+            });
+
+            // Event untuk menutup modal dengan tombol close
+            closeModal.addEventListener("click", () => {
+              modal.classList.remove("open");
+              resetStars(); // Reset bintang saat modal ditutup
+            });
+
+            // Event untuk menutup modal dengan klik di luar area modal
+            window.addEventListener("click", (event) => {
+              if (event.target === modal) {
+                modal.classList.remove("open");
+                resetStars(); // Reset bintang saat modal ditutup
+              }
+            });
+
+            // Event untuk mengatur rating bintang
+            allStar.forEach((item, idx) => {
+              item.addEventListener('click', function () {
+                let click = 0;
+                ratingValue.value = idx + 1; // Simpan nilai rating ke input
+
+                allStar.forEach(i => {
+                  i.classList.replace('bxs-star', 'bx-star');
+                  i.classList.remove('active');
+                });
+
+                for (let i = 0; i < allStar.length; i++) {
+                  if (i <= idx) {
+                    allStar[i].classList.replace('bx-star', 'bxs-star');
+                    allStar[i].classList.add('active');
+                  } else {
+                    allStar[i].style.setProperty('--i', click);
+                    click++;
+                  }
+                }
+              });
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // Ambil item_id dari URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const itemId = urlParams.get('id');
+            
+                // Load item data
+                fetch(`../Controller/get_item_detail.php?id=${itemId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const item = data.item;
+                document.querySelector('h1').textContent = item.name;
+                document.querySelector('.rating-score').textContent = item.avg_rating || '0';
+                document.querySelector('.location-info p').textContent = item.address;
+                // ... update elemen lainnya
+                
+                // Update gallery
+                const gallery = document.querySelector('.gallery');
+                item.images.forEach((img, index) => {
+                    // ... tambah gambar ke gallery
+                });
+                
+                // Load reviews
+                loadReviews(itemId);
+            }
+                        
+        )
+        });
+            // Handle submit review
+            document.querySelector('.submit').addEventListener('click', function() {
+                const rating = document.querySelector('[name="rating"]').value;
+                const comment = document.querySelector('textarea').value;
+                const fileInput = document.getElementById('file-input');
+                
+                const formData = new FormData();
+                formData.append('item_id', itemId);
+                formData.append('rating', rating);
+                formData.append('comment', comment);
+                
+                // Append images if any
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('images[]', fileInput.files[i]);
+                }
+            
+                fetch('../Controller/save_review.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Review berhasil ditambahkan!');
+                        location.reload();
+                    }
+                });
+            });
+    </script>
+</html>
