@@ -60,8 +60,9 @@
                     <p>Find the best and spectacular show in Yogyakarta.</p>
                 </div>
                 <div class="search-bar">
-                    <input type="text" placeholder="where you want to go?" />
-                    <a href="#"><img src="../Image/search.png">Search</a>
+                    <input type="text" id="searchInput" placeholder="where you want to go?" />
+                    <a href="#" onclick="handleSearch(event)">
+                        <img src="../Image/search.png">Search</a>
                 </div>
             </section>
         </div>
@@ -304,76 +305,20 @@ function loadYoShow(filter = '') {
         });
 }
 
-// Tambahkan fungsi search
-function searchDestinations(searchTerm) {
-    const url = `../Controller/get_destinations.php?section=YoConcert&search=${encodeURIComponent(searchTerm)}`;
-    
-    fetch(url)
-        .then(response => response.json())
-        .then(result => {
-            if (result.success && Array.isArray(result.data)) {
-                const container = document.querySelector('.popular-grid');
-                container.innerHTML = ''; // Bersihkan konten yang ada
-                
-                if (result.data.length === 0) {
-                    container.innerHTML = '<div class="no-results">Tidak ada hasil yang ditemukan</div>';
-                    return;
-                }
-                
-                result.data.forEach(item => {
-                    const itemHtml = `
-                        <div class="popular-item">
-                            <div class="image-container">
-                                <a href="Item.html?id=${item.id}">
-                                    <img src="data:image/jpeg;base64,${item.main_image || ''}" 
-                                         alt="${item.name}"
-                                         onerror="this.src='../Image/placeholder.jpg'">
-                                    <div class="rating">
-                                        <span>★ ${item.rating || '0'}</span>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="content">
-                                <h3>${item.name}</h3>
-                                <div class="location">
-                                    <img src="../Image/location_brown.png" alt="Ikon Lokasi">
-                                    <span>${item.address}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    container.innerHTML += itemHtml;
-                });
-            }
-        })
-        .catch(error => console.error('Error saat mencari destinasi:', error));
-}
-
-// Tambahkan event listener untuk search bar
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('.search-bar input');
-    const searchButton = document.querySelector('.search-bar a');
-
-    // Event untuk tombol search
-    searchButton.addEventListener('click', function(e) {
+function handleSearch(e) {
+    e.preventDefault();
+    const searchTerm = document.getElementById('searchInput').value.trim();
+    if (searchTerm) {
+        searchDestinations(searchTerm);
+    }
+ }
+ 
+ document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
         e.preventDefault();
-        const searchTerm = searchInput.value.trim();
-        if (searchTerm) {
-            searchDestinations(searchTerm);
-        }
-    });
-
-    // Event untuk input ketika user menekan Enter
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const searchTerm = this.value.trim();
-            if (searchTerm) {
-                searchDestinations(searchTerm);
-            }
-        }
-    });
-});
+        handleSearch(e);
+    }
+ });
 
 // Panggil fungsi saat halaman dimuat
 document.addEventListener('DOMContentLoaded', function() {
