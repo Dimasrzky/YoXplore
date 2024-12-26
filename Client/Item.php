@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../Config/database.php';
+require_once '../Config/db_connect.php';
 
 // Redirect ke login jika belum login
 if (!isset($_SESSION['user_id'])) {
