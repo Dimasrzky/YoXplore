@@ -90,34 +90,34 @@ document.addEventListener('DOMContentLoaded', function() {
  
  // item.js
 function updateUI(data) {
-    document.title = `${data.item.name} - YoXplore`;
+    document.title = `${data.items.name} - YoXplore`;
     
     const contentHTML = `
         <div class="container2">
             <div class="column">
                 <div class="column-right">
-                    <h1>${data.item.name}</h1>
+                    <h1>${data.items.name}</h1>
                     <div class="review-rating-head">
                         <div class="star-rating">
                             <i class='bx bxs-star'></i>
                         </div>
-                        <span class="rating-score">${data.item.rating}</span>
+                        <span class="rating-score">${data.items.rating}</span>
                         <span class="rating-max">/5</span>
-                        <span class="rating-user">From ${data.item.total_reviews} users</span>
+                        <span class="rating-user">From ${data.items.total_reviews} users</span>
                     </div>
                     <div class="info-section">
                         <div class="location-info">
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/location.png" alt=""></span>
-                                <p>${data.item.address}</p>
+                                <p>${data.items.address}</p>
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/clock.png" alt=""></span>
-                                <p>${data.item.opening_hours} - ${data.item.closing_hours}</p>
+                                <p>${data.items.opening_hours} - ${data.items.closing_hours}</p>
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/call.png" alt=""></span>
-                                <p>${data.item.phone}</p>
+                                <p>${data.items.phone}</p>
                             </div>
                         </div>
                     </div>
