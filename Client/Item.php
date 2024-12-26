@@ -8,68 +8,87 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Ambil item ID dari URL
-$itemId = isset($_GET['id']) ? $_GET['id'] : null;
+// Validasi dan sanitasi item ID
+$itemId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 if (!$itemId) {
-    header('Location: home.php');
+    header('Location: home.php?error=invalid_id');
     exit;
 }
 
-// Ambil data item
 try {
-    // Ambil detail item dengan total reviews dan rating rata-rata
+    // Ambil detail item dengan JOIN ke category
     $query = "
-        SELECT i.*, 
-               COUNT(r.id) as total_reviews,
+        SELECT i.*, c.name as category_name,
+               COUNT(DISTINCT r.id) as total_reviews,
                COALESCE(AVG(r.rating), 0) as avg_rating
         FROM items i 
+        LEFT JOIN categories c ON i.category_id = c.id
         LEFT JOIN reviews r ON i.id = r.item_id
-        WHERE i.id = :item_id
-        GROUP BY i.id
+        WHERE i.id = :item_id AND i.is_active = 1
+        GROUP BY i.id, c.name
     ";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':item_id', $itemId, PDO::PARAM_INT);
     $stmt->execute();
+    
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$item) {
-        header('Location: home.php');
+        header('Location: home.php?error=item_not_found');
         exit;
     }
 
-    // Ambil gambar item
-    $query = "SELECT * FROM item_images WHERE item_id = :item_id ORDER BY is_main DESC";
+    // Ambil gambar item dengan pagination untuk modal
+    $query = "SELECT * FROM item_images 
+              WHERE item_id = :item_id 
+              ORDER BY is_main DESC, display_order ASC";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':item_id', $itemId, PDO::PARAM_INT);
     $stmt->execute();
     $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Ambil review dengan user info
+    // Ambil review dengan user info dan pagination
     $query = "
-        SELECT r.*, u.username, u.profile_image
+        SELECT r.*, u.username, u.profile_image,
+               (SELECT COUNT(*) FROM review_likes WHERE review_id = r.id) as likes_count
         FROM reviews r
         JOIN users u ON r.user_id = u.id
-        WHERE r.item_id = :item_id
+        WHERE r.item_id = :item_id AND r.is_approved = 1
         ORDER BY r.created_at DESC
+        LIMIT 10
     ";
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':item_id', $itemId, PDO::PARAM_INT);
     $stmt->execute();
     $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Ambil gambar review
-    foreach ($reviews as &$review) {
-        $query = "SELECT image_url FROM review_images WHERE review_id = :review_id";
+    // Ambil gambar review dengan optimasi query
+    if (!empty($reviews)) {
+        $reviewIds = array_column($reviews, 'id');
+        $placeholders = str_repeat('?,', count($reviewIds) - 1) . '?';
+        
+        $query = "SELECT review_id, image_url 
+                 FROM review_images 
+                 WHERE review_id IN ($placeholders)
+                 ORDER BY review_id, display_order";
         $stmt = $conn->prepare($query);
-        $stmt->bindParam(':review_id', $review['id'], PDO::PARAM_INT);
-        $stmt->execute();
-        $review['images'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute($reviewIds);
+        $reviewImages = $stmt->fetchAll(PDO::FETCH_GROUP);
+        
+        // Assign images to corresponding reviews
+        foreach ($reviews as &$review) {
+            $review['images'] = $reviewImages[$review['id']] ?? [];
+        }
     }
 
+    // Format waktu dengan proper time zone
+    date_default_timezone_set('Asia/Jakarta');
+    $openingHours = !empty($item['opening_hours']) ? date('H:i', strtotime($item['opening_hours'])) : '-';
+    $closingHours = !empty($item['closing_hours']) ? date('H:i', strtotime($item['closing_hours'])) : '-';
+
 } catch (PDOException $e) {
-    // Log error dan redirect ke home
-    error_log($e->getMessage());
-    header('Location: home.php');
+    error_log("Error in item.php: " . $e->getMessage());
+    header('Location: error.php?type=database');
     exit;
 }
 
@@ -83,6 +102,7 @@ $closingHours = !empty($item['closing_hours']) ? date('H:i', strtotime($item['cl
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<?= htmlspecialchars($item['name']) ?> - <?= htmlspecialchars(substr($item['address'], 0, 150)) ?>">
     <title><?= htmlspecialchars($item['name']) ?> - YoXplore</title>
     <link rel="icon" href="../Image/Logo Yoxplore.png" type="image/png">
     <link rel="stylesheet" href="../Style/Item.css">
@@ -239,6 +259,7 @@ $closingHours = !empty($item['closing_hours']) ? date('H:i', strtotime($item['cl
             <h3>Leave a Review</h3>
             <form id="reviewForm" method="POST" action="../Controller/add_review.php" enctype="multipart/form-data">
                 <input type="hidden" name="item_id" value="<?= $itemId ?>">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                 
                 <div class="rating">
                     <input type="number" name="rating" hidden required>
@@ -316,6 +337,45 @@ $closingHours = !empty($item['closing_hours']) ? date('H:i', strtotime($item['cl
                 if (event.target === modal) modal.style.display = 'none';
                 if (event.target === galleryModal) galleryModal.style.display = 'none';
             };
+        });
+
+                // Helper functions - tambahkan di bagian atas setelah try-catch
+        function formatRating($rating) {
+            return number_format($rating, 1);
+        }
+
+        function getStarClass($current, $rating) {
+            return $current <= round($rating) ? 'bxs-star' : 'bx-star';
+        }
+
+        function formatDate($date) {
+            return date('M d, Y', strtotime($date));
+        }
+
+                // Tambahkan di bagian script
+        const reviewForm = document.getElementById('reviewForm');
+        reviewForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(reviewForm);
+            
+            try {
+                const response = await fetch(reviewForm.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.reload();
+                } else {
+                    alert(result.message || 'Failed to submit review');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to submit review');
+            }
         });
     </script>
 </body>
