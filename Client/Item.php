@@ -90,10 +90,6 @@ try {
     $openingHours = !empty($item['opening_hours']) ? date('H:i', strtotime($item['opening_hours'])) : '-';
     $closingHours = !empty($item['closing_hours']) ? date('H:i', strtotime($item['closing_hours'])) : '-';
 
-} catch (PDOException $e) {
-    error_log("Error in item.php: " . $e->getMessage());
-    header('Location: error.php?type=database');
-    exit;
 }
 
 // Format waktu buka-tutup
