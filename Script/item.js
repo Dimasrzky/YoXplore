@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
  
     showLoading();
  
-    const url = `/YoXplore/Controller/get_destination_detail.php?id=${itemId}`;
+    const url = `../Controller/get_destination_detail.php?id=${itemId}`;
     console.log('Fetching from:', url);
  
     fetch(url, {
