@@ -1,4 +1,58 @@
-<!-- Views/item.view.php -->
+<?php
+session_start();
+require_once '../Config/db_connect.php';
+
+// Redirect if not logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+// Validate item ID
+$itemId = isset($_GET['id']) ? filter_var($_GET['id'], FILTER_VALIDATE_INT) : null;
+if (!$itemId) {
+    header('Location: home.php');
+    exit;
+}
+
+try {
+    // Get item details
+    $query = "SELECT i.*, 
+              COUNT(DISTINCT r.id) as total_reviews,
+              COALESCE(AVG(r.rating), 0) as avg_rating
+              FROM items i 
+              LEFT JOIN reviews r ON i.id = r.item_id
+              WHERE i.id = :id
+              GROUP BY i.id";
+    $stmt = $conn->prepare($query);
+    $stmt->execute(['id' => $itemId]);
+    $data['item'] = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$data['item']) {
+        header('Location: home.php');
+        exit;
+    }
+
+    // Get images
+    $query = "SELECT * FROM item_images WHERE item_id = :item_id ORDER BY is_main DESC";
+    $stmt = $conn->prepare($query);
+    $stmt->execute(['item_id' => $itemId]);
+    $data['images'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Format time
+    date_default_timezone_set('Asia/Jakarta');
+    $openingHours = !empty($data['item']['opening_hours']) ? 
+        date('H:i', strtotime($data['item']['opening_hours'])) : '-';
+    $closingHours = !empty($data['item']['closing_hours']) ? 
+        date('H:i', strtotime($data['item']['closing_hours'])) : '-';
+
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    header('Location: home.php?error=database');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,14 +104,14 @@
                     <!-- Main large image -->
                     <div class="gallery-item parent">
                         <img src="<?= htmlspecialchars($data['images'][0]['image_url']) ?>" 
-                             alt="Main Hotel Image">
+                             alt="Main Image">
                     </div>
                     
                     <!-- Smaller images -->
                     <?php for($i = 1; $i < min(6, count($data['images'])); $i++): ?>
                         <div class="gallery-item child">
                             <img src="<?= htmlspecialchars($data['images'][$i]['image_url']) ?>" 
-                                 alt="Hotel Image <?= $i + 1 ?>">
+                                 alt="Image <?= $i + 1 ?>">
                         </div>
                     <?php endfor; ?>
                     
@@ -65,7 +119,7 @@
                     <?php if(count($data['images']) > 6): ?>
                         <div class="gallery-item child last-item">
                             <img src="<?= htmlspecialchars($data['images'][6]['image_url']) ?>" 
-                                 alt="Hotel Image 7">
+                                 alt="Image 7">
                             <a href="javascript:void(0)" onclick="openGallery()" class="overlay-link">
                                 <div class="overlay-content">
                                     <div class="image-icon">
@@ -85,9 +139,43 @@
         </div>
     </div>
 
-    <!-- Rest of your modal and other sections -->
+    <!-- Gallery Modal -->
+    <div id="gallery-modal" class="gallery-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>All Photos</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-gallery">
+                <?php foreach($data['images'] as $image): ?>
+                    <img src="<?= htmlspecialchars($image['image_url']) ?>" 
+                         alt="<?= htmlspecialchars($data['item']['name']) ?>">
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
     <?php include '../Components/footer.php'; ?>
 
-    <script src="../Scripts/item.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('gallery-modal');
+            const closeBtn = modal.querySelector('.close');
+            
+            window.openGallery = function() {
+                modal.style.display = 'block';
+            }
+            
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+            
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
