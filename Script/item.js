@@ -1,49 +1,46 @@
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const itemId = urlParams.get('id');
- 
+
     if (!itemId || isNaN(parseInt(itemId))) {
         showError('Invalid item ID');
         return;
     }
- 
+
     showLoading();
- 
-    const url = `../Controller/get_destination_detail.php?id=${itemId}`;
-    console.log('Fetching from:', url);
- 
-    fetch(url, {
+
+    fetch(`../Controller/get_destination_detail.php?id=${itemId}`, {
         headers: {
-            'Accept': 'application/json'
-        }
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        method: 'GET',
+        credentials: 'same-origin'
     })
     .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         return response.text();
     })
     .then(text => {
-        console.log('Raw response:', text);
         try {
-            return JSON.parse(text);
+            const data = JSON.parse(text);
+            if (!data || data.error || !data.item) {
+                throw new Error(data.message || 'Invalid data received');
+            }
+            hideLoading();
+            updateUI(data);
         } catch (e) {
-            throw new Error('Invalid JSON response');
+            throw new Error('Failed to parse response: ' + e.message);
         }
-    })
-    .then(data => {
-        console.log('Parsed data:', data);
-        if (!data || data.error || !data.item?.name) {
-            throw new Error(data.message || 'Invalid data received');
-        }
-        hideLoading();
-        updateUI(data);
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Fetch error:', error);
         hideLoading();
-        showError(error.message);
+        showError(`Error loading data: ${error.message}`);
     });
- });
+});
  
  function showLoading() {
     const main = document.querySelector('.main');
