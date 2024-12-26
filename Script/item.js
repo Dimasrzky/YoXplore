@@ -1,48 +1,160 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('modal');
-    const galleryModal = document.getElementById('gallery-modal');
-    const openModalBtn = document.getElementById('openModal');
-    const closeModalBtn = document.getElementById('closeModal');
-    const stars = document.querySelectorAll('.rating .star');
-    const fileInput = document.getElementById('file-input');
-    const previewContainer = document.getElementById('image-preview');
+    // Get item ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemId = urlParams.get('id');
 
-    // Modal handlers
-    openModalBtn.onclick = () => modal.style.display = 'flex';
-    closeModalBtn.onclick = () => modal.style.display = 'none';
-    
-    // Gallery modal
-    window.openGallery = () => galleryModal.style.display = 'block';
-    document.querySelector('.close').onclick = () => galleryModal.style.display = 'none';
+    if (!itemId) {
+        window.location.href = 'Home.html';
+        return;
+    }
 
-    // Star rating logic
-    stars.forEach((star, index) => {
-        star.onclick = () => {
-            document.querySelector('input[name="rating"]').value = index + 1;
-            stars.forEach((s, i) => {
-                s.classList.toggle('bxs-star', i <= index);
-                s.classList.toggle('bx-star', i > index);
-            });
-        };
-    });
+    // Fetch item details
+    fetch(`../Controller/get_destination_detail.php?id=${itemId}`)
+        .then(response => response.json())
+        .then(data => {
+            const item = data.item;
+            
+            // Update page title
+            document.title = `${item.name} - YoXplore`;
+            
+            // Update basic information
+            document.getElementById('itemName').textContent = item.name;
+            document.getElementById('ratingScore').textContent = data.rating.average;
+            document.getElementById('totalReviews').textContent = `From ${data.rating.total} users`;
+            document.getElementById('itemAddress').textContent = item.address;
+            document.getElementById('itemHours').textContent = `${item.opening_hours} - ${item.closing_hours}`;
+            document.getElementById('itemPhone').textContent = item.phone || 'Not available';
 
-    // Image preview logic
-    fileInput.onchange = () => {
-        previewContainer.innerHTML = '';
-        [...fileInput.files].forEach(file => {
-            const reader = new FileReader();
-            reader.onload = e => {
+            // Update map
+            if (item.maps_url) {
+                document.getElementById('mapFrame').src = item.maps_url;
+                document.getElementById('directionBtn').onclick = () => {
+                    window.open(item.maps_url, '_blank');
+                };
+            }
+
+            // Update gallery images
+            const gallery = document.getElementById('imageGallery');
+            data.images.forEach((imageUrl, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = `gallery-item ${index === 0 ? 'parent' : 'child'}`;
+                
                 const img = document.createElement('img');
-                img.src = e.target.result;
-                previewContainer.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        });
-    };
+                img.src = imageUrl;
+                img.alt = `${item.name} Image ${index + 1}`;
+                
+                galleryItem.appendChild(img);
+                gallery.appendChild(galleryItem);
+            });
 
-    // Close modals when clicking outside
-    window.onclick = (event) => {
-        if (event.target === modal) modal.style.display = 'none';
-        if (event.target === galleryModal) galleryModal.style.display = 'none';
-    };
+            // Update reviews
+            const reviewsContainer = document.getElementById('reviewsContainer');
+            data.reviews.forEach(review => {
+                const reviewCard = createReviewCard(review);
+                reviewsContainer.appendChild(reviewCard);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching item details:', error);
+            alert('Failed to load item details. Please try again later.');
+        });
+});
+
+// Function to create review card
+function createReviewCard(review) {
+    const card = document.createElement('div');
+    card.className = 'review-card';
+    
+    card.innerHTML = `
+        <div class="review-header">
+            <div class="reviewer-info">
+                <img src="../Image/user.png" alt="User Profile" class="reviewer-pic">
+                <div class="reviewer-details">
+                    <h4>${review.username}</h4>
+                    <span>${new Date(review.created_at).toLocaleDateString()}</span>
+                </div>
+            </div>
+            <div class="review-rating">
+                <div class="star-rating">
+                    ${generateStars(review.rating)}
+                </div>
+                <span class="rating-score">${review.rating}</span>
+                <span class="rating-max">/5</span>
+            </div>
+        </div>
+        <p class="review-text">${review.review_text}</p>
+        ${review.image_urls ? createReviewImages(review.image_urls) : ''}
+    `;
+    
+    return card;
+}
+
+// Function to generate star rating
+function generateStars(rating) {
+    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+}
+
+// Function to create review images
+function createReviewImages(imageUrls) {
+    if (!imageUrls || !imageUrls.length) return '';
+    
+    const images = imageUrls.map(url => `
+        <img src="${url}" alt="Review Image">
+    `).join('');
+    
+    return `<div class="review-images">${images}</div>`;
+}
+
+// Modal handling
+const modal = document.getElementById('modal');
+const openModalBtn = document.getElementById('openModal');
+const closeModalBtn = document.getElementById('closeModal');
+const stars = document.querySelectorAll('.modal .star');
+const ratingInput = document.querySelector('.modal input[name="rating"]');
+
+openModalBtn.addEventListener('click', () => {
+    modal.style.display = 'block';
+});
+
+closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+});
+
+// Star rating handling
+stars.forEach((star, index) => {
+    star.addEventListener('click', () => {
+        ratingInput.value = index + 1;
+        stars.forEach((s, i) => {
+            s.classList.toggle('active', i <= index);
+        });
+    });
+});
+
+// Handle form submission
+document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const urlParams = new URLSearchParams(window.location.search);
+    formData.append('item_id', urlParams.get('id'));
+    
+    try {
+        const response = await fetch('../Controller/add_review.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Review submitted successfully!');
+            modal.style.display = 'none';
+            location.reload();
+        } else {
+            alert(result.message || 'Failed to submit review');
+        }
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        alert('Failed to submit review. Please try again later.');
+    }
 });
