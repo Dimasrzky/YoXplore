@@ -308,46 +308,33 @@
 
         function searchDestinations(searchTerm) {
             const url = `../Controller/get_destinations.php?section=YoConcert&search=${encodeURIComponent(searchTerm)}`;
+            console.log('Search URL:', url); // Debug URL
             
             fetch(url)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success && Array.isArray(result.data)) {
-                        const container = document.querySelector('.popular-grid');
-                        container.innerHTML = ''; // Bersihkan konten yang ada
-                        
-                        if (result.data.length === 0) {
-                            container.innerHTML = '<div class="no-results">Tidak ada hasil yang ditemukan</div>';
-                            return;
-                        }
-                        
-                        result.data.forEach(item => {
-                            const itemHtml = `
-                                <div class="popular-item">
-                                    <div class="image-container">
-                                        <a href="Item.html?id=${item.id}">
-                                            <img src="data:image/jpeg;base64,${item.main_image || ''}" 
-                                                alt="${item.name}"
-                                                onerror="this.src='../Image/placeholder.jpg'">
-                                            <div class="rating">
-                                                <span>★ ${item.rating || '0'}</span>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="content">
-                                        <h3>${item.name}</h3>
-                                        <div class="location">
-                                            <img src="../Image/location_brown.png" alt="Ikon Lokasi">
-                                            <span>${item.address}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                            container.innerHTML += itemHtml;
-                        });
-                    }
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+                    return response.json();
                 })
-                .catch(error => console.error('Error saat mencari destinasi:', error));
+                .then(result => {
+                    const container = document.querySelector('.popular-grid');
+                    container.innerHTML = '';
+                    
+                    if (!result.success || !Array.isArray(result.data)) {
+                        throw new Error('Invalid response format');
+                    }
+                    
+                    if (result.data.length === 0) {
+                        container.innerHTML = '<div class="no-results">Tidak ada hasil yang ditemukan</div>';
+                        return;
+                    }
+                    
+                    result.data.forEach(item => displayDestinationItem(item, container));
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    document.querySelector('.popular-grid').innerHTML = 
+                        '<div class="error-message">Error saat mencari. Silakan coba lagi.</div>';
+                });
         }
 
         // Panggil fungsi saat halaman dimuat
