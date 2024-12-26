@@ -23,9 +23,8 @@ try {
     
     // Tambahkan kondisi pencarian jika ada
     if ($search) {
-        $query .= " AND (i.name LIKE :search OR i.address LIKE :search)";
+        $query .= " AND i.name LIKE :search";
     }
-    
     // Tambahkan filter kategori jika ada
     if ($category && $category !== 'Semua Kategori') {
         $query .= " AND c.name = :category";
