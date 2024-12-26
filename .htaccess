@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /YoXplore/
+
+    # Allow access to Client folder
+    <Directory "Client">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    # Handle errors
+    ErrorDocument 403 /YoXplore/error.php
+</IfModule>
