@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin: *');
 
 try {
     // Include connection
-    require_once('../Config/Connection.php');
+    require_once('../Config/db_connect.php');
 
     // Check if ID exists
     $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
