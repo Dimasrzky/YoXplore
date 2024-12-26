@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
  
-    document.querySelector('.loading').style.display = 'block';
+    document.querySelector('.loading').Style.display = 'block';
  
     fetch(`../Controller/get_destination_detail.php?id=${itemId}`, {
         headers: {'Accept': 'application/json'}
