@@ -6,9 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showError('Invalid item ID');
         return;
     }
- 
-    showLoading();
- 
+
     fetch(`../Controller/get_destination_detail.php?id=${itemId}`, {
         headers: {'Accept': 'application/json'}
     })
