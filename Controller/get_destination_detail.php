@@ -55,7 +55,7 @@ try {
    $reviewStmt = $conn->prepare("
        SELECT r.*, u.username 
        FROM reviews r 
-       LEFT JOIN users u ON r.user_id = u.id 
+       LEFT JOIN client u ON r.user_id = u.id 
        WHERE r.item_id = ? 
        ORDER BY r.created_at DESC
    ");
