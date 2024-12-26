@@ -13,25 +13,14 @@ try {
    $id = intval($_GET['id']);
    
    // Get item details
-   $query = "SELECT * FROM items WHERE id = ?";
-   $stmt = $conn->prepare($query);
-   if (!$stmt) {
-       throw new Exception($conn->error);
-   }
-   
-   $stmt->bind_param("i", $id);
-   if (!$stmt->execute()) {
-       throw new Exception($stmt->error);
-   }
-
-   $result = $stmt->get_result();
-   $item = $result->fetch_assoc();
+   $stmt = $conn->prepare("SELECT * FROM items WHERE id = ?");
+   $stmt->execute([$id]);
+   $item = $stmt->fetch();
 
    if (!$item) {
        throw new Exception("Item not found");
    }
 
-   // Initialize response
    $response = [
        'item' => [
            'id' => intval($item['id']),
@@ -50,97 +39,63 @@ try {
    ];
 
    // Get ratings
-   $ratingQuery = "SELECT AVG(rating) as avg_rating, COUNT(*) as total_reviews 
-                  FROM reviews WHERE item_id = ?";
-   $ratingStmt = $conn->prepare($ratingQuery);
+   $ratingStmt = $conn->prepare("
+       SELECT AVG(rating) as avg_rating, COUNT(*) as total_reviews 
+       FROM reviews WHERE item_id = ?
+   ");
+   $ratingStmt->execute([$id]);
+   $ratingData = $ratingStmt->fetch();
    
-   if ($ratingStmt) {
-       $ratingStmt->bind_param("i", $id);
-       if ($ratingStmt->execute()) {
-           $ratingResult = $ratingStmt->get_result();
-           $ratingData = $ratingResult->fetch_assoc();
-           $response['rating'] = [
-               'average' => number_format(floatval($ratingData['avg_rating'] ?? 0), 1),
-               'total' => intval($ratingData['total_reviews'] ?? 0)
-           ];
-       }
-       $ratingStmt->close();
+   $response['rating'] = [
+       'average' => number_format(floatval($ratingData['avg_rating'] ?? 0), 1),
+       'total' => intval($ratingData['total_reviews'] ?? 0)
+   ];
+
+   // Get reviews with user info
+   $reviewStmt = $conn->prepare("
+       SELECT r.*, u.username 
+       FROM reviews r 
+       LEFT JOIN users u ON r.user_id = u.id 
+       WHERE r.item_id = ? 
+       ORDER BY r.created_at DESC
+   ");
+   $reviewStmt->execute([$id]);
+   
+   while ($review = $reviewStmt->fetch()) {
+       // Get review images
+       $reviewImagesStmt = $conn->prepare("
+           SELECT image_url FROM review_images WHERE review_id = ?
+       ");
+       $reviewImagesStmt->execute([$review['id']]);
+       $reviewImages = $reviewImagesStmt->fetchAll(PDO::FETCH_COLUMN);
+
+       $response['reviews'][] = [
+           'id' => intval($review['id']),
+           'username' => $review['username'] ?? 'Anonymous',
+           'rating' => floatval($review['rating']),
+           'review_text' => $review['review_text'] ?? '',
+           'created_at' => $review['created_at'],
+           'images' => $reviewImages
+       ];
    }
 
-   // Get reviews
-   $reviewQuery = "SELECT r.*, u.username 
-                  FROM reviews r 
-                  LEFT JOIN users u ON r.user_id = u.id 
-                  WHERE r.item_id = ? 
-                  ORDER BY r.created_at DESC";
-   $reviewStmt = $conn->prepare($reviewQuery);
-   
-   if ($reviewStmt) {
-       $reviewStmt->bind_param("i", $id);
-       if ($reviewStmt->execute()) {
-           $reviewResult = $reviewStmt->get_result();
-           while ($review = $reviewResult->fetch_assoc()) {
-               // Get review images
-               $reviewImagesQuery = "SELECT image_url FROM review_images WHERE review_id = ?";
-               $reviewImagesStmt = $conn->prepare($reviewImagesQuery);
-               $reviewImages = [];
-               
-               if ($reviewImagesStmt) {
-                   $reviewImagesStmt->bind_param("i", $review['id']);
-                   if ($reviewImagesStmt->execute()) {
-                       $imagesResult = $reviewImagesStmt->get_result();
-                       while ($image = $imagesResult->fetch_assoc()) {
-                           $reviewImages[] = $image['image_url'];
-                       }
-                   }
-                   $reviewImagesStmt->close();
-               }
-               
-               $response['reviews'][] = [
-                   'id' => intval($review['id']),
-                   'username' => $review['username'] ?? 'Anonymous',
-                   'rating' => floatval($review['rating']),
-                   'review_text' => $review['review_text'] ?? '',
-                   'created_at' => $review['created_at'],
-                   'images' => $reviewImages
-               ];
-           }
-       }
-       $reviewStmt->close();
-   }
-
-   // Get item images 
-   $imageQuery = "SELECT image_url FROM item_images WHERE item_id = ?";
-   $imageStmt = $conn->prepare($imageQuery);
-   
-   if ($imageStmt) {
-       $imageStmt->bind_param("i", $id);
-       if ($imageStmt->execute()) {
-           $imageResult = $imageStmt->get_result();
-           while ($image = $imageResult->fetch_assoc()) {
-               $response['images'][] = $image['image_url'];
-           }
-       }
-       $imageStmt->close();
-   }
+   // Get item images
+   $imageStmt = $conn->prepare("SELECT image_url FROM item_images WHERE item_id = ?");
+   $imageStmt->execute([$id]);
+   $response['images'] = $imageStmt->fetchAll(PDO::FETCH_COLUMN);
 
    // Add default image if none exists
    if (empty($response['images'])) {
        $response['images'][] = '../Image/placeholder.png';
    }
 
-   // Send response
    echo json_encode($response, JSON_PRETTY_PRINT);
 
 } catch (Exception $e) {
    error_log("Error in get_destination_detail.php: " . $e->getMessage());
    http_response_code(500);
    echo json_encode([
-       'error' => true,
+       'error' => true, 
        'message' => $e->getMessage()
    ]);
-} finally {
-   if (isset($conn)) {
-       $conn->close();
-   }
 }
