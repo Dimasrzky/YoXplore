@@ -9,36 +9,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     showLoading();
 
-    fetch(`../Controller/get_destination_detail.php?id=${itemId}`, {
-        headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        method: 'GET',
-        credentials: 'same-origin'
-    })
+    fetch(`../Controller/get_destination_detail.php?id=${itemId}`)
     .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Invalid content type: ' + contentType);
         }
-        return response.text();
+        return response.json();
     })
-    .then(text => {
-        try {
-            const data = JSON.parse(text);
-            if (!data || data.error || !data.item) {
-                throw new Error(data.message || 'Invalid data received');
-            }
-            hideLoading();
-            updateUI(data);
-        } catch (e) {
-            throw new Error('Failed to parse response: ' + e.message);
-        }
+    .then(data => {
+        if (!data || data.error) throw new Error(data.message || 'Invalid data');
+        hideLoading();
+        updateUI(data);
     })
     .catch(error => {
-        console.error('Fetch error:', error);
+        console.error('Fetch error:', error, error.stack);
         hideLoading();
-        showError(`Error loading data: ${error.message}`);
+        showError(error.message);
     });
 });
  
