@@ -11,27 +11,44 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show loading state
     showLoading();
 
-    // Fetch item details
+    // Fetch item details with error logging
     fetch(`../Controller/get_destination_detail.php?id=${itemId}`)
         .then(response => {
             console.log('Response status:', response.status);
-            return response.text().then(text => {
-                try {
-                    // Try to parse as JSON
-                    console.log('Raw response:', text);
-                    return JSON.parse(text);
-                } catch (e) {
-                    console.error('JSON parse error:', e);
-                    console.log('Response text:', text);
-                    throw new Error('Invalid JSON response');
-                }
-            });
+            // Check if response is OK
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(text => {
+            // Log raw response for debugging
+            console.log('Raw response:', text);
+            
+            try {
+                // Try to parse as JSON
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('JSON parse error:', e);
+                throw new Error('Invalid JSON response');
+            }
         })
         .then(data => {
             console.log('Parsed data:', data);
             
-            if (!data || !data.item) {
-                throw new Error('Invalid data structure');
+            // Check if data exists and has required structure
+            if (!data) {
+                throw new Error('No data received');
+            }
+
+            // Check if there's an error message in the response
+            if (data.error) {
+                throw new Error(data.message || 'Server error occurred');
+            }
+
+            // Check for required item data
+            if (!data.item || !data.item.name) {
+                throw new Error('Invalid item data received');
             }
 
             hideLoading();
@@ -39,11 +56,11 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error:', error);
+            hideLoading();
             showError(error.message);
         });
 });
 
-// UI Helper Functions
 function showLoading() {
     const main = document.querySelector('.main');
     if (main) {
@@ -95,14 +112,15 @@ function updateUI(data) {
     const main = document.querySelector('.main');
     if (!main) return;
 
-    main.innerHTML = `
+    // Build the HTML content
+    let contentHTML = `
         <div class="container2">
             <div class="column">
                 <div class="column-right">
                     <h1>${item.name}</h1>
                     <div class="review-rating-head">
                         <div class="star-rating">
-                            <i class='bx bxs-star'></i>
+                            ${generateStars(parseFloat(data.rating.average))}
                         </div>
                         <span class="rating-score">${data.rating.average}</span>
                         <span class="rating-max">/5</span>
@@ -111,15 +129,15 @@ function updateUI(data) {
                     <div class="info-section">
                         <div class="location-info">
                             <div class="info-item">
-                                <span class="icon"><img src="../Image/location.png" alt=""></span>
+                                <span class="icon"><img src="../Image/location.png" alt="Location"></span>
                                 <p>${item.address || 'Address not available'}</p>
                             </div>
                             <div class="info-item">
-                                <span class="icon"><img src="../Image/clock.png" alt=""></span>
-                                <p>${item.opening_hours || '00:00'} - ${item.closing_hours || '00:00'}</p>
+                                <span class="icon"><img src="../Image/clock.png" alt="Hours"></span>
+                                <p>${formatHours(item.opening_hours, item.closing_hours)}</p>
                             </div>
                             <div class="info-item">
-                                <span class="icon"><img src="../Image/call.png" alt=""></span>
+                                <span class="icon"><img src="../Image/call.png" alt="Phone"></span>
                                 <p>${item.phone || 'Not available'}</p>
                             </div>
                         </div>
@@ -133,13 +151,31 @@ function updateUI(data) {
         </div>
     `;
 
+    // Update main content
+    main.innerHTML = contentHTML;
+
     // Add map if available
     if (item.maps_url) {
         addMap(item.maps_url);
     }
 
     // Add reviews section
-    addReviewsSection(data.reviews);
+    addReviewsSection(data.reviews || []);
+}
+
+function generateStars(rating) {
+    const fullStars = Math.floor(rating);
+    const halfStar = (rating % 1) >= 0.5;
+    const emptyStars = 5 - Math.ceil(rating);
+    
+    return `${'<i class="bx bxs-star"></i>'.repeat(fullStars)}
+            ${halfStar ? '<i class="bx bxs-star-half"></i>' : ''}
+            ${'<i class="bx bx-star"></i>'.repeat(emptyStars)}`;
+}
+
+function formatHours(opening, closing) {
+    if (!opening || !closing) return 'Hours not available';
+    return `${opening} - ${closing}`;
 }
 
 function createGalleryHTML(images) {
@@ -149,12 +185,16 @@ function createGalleryHTML(images) {
 
     return images.map((url, index) => `
         <div class="gallery-item ${index === 0 ? 'parent' : 'child'}">
-            <img src="${url}" alt="Item image ${index + 1}" onerror="this.src='../Image/placeholder.png'">
+            <img src="${url}" 
+                 alt="View image ${index + 1}"
+                 onerror="this.src='../Image/placeholder.png'">
         </div>
     `).join('');
 }
 
 function addMap(mapsUrl) {
+    if (!mapsUrl) return;
+
     const mapHTML = `
         <div class="map">
             <iframe 
@@ -171,7 +211,11 @@ function addMap(mapsUrl) {
             </button>
         </div>
     `;
-    document.querySelector('.container2').insertAdjacentHTML('afterend', mapHTML);
+
+    const container = document.querySelector('.container2');
+    if (container) {
+        container.insertAdjacentHTML('afterend', mapHTML);
+    }
 }
 
 function addReviewsSection(reviews) {
@@ -182,9 +226,54 @@ function addReviewsSection(reviews) {
                 <button class="add-review-btn" id="openModal">+ Add Review</button>
             </div>
             <div class="reviews-container">
-                ${reviews.length ? createReviewsHTML(reviews) : '<p class="no-reviews">No reviews yet. Be the first to review!</p>'}
+                ${reviews.length ? 
+                    reviews.map(review => createReviewCard(review)).join('') : 
+                    '<p class="no-reviews">No reviews yet. Be the first to review!</p>'}
             </div>
         </div>
     `;
-    document.querySelector('.map').insertAdjacentHTML('afterend', reviewsHTML);
+
+    const map = document.querySelector('.map');
+    if (map) {
+        map.insertAdjacentHTML('afterend', reviewsHTML);
+    } else {
+        const container = document.querySelector('.container2');
+        if (container) {
+            container.insertAdjacentHTML('afterend', reviewsHTML);
+        }
+    }
+}
+
+function createReviewCard(review) {
+    return `
+        <div class="review-card">
+            <div class="review-header">
+                <div class="reviewer-info">
+                    <img src="../Image/user.png" alt="User Profile" class="reviewer-pic">
+                    <div class="reviewer-details">
+                        <h4>${review.username || 'Anonymous'}</h4>
+                        <span>${formatDate(review.created_at)}</span>
+                    </div>
+                </div>
+                <div class="review-rating">
+                    <div class="star-rating">
+                        ${generateStars(review.rating)}
+                    </div>
+                    <span class="rating-score">${review.rating.toFixed(1)}</span>
+                    <span class="rating-max">/5</span>
+                </div>
+            </div>
+            <p class="review-text">${review.review_text || ''}</p>
+        </div>
+    `;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 }
