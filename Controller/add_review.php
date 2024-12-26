@@ -1,82 +1,74 @@
 <?php
+header('Content-Type: application/json');
 session_start();
-include '../Config/db_connect.php';
-
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Please login first']);
-    exit();
-}
-
-// Get form data
-$userId = $_SESSION['user_id'];
-$itemId = $_POST['item_id'];
-$rating = $_POST['rating'];
-$reviewText = $_POST['review'];
+require_once('../Config/db_connect.php');
 
 try {
-    // Start transaction
-    $conn->begin_transaction();
+    if (!isset($_SESSION['user_id'])) {
+        throw new Exception('Please login first');
+    }
+
+    $userId = $_SESSION['user_id'];
+    $itemId = filter_input(INPUT_POST, 'item_id', FILTER_VALIDATE_INT);
+    $rating = filter_input(INPUT_POST, 'rating', FILTER_VALIDATE_INT);
+    $reviewText = filter_input(INPUT_POST, 'review_text', FILTER_SANITIZE_STRING);
+
+    if (!$itemId || !$rating || !$reviewText) {
+        throw new Exception('Missing required fields');
+    }
+
+    $conn->beginTransaction();
 
     // Insert review
-    $reviewQuery = "INSERT INTO reviews (user_id, item_id, rating, review_text, created_at) 
-                   VALUES (?, ?, ?, ?, NOW())";
-    $stmt = $conn->prepare($reviewQuery);
-    $stmt->bind_param("iiis", $userId, $itemId, $rating, $reviewText);
-    $stmt->execute();
-    
-    $reviewId = $conn->insert_id;
+    $stmt = $conn->prepare("
+        INSERT INTO reviews (user_id, item_id, rating, review_text, created_at)
+        VALUES (?, ?, ?, ?, NOW())
+    ");
+    $stmt->execute([$userId, $itemId, $rating, $reviewText]);
+    $reviewId = $conn->lastInsertId();
 
-    // Handle image uploads if any
+    // Handle image uploads
     if (isset($_FILES['images'])) {
         $uploadDir = '../uploads/reviews/';
-        
-        // Create directory if it doesn't exist
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
 
         foreach ($_FILES['images']['tmp_name'] as $key => $tmp_name) {
-            $fileName = uniqid() . '_' . $_FILES['images']['name'][$key];
-            $filePath = $uploadDir . $fileName;
-            
-            if (move_uploaded_file($tmp_name, $filePath)) {
-                // Insert image reference to database
-                $imageQuery = "INSERT INTO review_images (review_id, image_url) VALUES (?, ?)";
-                $imageStmt = $conn->prepare($imageQuery);
-                $imageUrl = 'uploads/reviews/' . $fileName;
-                $imageStmt->bind_param("is", $reviewId, $imageUrl);
-                $imageStmt->execute();
+            if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
+                $filename = uniqid() . '_' . $_FILES['images']['name'][$key];
+                $filepath = $uploadDir . $filename;
+                
+                if (move_uploaded_file($tmp_name, $filepath)) {
+                    $stmt = $conn->prepare("
+                        INSERT INTO review_images (review_id, image_url)
+                        VALUES (?, ?)
+                    ");
+                    $stmt->execute([$reviewId, 'uploads/reviews/' . $filename]);
+                }
             }
         }
     }
 
-    // Update item's rating
-    $updateRatingQuery = "UPDATE items i 
-                         SET rating = (
-                             SELECT AVG(rating) 
-                             FROM reviews 
-                             WHERE item_id = ?
-                         ),
-                         total_reviews = (
-                             SELECT COUNT(*) 
-                             FROM reviews 
-                             WHERE item_id = ?
-                         )
-                         WHERE i.id = ?";
-    $updateStmt = $conn->prepare($updateRatingQuery);
-    $updateStmt->bind_param("iii", $itemId, $itemId, $itemId);
-    $updateStmt->execute();
+    // Update item rating
+    $stmt = $conn->prepare("
+        UPDATE items SET
+        rating = (SELECT AVG(rating) FROM reviews WHERE item_id = ?),
+        total_reviews = (SELECT COUNT(*) FROM reviews WHERE item_id = ?)
+        WHERE id = ?
+    ");
+    $stmt->execute([$itemId, $itemId, $itemId]);
 
-    // Commit transaction
     $conn->commit();
-    
     echo json_encode(['success' => true]);
-} catch (Exception $e) {
-    // Rollback on error
-    $conn->rollback();
-    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
-}
 
-$conn->close();
+} catch (Exception $e) {
+    if (isset($conn)) {
+        $conn->rollBack();
+    }
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
+}
 ?>

@@ -233,10 +233,10 @@
         <div id="modal" class="modal">
             <div class="wrapper">
               <h3>Leave a Review</h3>
-              
+              <form id="reviewForm">
               <!-- Rating -->
               <div class="rating">
-                <input type="number" name="rating" hidden>
+                <input type="number" name="rating" id="ratingInput" hidden>
                 <i class='bx bx-star star' style="--i: 0;"></i>
                 <i class='bx bx-star star' style="--i: 1;"></i>
                 <i class='bx bx-star star' style="--i: 2;"></i>
@@ -245,22 +245,22 @@
               </div>
     
               <!-- Kolom Komentar -->
-              <textarea rows="4" placeholder="Write your comment here..."></textarea>
+              <textarea name="review_text" rows="4" placeholder="Write your comment here..."></textarea>
     
               <!-- Input Upload Gambar -->
               <div class="image-upload">
                 <label for="file-input" class="upload-label">
                   <i class='bx bx-image-add'></i> Upload Image
                 </label>
-                <input type="file" id="file-input" accept="image/*" hidden>
+                <input type="file" id="file-input" name="images[]" accept="image/*" multiple>
                 <div id="image-preview" class="image-preview"></div>
-              </div>
+            </div>
     
-              <!-- Button Group -->
-              <div class="btn-group">
-                <button class="btn submit">Submit</button>
-                <button class="btn cancel" id="closeModal">Cancel</button>
-              </div>
+            <div class="btn-group">
+                <button type="submit" class="btn submit">Submit</button>
+                <button type="button" class="btn cancel" id="closeModal">Cancel</button>
+            </div>
+        </form>
             </div>
           </div>
         
@@ -306,7 +306,6 @@
         <script src="../Script/item.js"></script>
     </body>
     <script>
-        
         function logout() {
             // Clear semua data
             sessionStorage.clear();
@@ -570,5 +569,98 @@
                     }
                 });
             });
+
+            // Review functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('modal');
+    const reviewForm = document.getElementById('reviewForm');
+    const stars = document.querySelectorAll('.rating .star');
+    const ratingInput = document.getElementById('ratingInput');
+    const fileInput = document.getElementById('file-input');
+    const imagePreview = document.getElementById('image-preview');
+
+    // Open modal
+    document.getElementById('openModal').onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    // Close modal
+    document.getElementById('closeModal').onclick = function() {
+        modal.style.display = 'none';
+        resetForm();
+    }
+
+    // Star rating functionality
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const value = this.dataset.value;
+            ratingInput.value = value;
+            
+            stars.forEach(s => {
+                const starValue = s.dataset.value;
+                s.classList.remove('bxs-star');
+                s.classList.add('bx-star');
+                
+                if (starValue <= value) {
+                    s.classList.remove('bx-star');
+                    s.classList.add('bxs-star');
+                }
+            });
+        });
+    });
+
+    // Image preview
+    fileInput.addEventListener('change', function() {
+        imagePreview.innerHTML = '';
+        for (let file of this.files) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                imagePreview.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle form submission
+    reviewForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const itemId = new URLSearchParams(window.location.search).get('id');
+        const formData = new FormData(this);
+        formData.append('item_id', itemId);
+
+        fetch('../Controller/add_review.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Review submitted successfully!');
+                modal.style.display = 'none';
+                resetForm();
+                location.reload(); // Reload to show new review
+            } else {
+                alert(data.message || 'Error submitting review');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to submit review');
+        });
+    });
+
+    function resetForm() {
+        reviewForm.reset();
+        imagePreview.innerHTML = '';
+        stars.forEach(s => {
+            s.classList.remove('bxs-star');
+            s.classList.add('bx-star');
+        });
+        ratingInput.value = '';
+    }
+});
     </script>
 </html>
