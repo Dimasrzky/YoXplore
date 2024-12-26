@@ -1,5 +1,7 @@
 <?php
 include '../Config/db_connect.php';
+header('Content-Type: application/json');
+echo json_encode($itemData, JSON_PRETTY_PRINT);
 
 // Check if ID is provided
 if (!isset($_GET['id'])) {
