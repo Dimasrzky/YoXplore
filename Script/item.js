@@ -88,22 +88,56 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
  }
  
- function updateUI(data) {
-    const {item, images} = data;
+ // item.js
+function updateUI(data) {
+    document.title = `${data.item.name} - YoXplore`;
     
-    document.querySelector('h1').textContent = item.name;
-    document.querySelector('#itemAddress').textContent = item.address;
-    document.querySelector('#itemHours').textContent = 
-        `${item.opening_hours} - ${item.closing_hours}`;
-    document.querySelector('#itemPhone').textContent = item.phone;
-
-    const gallery = document.querySelector('.gallery');
-    gallery.innerHTML = images.map((url, i) => `
-        <div class="gallery-item ${i === 0 ? 'parent' : 'child'}">
-            <img src="${url}" alt="Item image ${i+1}" 
-                 onerror="this.src='../Image/placeholder.jpg'">
+    const contentHTML = `
+        <div class="container2">
+            <div class="column">
+                <div class="column-right">
+                    <h1>${data.item.name}</h1>
+                    <div class="review-rating-head">
+                        <div class="star-rating">
+                            <i class='bx bxs-star'></i>
+                        </div>
+                        <span class="rating-score">${data.item.rating}</span>
+                        <span class="rating-max">/5</span>
+                        <span class="rating-user">From ${data.item.total_reviews} users</span>
+                    </div>
+                    <div class="info-section">
+                        <div class="location-info">
+                            <div class="info-item">
+                                <span class="icon"><img src="../Image/location.png" alt=""></span>
+                                <p>${data.item.address}</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon"><img src="../Image/clock.png" alt=""></span>
+                                <p>${data.item.opening_hours} - ${data.item.closing_hours}</p>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon"><img src="../Image/call.png" alt=""></span>
+                                <p>${data.item.phone}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery">
+                ${data.images.map((url, i) => `
+                    <div class="gallery-item ${i === 0 ? 'parent' : 'child'}">
+                        <img src="${url}" alt="Image ${i+1}" onerror="this.src='../Image/placeholder.jpg'">
+                    </div>
+                `).join('')}
+            </div>
         </div>
-    `).join('');
+    `;
+
+    document.querySelector('.main').innerHTML = contentHTML;
+
+    if (data.item.maps_url) {
+        addMap(data.item.maps_url);
+    }
 }
  
  // Include remaining helper functions (generateStars, formatHours, createGalleryHTML, addMap, addReviewsSection, etc.)
