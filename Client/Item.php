@@ -17,18 +17,20 @@ if (!$itemId) {
 
 // Ambil data item
 try {
-    $stmt = $conn->prepare("
+    // Ambil detail item dengan total reviews dan rating rata-rata
+    $query = "
         SELECT i.*, 
                COUNT(r.id) as total_reviews,
-               AVG(r.rating) as avg_rating
+               COALESCE(AVG(r.rating), 0) as avg_rating
         FROM items i 
         LEFT JOIN reviews r ON i.id = r.item_id
-        WHERE i.id = ?
+        WHERE i.id = :item_id
         GROUP BY i.id
-    ");
-    $stmt->bind_param("i", $itemId);
+    ";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':item_id', $itemId, PDO::PARAM_INT);
     $stmt->execute();
-    $item = $stmt->get_result()->fetch_assoc();
+    $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$item) {
         header('Location: home.php');
@@ -36,37 +38,44 @@ try {
     }
 
     // Ambil gambar item
-    $stmt = $conn->prepare("SELECT * FROM item_images WHERE item_id = ? ORDER BY is_main DESC");
-    $stmt->bind_param("i", $itemId);
+    $query = "SELECT * FROM item_images WHERE item_id = :item_id ORDER BY is_main DESC";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':item_id', $itemId, PDO::PARAM_INT);
     $stmt->execute();
-    $images = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Ambil review dengan user info
-    $stmt = $conn->prepare("
+    $query = "
         SELECT r.*, u.username, u.profile_image
         FROM reviews r
         JOIN users u ON r.user_id = u.id
-        WHERE r.item_id = ?
+        WHERE r.item_id = :item_id
         ORDER BY r.created_at DESC
-    ");
-    $stmt->bind_param("i", $itemId);
+    ";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':item_id', $itemId, PDO::PARAM_INT);
     $stmt->execute();
-    $reviews = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Ambil gambar review
     foreach ($reviews as &$review) {
-        $stmt = $conn->prepare("SELECT image_url FROM review_images WHERE review_id = ?");
-        $stmt->bind_param("i", $review['id']);
+        $query = "SELECT image_url FROM review_images WHERE review_id = :review_id";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':review_id', $review['id'], PDO::PARAM_INT);
         $stmt->execute();
-        $review['images'] = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $review['images'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-} catch (Exception $e) {
+} catch (PDOException $e) {
     // Log error dan redirect ke home
     error_log($e->getMessage());
     header('Location: home.php');
     exit;
 }
+
+// Format waktu buka-tutup
+$openingHours = !empty($item['opening_hours']) ? date('H:i', strtotime($item['opening_hours'])) : '-';
+$closingHours = !empty($item['closing_hours']) ? date('H:i', strtotime($item['closing_hours'])) : '-';
 ?>
 
 <!DOCTYPE html>
@@ -91,7 +100,7 @@ try {
                     <div class="review-rating-head">
                         <div class="star-rating">
                             <?php for($i = 1; $i <= 5; $i++): ?>
-                                <i class='bx <?= $i <= $item['avg_rating'] ? 'bxs-star' : 'bx-star' ?>'></i>
+                                <i class='bx <?= $i <= round($item['avg_rating']) ? 'bxs-star' : 'bx-star' ?>'></i>
                             <?php endfor; ?>
                         </div>
                         <span class="rating-score"><?= number_format($item['avg_rating'], 1) ?></span>
@@ -106,7 +115,7 @@ try {
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/clock.png" alt=""></span>
-                                <p><?= $item['opening_hours'] ?> - <?= $item['closing_hours'] ?></p>
+                                <p><?= $openingHours ?> - <?= $closingHours ?></p>
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/call.png" alt=""></span>
@@ -117,6 +126,7 @@ try {
                 </div>
             </div>
 
+            <!-- Gallery Section -->
             <div class="gallery">
                 <?php foreach(array_slice($images, 0, 6) as $index => $image): ?>
                     <div class="gallery-item <?= $index === 0 ? 'parent' : 'child' ?>">
@@ -163,7 +173,7 @@ try {
         </div>
     </div>
 
-    <!-- Map -->
+    <!-- Map Section -->
     <div class="map">
         <iframe src="<?= htmlspecialchars($item['maps_url']) ?>"
                 width="90%" height="400"
@@ -231,7 +241,7 @@ try {
                 <input type="hidden" name="item_id" value="<?= $itemId ?>">
                 
                 <div class="rating">
-                    <input type="number" name="rating" hidden>
+                    <input type="number" name="rating" hidden required>
                     <?php for($i = 0; $i < 5; $i++): ?>
                         <i class='bx bx-star star' style="--i: <?= $i ?>;"></i>
                     <?php endfor; ?>
@@ -259,7 +269,6 @@ try {
     <?php include '../Components/footer.php'; ?>
 
     <script>
-        // Simplified JavaScript for modal and review functionality
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('modal');
             const galleryModal = document.getElementById('gallery-modal');
