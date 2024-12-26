@@ -1,65 +1,71 @@
 <?php
-class ItemController {
-    private $conn;
+include '../Config/db_connect.php';
 
-    public function __construct($db) {
-        $this->conn = $db;
-    }
-
-    public function getItem($itemId) {
-        try {
-            // Query untuk item details
-            $query = "SELECT i.*, 
-                     COUNT(DISTINCT r.id) as total_reviews,
-                     COALESCE(AVG(r.rating), 0) as avg_rating
-                     FROM items i 
-                     LEFT JOIN reviews r ON i.id = r.item_id
-                     WHERE i.id = :id
-                     GROUP BY i.id";
-                     
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute(['id' => $itemId]);
-            $item = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$item) {
-                return false;
-            }
-
-            // Get item images
-            $imageQuery = "SELECT * FROM item_images WHERE item_id = :item_id ORDER BY is_main DESC";
-            $imageStmt = $this->conn->prepare($imageQuery);
-            $imageStmt->execute(['item_id' => $itemId]);
-            $images = $imageStmt->fetchAll(PDO::FETCH_ASSOC);
-
-            // Get reviews with user info
-            $reviewQuery = "SELECT r.*, u.username, u.profile_image
-                          FROM reviews r
-                          JOIN users u ON r.user_id = u.id
-                          WHERE r.item_id = :item_id
-                          ORDER BY r.created_at DESC";
-            $reviewStmt = $this->conn->prepare($reviewQuery);
-            $reviewStmt->execute(['item_id' => $itemId]);
-            $reviews = $reviewStmt->fetchAll(PDO::FETCH_ASSOC);
-
-            // Get review images if there are reviews
-            if (!empty($reviews)) {
-                foreach ($reviews as &$review) {
-                    $imageQuery = "SELECT image_url FROM review_images WHERE review_id = :review_id";
-                    $imageStmt = $this->conn->prepare($imageQuery);
-                    $imageStmt->execute(['review_id' => $review['id']]);
-                    $review['images'] = $imageStmt->fetchAll(PDO::FETCH_ASSOC);
-                }
-            }
-
-            return [
-                'item' => $item,
-                'images' => $images,
-                'reviews' => $reviews
-            ];
-
-        } catch (PDOException $e) {
-            error_log("Error in ItemController: " . $e->getMessage());
-            return false;
-        }
-    }
+// Check if ID is provided
+if (!isset($_GET['id'])) {
+    header('Location: Home.html');
+    exit();
 }
+
+$id = $_GET['id'];
+
+// Fetch item details
+$query = "SELECT * FROM items WHERE id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$item = $result->fetch_assoc();
+
+// Fetch reviews for this item
+$reviewQuery = "SELECT r.*, u.username 
+               FROM reviews r 
+               JOIN users u ON r.user_id = u.id 
+               WHERE r.item_id = ?
+               ORDER BY r.created_at DESC";
+$reviewStmt = $conn->prepare($reviewQuery);
+$reviewStmt->bind_param("i", $id);
+$reviewStmt->execute();
+$reviews = $reviewStmt->get_result();
+
+// Calculate average rating
+$avgRatingQuery = "SELECT AVG(rating) as avg_rating, COUNT(*) as total_reviews 
+                  FROM reviews 
+                  WHERE item_id = ?";
+$ratingStmt = $conn->prepare($avgRatingQuery);
+$ratingStmt->bind_param("i", $id);
+$ratingStmt->execute();
+$ratingResult = $ratingStmt->get_result();
+$ratingData = $ratingResult->fetch_assoc();
+
+// Fetch images for this item
+$imageQuery = "SELECT image_url FROM item_images WHERE item_id = ?";
+$imageStmt = $conn->prepare($imageQuery);
+$imageStmt->bind_param("i", $id);
+$imageStmt->execute();
+$images = $imageStmt->get_result();
+
+// Convert to JSON for JavaScript use
+$itemData = [
+    'item' => $item,
+    'reviews' => [],
+    'images' => [],
+    'rating' => [
+        'average' => number_format($ratingData['avg_rating'], 1),
+        'total' => $ratingData['total_reviews']
+    ]
+];
+
+while ($review = $reviews->fetch_assoc()) {
+    $itemData['reviews'][] = $review;
+}
+
+while ($image = $images->fetch_assoc()) {
+    $itemData['images'][] = $image['image_url'];
+}
+
+header('Content-Type: application/json');
+echo json_encode($itemData);
+
+$conn->close();
+?>
