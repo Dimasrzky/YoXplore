@@ -30,42 +30,40 @@ document.addEventListener('DOMContentLoaded', function() {
  });
  
  function updateUI(data) {
-    const item = data.item;
-    document.querySelector('.main').innerHTML = `
-        <div class="container2">
-            <div class="column-right">
-                <h1>${item.name}</h1>
-                <div class="info-section">
-                    <div class="info-item">
-                        <span class="icon"><img src="../Image/location.png"></span>
-                        <p>${item.address || 'Not available'}</p>
-                    </div>
-                    <div class="info-item">
-                        <span class="icon"><img src="../Image/clock.png"></span>
-                        <p>${item.opening_hours || '00:00'} - ${item.closing_hours || '00:00'}</p>
-                    </div>
-                    <div class="info-item">
-                        <span class="icon"><img src="../Image/call.png"></span>
-                        <p>${item.phone || 'Not available'}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="gallery">
-                ${data.images.map((url, i) => `
-                    <div class="gallery-item ${i === 0 ? 'parent' : 'child'}">
-                        <img src="${url}" onerror="this.src='../Image/placeholder.jpg'">
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `;
- 
-    if (item.maps_url) {
-        document.querySelector('.container2').insertAdjacentHTML('afterend', `
-            <div class="map">
-                <iframe src="${item.maps_url}" width="90%" height="400" frameborder="0"></iframe>
-                <button onclick="window.open('${item.maps_url}')">Get Directions</button>
-            </div>
-        `);
+    // Update main item details
+    document.querySelector('.column-right h1').textContent = data.item.name;
+    document.querySelector('.rating-score').textContent = data.item.rating || '0.0';
+    document.querySelector('.rating-user').textContent = `From ${data.item.total_reviews || 0} users`;
+    
+    // Update info section
+    document.querySelector('.location-info .info-item:nth-child(1) p').textContent = data.item.address;
+    document.querySelector('.location-info .info-item:nth-child(2) p').textContent = 
+        `${data.item.opening_hours} - ${data.item.closing_hours}`;
+    document.querySelector('.location-info .info-item:nth-child(3) p').textContent = data.item.phone;
+
+    // Update gallery
+    const gallery = document.querySelector('.gallery');
+    data.images.forEach((url, index) => {
+        const galleryItem = gallery.children[index];
+        if (galleryItem) {
+            galleryItem.querySelector('img').src = url;
+        }
+    });
+
+    // Update map
+    const mapFrame = document.querySelector('.map iframe');
+    const routeBtn = document.querySelector('.route-btn');
+    if (data.item.maps_url) {
+        mapFrame.src = data.item.maps_url;
+        routeBtn.onclick = () => window.open(data.item.maps_url);
     }
- }
+
+    // Update modal gallery
+    const modalGallery = document.querySelector('.modal-gallery');
+    data.images.forEach((url, index) => {
+        const img = modalGallery.children[index];
+        if (img) {
+            img.src = url;
+        }
+    });
+}
