@@ -1,30 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const itemId = urlParams.get('id');
-
+    
     if (!itemId || isNaN(parseInt(itemId))) {
         showError('Invalid item ID');
         return;
     }
 
     showLoading();
-
-    fetch(`../Controller/get_destination_detail.php?id=${itemId}`)
-    .then(response => {
-        if (!response.ok) throw new Error(`HTTP status ${response.status}`);
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error('Invalid content type: ' + contentType);
+    
+    fetch(`../Controller/get_destination_detail.php?id=${itemId}`, {
+        headers: {
+            'Accept': 'application/json'
         }
-        return response.json();
+    })
+    .then(async response => {
+        const text = await response.text();
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error('Raw response:', text);
+            throw new Error('Failed to parse JSON response');
+        }
     })
     .then(data => {
-        if (!data || data.error) throw new Error(data.message || 'Invalid data');
         hideLoading();
+        if (!data || data.error) throw new Error(data.message || 'Invalid data');
         updateUI(data);
     })
     .catch(error => {
-        console.error('Fetch error:', error, error.stack);
+        console.error('Fetch error:', error);
         hideLoading();
         showError(error.message);
     });
