@@ -1,7 +1,7 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
+header('Content-Type: application/json');
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 
 try {
    require_once('../Config/db_connect.php');
@@ -13,7 +13,8 @@ try {
    $id = intval($_GET['id']);
    
    // Get item details
-   $stmt = $conn->prepare("SELECT * FROM items WHERE id = ?");
+   $query = "SELECT * FROM items WHERE id = ?";
+   $stmt = $conn->prepare($query);
    if (!$stmt) {
        throw new Exception($conn->error);
    }
@@ -27,7 +28,7 @@ try {
    $item = $result->fetch_assoc();
 
    if (!$item) {
-       throw new Exception("Item not found with ID: $id");
+       throw new Exception("Item not found");
    }
 
    // Initialize response
@@ -49,55 +50,86 @@ try {
    ];
 
    // Get ratings
-   $ratingStmt = $conn->prepare("
-       SELECT COALESCE(AVG(rating), 0) as avg_rating, COUNT(*) as total_reviews 
-       FROM reviews WHERE item_id = ?
-   ");
+   $ratingQuery = "SELECT AVG(rating) as avg_rating, COUNT(*) as total_reviews 
+                  FROM reviews WHERE item_id = ?";
+   $ratingStmt = $conn->prepare($ratingQuery);
    
-   if ($ratingStmt && $ratingStmt->execute([$id])) {
-       $ratingData = $ratingStmt->get_result()->fetch_assoc();
-       $response['rating'] = [
-           'average' => number_format(floatval($ratingData['avg_rating']), 1),
-           'total' => intval($ratingData['total_reviews'])
-       ];
-   }
-
-   // Get reviews with usernames
-   $reviewStmt = $conn->prepare("
-       SELECT r.*, u.username 
-       FROM reviews r 
-       LEFT JOIN users u ON r.user_id = u.id 
-       WHERE r.item_id = ? 
-       ORDER BY r.created_at DESC
-   ");
-   
-   if ($reviewStmt && $reviewStmt->execute([$id])) {
-       $reviews = $reviewStmt->get_result();
-       while ($review = $reviews->fetch_assoc()) {
-           $response['reviews'][] = [
-               'id' => intval($review['id']),
-               'username' => $review['username'] ?? 'Anonymous',
-               'rating' => floatval($review['rating']),
-               'review_text' => $review['review_text'] ?? '',
-               'created_at' => $review['created_at']
+   if ($ratingStmt) {
+       $ratingStmt->bind_param("i", $id);
+       if ($ratingStmt->execute()) {
+           $ratingResult = $ratingStmt->get_result();
+           $ratingData = $ratingResult->fetch_assoc();
+           $response['rating'] = [
+               'average' => number_format(floatval($ratingData['avg_rating'] ?? 0), 1),
+               'total' => intval($ratingData['total_reviews'] ?? 0)
            ];
        }
+       $ratingStmt->close();
    }
 
-   // Get item images
-   $imageStmt = $conn->prepare("SELECT image_url FROM item_images WHERE item_id = ?");
-   if ($imageStmt && $imageStmt->execute([$id])) {
-       $images = $imageStmt->get_result();
-       while ($image = $images->fetch_assoc()) {
-           $response['images'][] = $image['image_url'];
+   // Get reviews
+   $reviewQuery = "SELECT r.*, u.username 
+                  FROM reviews r 
+                  LEFT JOIN users u ON r.user_id = u.id 
+                  WHERE r.item_id = ? 
+                  ORDER BY r.created_at DESC";
+   $reviewStmt = $conn->prepare($reviewQuery);
+   
+   if ($reviewStmt) {
+       $reviewStmt->bind_param("i", $id);
+       if ($reviewStmt->execute()) {
+           $reviewResult = $reviewStmt->get_result();
+           while ($review = $reviewResult->fetch_assoc()) {
+               // Get review images
+               $reviewImagesQuery = "SELECT image_url FROM review_images WHERE review_id = ?";
+               $reviewImagesStmt = $conn->prepare($reviewImagesQuery);
+               $reviewImages = [];
+               
+               if ($reviewImagesStmt) {
+                   $reviewImagesStmt->bind_param("i", $review['id']);
+                   if ($reviewImagesStmt->execute()) {
+                       $imagesResult = $reviewImagesStmt->get_result();
+                       while ($image = $imagesResult->fetch_assoc()) {
+                           $reviewImages[] = $image['image_url'];
+                       }
+                   }
+                   $reviewImagesStmt->close();
+               }
+               
+               $response['reviews'][] = [
+                   'id' => intval($review['id']),
+                   'username' => $review['username'] ?? 'Anonymous',
+                   'rating' => floatval($review['rating']),
+                   'review_text' => $review['review_text'] ?? '',
+                   'created_at' => $review['created_at'],
+                   'images' => $reviewImages
+               ];
+           }
        }
+       $reviewStmt->close();
+   }
+
+   // Get item images 
+   $imageQuery = "SELECT image_url FROM item_images WHERE item_id = ?";
+   $imageStmt = $conn->prepare($imageQuery);
+   
+   if ($imageStmt) {
+       $imageStmt->bind_param("i", $id);
+       if ($imageStmt->execute()) {
+           $imageResult = $imageStmt->get_result();
+           while ($image = $imageResult->fetch_assoc()) {
+               $response['images'][] = $image['image_url'];
+           }
+       }
+       $imageStmt->close();
    }
 
    // Add default image if none exists
    if (empty($response['images'])) {
-       $response['images'][] = '/YoXplore/Image/placeholder.png';
+       $response['images'][] = '../Image/placeholder.png';
    }
 
+   // Send response
    echo json_encode($response, JSON_PRETTY_PRINT);
 
 } catch (Exception $e) {
