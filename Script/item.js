@@ -89,50 +89,22 @@ document.addEventListener('DOMContentLoaded', function() {
  }
  
  function updateUI(data) {
-    const item = data.item;
-    document.title = `${item.name} - YoXplore`;
+    const {item, images} = data;
     
-    const contentState = document.getElementById('contentState');
-    contentState.style.display = 'block';
-    
-    contentState.innerHTML = `
-        <div class="container2">
-            <div class="column">
-                <div class="column-right">
-                    <h1>${item.name}</h1>
-                    <div class="review-rating-head">
-                        <div class="star-rating">${generateStars(parseFloat(data.rating.average))}</div>
-                        <span class="rating-score">${data.rating.average}</span>
-                        <span class="rating-max">/5</span>
-                        <span class="rating-user">From ${data.rating.total} users</span>
-                    </div>
-                    <div class="info-section">
-                        <div class="location-info">
-                            <div class="info-item">
-                                <span class="icon"><img src="/YoXplore/Image/location.png" alt="Location"></span>
-                                <p>${item.address || 'Address not available'}</p>
-                            </div>
-                            <div class="info-item">
-                                <span class="icon"><img src="/YoXplore/Image/clock.png" alt="Hours"></span>
-                                <p>${formatHours(item.opening_hours, item.closing_hours)}</p>
-                            </div>
-                            <div class="info-item">
-                                <span class="icon"><img src="/YoXplore/Image/call.png" alt="Phone"></span>
-                                <p>${item.phone || 'Not available'}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="gallery" id="imageGallery">${createGalleryHTML(data.images)}</div>
+    document.querySelector('h1').textContent = item.name;
+    document.querySelector('#itemAddress').textContent = item.address;
+    document.querySelector('#itemHours').textContent = 
+        `${item.opening_hours} - ${item.closing_hours}`;
+    document.querySelector('#itemPhone').textContent = item.phone;
+
+    const gallery = document.querySelector('.gallery');
+    gallery.innerHTML = images.map((url, i) => `
+        <div class="gallery-item ${i === 0 ? 'parent' : 'child'}">
+            <img src="${url}" alt="Item image ${i+1}" 
+                 onerror="this.src='../Image/placeholder.jpg'">
         </div>
-    `;
- 
-    if (item.maps_url) {
-        addMap(item.maps_url);
-    }
-    addReviewsSection(data.reviews || []);
- }
+    `).join('');
+}
  
  // Include remaining helper functions (generateStars, formatHours, createGalleryHTML, addMap, addReviewsSection, etc.)
  // as they were in the previous code
