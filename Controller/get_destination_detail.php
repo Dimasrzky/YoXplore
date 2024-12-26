@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include '../Config/Connection.php';
+include '../Config/db_connect.php';
 
 try {
     // Check if ID is provided
