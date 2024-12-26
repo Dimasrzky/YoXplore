@@ -166,6 +166,23 @@ async function submitReview(formData) {
     }
 }
 
+// Function to show error messages
+function showError(message) {
+    // You can customize how errors are displayed
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    
+    // Insert error message at the top of the main content
+    const mainContent = document.querySelector('.main');
+    mainContent.insertBefore(errorDiv, mainContent.firstChild);
+    
+    // Optional: Remove error message after few seconds
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 5000);
+}
+
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
     loadItemDetails();
