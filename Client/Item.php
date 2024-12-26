@@ -2,53 +2,51 @@
 session_start();
 require_once '../Config/db_connect.php';
 
-// Redirect if not logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
-// Validate item ID
-$itemId = isset($_GET['id']) ? filter_var($_GET['id'], FILTER_VALIDATE_INT) : null;
-if (!$itemId) {
-    header('Location: home.php');
-    exit;
-}
+// Debug mode
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 try {
-    // Get item details
-    $query = "SELECT i.*, 
-              COUNT(DISTINCT r.id) as total_reviews,
-              COALESCE(AVG(r.rating), 0) as avg_rating
-              FROM items i 
-              LEFT JOIN reviews r ON i.id = r.item_id
-              WHERE i.id = :id
-              GROUP BY i.id";
-    $stmt = $conn->prepare($query);
-    $stmt->execute(['id' => $itemId]);
-    $data['item'] = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$data['item']) {
-        header('Location: home.php');
+    // Validasi ID
+    if (!isset($_GET['id'])) {
+        header('Location: YoTrip.php');
         exit;
     }
 
-    // Get images
-    $query = "SELECT * FROM item_images WHERE item_id = :item_id ORDER BY is_main DESC";
-    $stmt = $conn->prepare($query);
-    $stmt->execute(['item_id' => $itemId]);
-    $data['images'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $itemId = $_GET['id'];
 
-    // Format time
-    date_default_timezone_set('Asia/Jakarta');
-    $openingHours = !empty($data['item']['opening_hours']) ? 
-        date('H:i', strtotime($data['item']['opening_hours'])) : '-';
-    $closingHours = !empty($data['item']['closing_hours']) ? 
-        date('H:i', strtotime($data['item']['closing_hours'])) : '-';
+    // Basic query untuk item
+    $query = "SELECT * FROM items WHERE id = :id";
+    $stmt = $conn->prepare($query);
+    $stmt->execute(['id' => $itemId]);
+    $item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$item) {
+        header('Location: YoTrip.php');
+        exit;
+    }
+
+    // Query untuk gambar
+    $imageQuery = "SELECT * FROM item_images WHERE item_id = :item_id ORDER BY is_main DESC";
+    $imageStmt = $conn->prepare($imageQuery);
+    $imageStmt->execute(['item_id' => $itemId]);
+    $images = $imageStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Query untuk review dan rating
+    $reviewQuery = "SELECT COUNT(*) as total_reviews, COALESCE(AVG(rating), 0) as avg_rating 
+                   FROM reviews 
+                   WHERE item_id = :item_id";
+    $reviewStmt = $conn->prepare($reviewQuery);
+    $reviewStmt->execute(['item_id' => $itemId]);
+    $reviewData = $reviewStmt->fetch(PDO::FETCH_ASSOC);
+
+    // Format waktu
+    $openingHours = !empty($item['opening_hours']) ? date('H:i', strtotime($item['opening_hours'])) : '-';
+    $closingHours = !empty($item['closing_hours']) ? date('H:i', strtotime($item['closing_hours'])) : '-';
 
 } catch (PDOException $e) {
-    error_log($e->getMessage());
-    header('Location: home.php?error=database');
+    error_log("Database Error: " . $e->getMessage());
+    header('Location: YoTrip.php');
     exit;
 }
 ?>
@@ -58,7 +56,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($data['item']['name']) ?> - YoXplore</title>
+    <title><?= htmlspecialchars($item['name']) ?> - YoXplore</title>
     <link rel="icon" href="../Image/Logo Yoxplore.png" type="image/png">
     <link rel="stylesheet" href="../Style/Item.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -70,20 +68,22 @@ try {
         <div class="container2">
             <div class="column">
                 <div class="column-right">
-                    <h1><?= htmlspecialchars($data['item']['name']) ?></h1>
+                    <h1><?= htmlspecialchars($item['name']) ?></h1>
                     <div class="review-rating-head">
                         <div class="star-rating">
-                            <i class='bx bxs-star'></i>
+                            <?php for($i = 1; $i <= 5; $i++): ?>
+                                <i class='bx <?= $i <= round($reviewData['avg_rating']) ? 'bxs-star' : 'bx-star' ?>'></i>
+                            <?php endfor; ?>
                         </div>
-                        <span class="rating-score"><?= number_format($data['item']['avg_rating'], 1) ?></span>
+                        <span class="rating-score"><?= number_format($reviewData['avg_rating'], 1) ?></span>
                         <span class="rating-max">/5</span>
-                        <span class="rating-user">From <?= $data['item']['total_reviews'] ?> users</span>
+                        <span class="rating-user">From <?= $reviewData['total_reviews'] ?> users</span>
                     </div>
                     <div class="info-section">
                         <div class="location-info">
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/location.png" alt=""></span>
-                                <p><?= htmlspecialchars($data['item']['address']) ?></p>
+                                <p><?= htmlspecialchars($item['address']) ?></p>
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/clock.png" alt=""></span>
@@ -91,7 +91,7 @@ try {
                             </div>
                             <div class="info-item">
                                 <span class="icon"><img src="../Image/call.png" alt=""></span>
-                                <p><?= htmlspecialchars($data['item']['phone'] ?? '-') ?></p>
+                                <p><?= htmlspecialchars($item['phone'] ?? '-') ?></p>
                             </div>
                         </div>
                     </div>
@@ -100,25 +100,25 @@ try {
 
             <!-- Gallery Section -->
             <div class="gallery">
-                <?php if (!empty($data['images'])): ?>
+                <?php if (!empty($images)): ?>
                     <!-- Main large image -->
                     <div class="gallery-item parent">
-                        <img src="<?= htmlspecialchars($data['images'][0]['image_url']) ?>" 
+                        <img src="<?= htmlspecialchars($images[0]['image_url']) ?>" 
                              alt="Main Image">
                     </div>
                     
                     <!-- Smaller images -->
-                    <?php for($i = 1; $i < min(6, count($data['images'])); $i++): ?>
+                    <?php for($i = 1; $i < min(6, count($images)); $i++): ?>
                         <div class="gallery-item child">
-                            <img src="<?= htmlspecialchars($data['images'][$i]['image_url']) ?>" 
+                            <img src="<?= htmlspecialchars($images[$i]['image_url']) ?>" 
                                  alt="Image <?= $i + 1 ?>">
                         </div>
                     <?php endfor; ?>
                     
                     <!-- Last item with overlay -->
-                    <?php if(count($data['images']) > 6): ?>
+                    <?php if(count($images) > 6): ?>
                         <div class="gallery-item child last-item">
-                            <img src="<?= htmlspecialchars($data['images'][6]['image_url']) ?>" 
+                            <img src="<?= htmlspecialchars($images[6]['image_url']) ?>" 
                                  alt="Image 7">
                             <a href="javascript:void(0)" onclick="openGallery()" class="overlay-link">
                                 <div class="overlay-content">
@@ -137,6 +137,21 @@ try {
                 <?php endif; ?>
             </div>
         </div>
+
+        <!-- Map Section -->
+        <?php if (!empty($item['maps_url'])): ?>
+        <div class="map">
+            <iframe src="<?= htmlspecialchars($item['maps_url']) ?>"
+                    width="90%" height="400"
+                    style="border:0; border-radius:10px;"
+                    allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+            <button class="route-btn" onclick="window.open('<?= htmlspecialchars($item['maps_url']) ?>', '_blank')">
+                Get Direction
+            </button>
+        </div>
+        <?php endif; ?>
     </div>
 
     <!-- Gallery Modal -->
@@ -147,9 +162,9 @@ try {
                 <span class="close">&times;</span>
             </div>
             <div class="modal-gallery">
-                <?php foreach($data['images'] as $image): ?>
+                <?php foreach($images as $image): ?>
                     <img src="<?= htmlspecialchars($image['image_url']) ?>" 
-                         alt="<?= htmlspecialchars($data['item']['name']) ?>">
+                         alt="<?= htmlspecialchars($item['name']) ?>">
                 <?php endforeach; ?>
             </div>
         </div>
