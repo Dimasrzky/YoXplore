@@ -1,41 +1,33 @@
 <?php
-include '../Config/db_connect.php';
-
-// Enable error reporting
-error_reporting(E_ALL);
 ini_set('display_errors', 1);
+error_reporting(E_ALL);
+header('Content-Type: application/json');
 
-// Test database connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+require_once('../Config/db_connect.php');
 
-// Get a test item ID
-$query = "SELECT id FROM items LIMIT 1";
-$result = $conn->query($query);
-
-if ($result && $result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $testId = $row['id'];
+try {
+    $itemId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
     
-    // Now test the full query
-    $itemQuery = "SELECT * FROM items WHERE id = ?";
-    $stmt = $conn->prepare($itemQuery);
-    $stmt->bind_param("i", $testId);
-    $stmt->execute();
-    $itemResult = $stmt->get_result();
-    $item = $itemResult->fetch_assoc();
-    
-    // Print the result
-    echo "Test Results:\n";
-    echo "Item found: " . ($item ? "Yes" : "No") . "\n";
-    if ($item) {
-        echo "Item details:\n";
-        print_r($item);
+    if (!$itemId) {
+        throw new PDOException('Invalid ID');
     }
-} else {
-    echo "No items found in database";
+    
+    $sql = "SELECT * FROM items WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$itemId]);
+    $item = $stmt->fetch();
+    
+    if (!$item) {
+        throw new PDOException('Item not found');
+    }
+    
+    echo json_encode([
+        'item' => $item,
+        'rating' => ['average' => '0', 'total' => 0],
+        'images' => ['../Image/placeholder.png']
+    ]);
+    
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['error' => true, 'message' => $e->getMessage()]);
 }
-
-$conn->close();
-?>
