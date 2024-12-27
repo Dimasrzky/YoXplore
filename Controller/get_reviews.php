@@ -21,7 +21,7 @@ function getReviews($conn, $itemId, $page = 1, $perPage = 5) {
                 r.id,
                 r.user_id,
                 r.rating,
-                r.review_text,
+                r.comment,
                 r.created_at,
                 u.username,
                 u.profile_image,
