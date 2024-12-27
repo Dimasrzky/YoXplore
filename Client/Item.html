@@ -617,21 +617,72 @@ function getItemIdFromUrl() {
 }
 
 // Function to load reviews
+// Function to load reviews
 async function loadReviews() {
     try {
-        const itemId = getItemIdFromUrl();
-        const response = await fetch(`../Controller/get_reviews.php?item_id=${itemId}`);
+        const itemId = new URLSearchParams(window.location.search).get('id');
+        console.log('Loading reviews for item:', itemId);
+
+        const response = await fetch(`../Controller/get_reviews.php?id=${itemId}`);
         const data = await response.json();
+        console.log('Review data received:', data);
         
         if (data.success) {
             displayReviews(data.data);
         } else {
-            console.error('Failed to load reviews:', data.message);
+            throw new Error(data.message || 'Failed to load reviews');
         }
     } catch (error) {
         console.error('Error loading reviews:', error);
+        const container = document.querySelector('.reviews-container');
+        if (container) {
+            container.innerHTML = '<p class="error">Error loading reviews. Please try again later.</p>';
+        }
     }
 }
+
+// Call loadReviews when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadReviews();
+});
+
+// Handle review submission
+document.querySelector('.submit').addEventListener('click', async function() {
+    try {
+        const rating = document.querySelector('[name="rating"]').value;
+        const comment = document.querySelector('textarea').value;
+        const itemId = new URLSearchParams(window.location.search).get('id');
+
+        if (!rating || !comment.trim()) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('item_id', itemId);
+        formData.append('rating', rating);
+        formData.append('comment', comment);
+
+        const response = await fetch('../Controller/save_review.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        console.log('Submit response:', data);
+
+        if (data.success) {
+            alert('Review submitted successfully!');
+            document.getElementById('modal').classList.remove('open');
+            loadReviews(); // Reload reviews
+        } else {
+            throw new Error(data.message || 'Failed to submit review');
+        }
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        alert('Error submitting review: ' + error.message);
+    }
+});
 
 // Function to display reviews
 function displayReviews(reviews) {

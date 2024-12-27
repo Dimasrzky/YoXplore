@@ -7,26 +7,22 @@ header('Content-Type: application/json');
 require_once('../Config/db_connect.php');
 
 try {
-    // Get item_id from URL parameter
+    // Debug log untuk melihat parameter yang diterima
+    error_log("Received request with parameters: " . print_r($_GET, true));
+    
     $itemId = isset($_GET['id']) ? $_GET['id'] : null;
     
     if (!$itemId) {
         throw new Exception('Item ID is required');
     }
 
-    // Query to get reviews with user information
     $query = "
         SELECT 
-            r.id,
-            r.user_id,
-            r.item_id,
-            r.rating,
-            r.review_text,
-            r.created_at,
-            u.username,
-            u.profile_image
+            r.*,
+            c.username,
+            c.profile_image
         FROM reviews r
-        LEFT JOIN client u ON r.user_id = u.id
+        LEFT JOIN client c ON r.user_id = c.id
         WHERE r.item_id = ?
         ORDER BY r.created_at DESC
     ";
@@ -35,8 +31,8 @@ try {
     $stmt->execute([$itemId]);
     $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Debug log
-    error_log("Found " . count($reviews) . " reviews for item " . $itemId);
+    // Debug log untuk hasil query
+    error_log("Query results: " . print_r($reviews, true));
 
     echo json_encode([
         'success' => true,
