@@ -615,6 +615,80 @@ function getItemIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('id');
 }
+
+// Function to load reviews
+async function loadReviews() {
+    try {
+        const itemId = getItemIdFromUrl();
+        const response = await fetch(`../Controller/get_reviews.php?item_id=${itemId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayReviews(data.data);
+        } else {
+            console.error('Failed to load reviews:', data.message);
+        }
+    } catch (error) {
+        console.error('Error loading reviews:', error);
+    }
+}
+
+// Function to display reviews
+function displayReviews(reviews) {
+    const container = document.querySelector('.reviews-container');
+    if (!container) return;
+
+    if (!reviews.length) {
+        container.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review!</p>';
+        return;
+    }
+
+    container.innerHTML = reviews.map(review => `
+        <div class="review-card">
+            <div class="review-header">
+                <div class="reviewer-info">
+                    <img src="${review.profile_image || '../Image/user.png'}" alt="User Profile" class="reviewer-pic">
+                    <div class="reviewer-details">
+                        <h4>${review.username}</h4>
+                    </div>
+                </div>
+                <div class="review-rating">
+                    <div class="star-rating">
+                        ${generateStars(review.rating)}
+                    </div>
+                    <span class="rating-score">${review.rating}</span>
+                    <span class="rating-max">/5</span>
+                </div>
+            </div>
+            <p class="review-text">${review.review_text}</p>
+            ${review.images.length ? `
+                <div class="review-images">
+                    ${review.images.map(img => `
+                        <img src="../${img}" alt="Review Image">
+                    `).join('')}
+                </div>
+            ` : ''}
+        </div>
+    `).join('');
+}
+
+// Function to generate star rating HTML
+function generateStars(rating) {
+    return Array(5).fill().map((_, index) => `
+        <i class='bx ${index < rating ? 'bxs-star' : 'bx-star'}'></i>
+    `).join('');
+}
+
+// Function to get item ID from URL
+function getItemIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
+}
+
+// Call loadReviews when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadReviews();
+});
 </script>
     <script>src="../Script/review.js"</script>
 </html>
