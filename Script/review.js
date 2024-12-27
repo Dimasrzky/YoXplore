@@ -201,3 +201,68 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+async function submitReview(e) {
+    e.preventDefault();
+    
+    const rating = document.querySelector('[name="rating"]').value;
+    const comment = document.querySelector('textarea').value;
+    const fileInput = document.getElementById('file-input');
+    const itemId = getItemIdFromUrl();
+
+    if (!rating) {
+        alert('Please select a rating');
+        return;
+    }
+
+    if (!comment.trim()) {
+        alert('Please write a review');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('item_id', itemId);
+    formData.append('rating', rating);
+    formData.append('comment', comment);
+
+    // Handle image uploads
+    if (fileInput && fileInput.files.length > 0) {
+        Array.from(fileInput.files).forEach(file => {
+            formData.append('images[]', file);
+        });
+    }
+
+    try {
+        const response = await fetch('../Controller/save_review.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        // Debug response
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+
+        // Try to parse JSON
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.error('Failed to parse JSON:', e);
+            throw new Error('Invalid server response');
+        }
+
+        if (data.success) {
+            alert('Review submitted successfully!');
+            modal.classList.remove('open');
+            resetForm();
+            await loadReviews(); // Reload reviews
+        } else {
+            throw new Error(data.message || 'Error submitting review');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(error.message || 'Error submitting review. Please try again.');
+    }
+}
+
+// Add event listener
+document.querySelector('.submit').addEventListener('click', submitReview);
