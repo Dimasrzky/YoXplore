@@ -1,177 +1,123 @@
-// Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    initializeReviewSystem();
+    // Get item_id from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemId = urlParams.get('id');
+
+    // Load item data
+    if (itemId) {
+        fetchItemDetails(itemId);
+    }
+
+    // Initialize IntersectionObserver only if element exists
+    const popularGrid = document.querySelector('.popular-grid');
+    if (popularGrid) {
+        initializeIntersectionObserver(popularGrid);
+    }
 });
 
-// Initialize the review system
-function initializeReviewSystem() {
-    // Initialize components
-    initializeStarRating();
-    initializeModalHandlers();
-    initializeSubmitHandler();
-    loadReviews(); // Load existing reviews
-}
-
-// Star Rating Handler
-function initializeStarRating() {
-    const stars = document.querySelectorAll('.rating .star');
-    const ratingInput = document.querySelector('[name="rating"]');
-
-    stars.forEach((star, index) => {
-        star.addEventListener('click', () => {
-            const rating = index + 1;
-            ratingInput.value = rating;
-            updateStars(index);
-        });
-
-        star.addEventListener('mouseover', () => {
-            updateStars(index);
-        });
-
-        star.addEventListener('mouseleave', () => {
-            updateStars(ratingInput.value - 1);
-        });
-    });
-}
-
-// Update star display
-function updateStars(activeIndex) {
-    const stars = document.querySelectorAll('.rating .star');
-    stars.forEach((star, index) => {
-        if (index <= activeIndex) {
-            star.classList.replace('bx-star', 'bxs-star');
-            star.classList.add('active');
-        } else {
-            star.classList.replace('bxs-star', 'bx-star');
-            star.classList.remove('active');
-        }
-    });
-}
-
-// Modal Handlers
-function initializeModalHandlers() {
-    const modal = document.getElementById('modal');
-    const openModalBtn = document.getElementById('openModal');
-    const closeModalBtn = document.getElementById('closeModal');
-
-    openModalBtn.addEventListener('click', () => {
-        modal.classList.add('open');
-    });
-
-    closeModalBtn.addEventListener('click', () => {
-        modal.classList.remove('open');
-        resetForm();
-    });
-
-    // Close on outside click
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.classList.remove('open');
-            resetForm();
-        }
-    });
-}
-
-// Submit Handler
-function initializeSubmitHandler() {
-    const submitBtn = document.querySelector('.submit');
-    let isSubmitting = false;
-
-    submitBtn.addEventListener('click', async function(e) {
-        e.preventDefault();
+// Fetch item details
+async function fetchItemDetails(itemId) {
+    try {
+        const response = await fetch(`../Controller/get_item_detail.php?id=${itemId}`);
+        const data = await response.json();
         
-        if (isSubmitting) return;
-        isSubmitting = true;
-        submitBtn.disabled = true;
-
-        try {
-            const rating = document.querySelector('[name="rating"]').value;
-            const comment = document.querySelector('textarea').value;
-            const itemId = new URLSearchParams(window.location.search).get('id');
-
-            // Validate inputs
-            if (!rating) {
-                throw new Error('Please select a rating');
-            }
-            
-            if (!comment.trim()) {
-                throw new Error('Please write a review');
-            }
-
-            const formData = new FormData();
-            formData.append('item_id', itemId);
-            formData.append('rating', rating);
-            formData.append('comment', comment);
-
-            const response = await fetch('../Controller/save_review.php', {
-                method: 'POST',
-                body: formData
-            });
-
-            const responseText = await response.text();
-            console.log('Raw response:', responseText);
-
-            const data = JSON.parse(responseText);
-
-            if (data.success) {
-                alert('Review submitted successfully!');
-                modal.classList.remove('open');
-                resetForm();
-                loadReviews(); // Reload reviews
-            } else {
-                throw new Error(data.message || 'Failed to submit review');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert(error.message || 'Error submitting review');
-        } finally {
-            isSubmitting = false;
-            submitBtn.disabled = false;
+        if (data.success && data.item) {
+            updateItemDetails(data.item);
+        } else {
+            console.error('Failed to get item details');
         }
+    } catch (error) {
+        console.error('Error fetching item details:', error);
+    }
+}
+
+// Update item details in the DOM
+function updateItemDetails(item) {
+    // Update title
+    const titleElement = document.querySelector('h1');
+    if (titleElement) titleElement.textContent = item.name;
+
+    // Update rating
+    const ratingElement = document.querySelector('.rating-score');
+    if (ratingElement) ratingElement.textContent = item.avg_rating || '0';
+
+    // Update location info
+    const locationElement = document.querySelector('.location-info p');
+    if (locationElement) locationElement.textContent = item.address;
+
+    // Update gallery if exists
+    updateGallery(item.images);
+}
+
+// Update gallery images
+function updateGallery(images) {
+    const gallery = document.querySelector('.gallery');
+    if (!gallery || !images) return;
+
+    // Clear existing gallery
+    gallery.innerHTML = '';
+
+    // Add new images
+    images.forEach((img, index) => {
+        const div = document.createElement('div');
+        div.className = `gallery-item ${index === 0 ? 'parent' : 'child'}`;
+        
+        const imgElement = document.createElement('img');
+        imgElement.src = img.url;
+        imgElement.alt = `Gallery Image ${index + 1}`;
+        
+        div.appendChild(imgElement);
+        gallery.appendChild(div);
     });
 }
 
+// Initialize IntersectionObserver
+function initializeIntersectionObserver(element) {
+    const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                element.classList.add('items-visible');
+                observer.unobserve(element);
+            }
+        });
+    }, options);
+
+    observer.observe(element);
+}
+
+// Function to load reviews
 async function loadReviews() {
     try {
         const itemId = new URLSearchParams(window.location.search).get('id');
         console.log('Loading reviews for item:', itemId);
 
-        if (!itemId) {
-            throw new Error('No item ID found');
-        }
-
         const response = await fetch(`../Controller/get_reviews.php?id=${itemId}`);
-        const responseText = await response.text();
-
-        // Try to parse the response
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (parseError) {
-            console.error('Invalid JSON response:', responseText);
-            throw new Error('Invalid server response');
-        }
-
-        if (!data) {
-            throw new Error('Empty response from server');
-        }
-
-        console.log('Review data:', data);
-
+        const data = await response.json();
+        console.log('Review data received:', data); // Debug data yang diterima
+        
+        // Pastikan data.data ada dan merupakan array
         if (data.success && Array.isArray(data.data)) {
             displayReviews(data.data);
         } else {
-            displayReviews([]); // Show empty state
+            console.log('No reviews found or invalid data structure:', data);
+            displayReviews([]); // Pass empty array jika tidak ada review
         }
     } catch (error) {
         console.error('Error loading reviews:', error);
         const container = document.querySelector('.reviews-container');
         if (container) {
-            container.innerHTML = `<p class="error">Error loading reviews: ${error.message}</p>`;
+            container.innerHTML = '<p class="error">Error loading reviews. Please try again later.</p>';
         }
     }
 }
 
+// Function to display reviews
 function displayReviews(reviews) {
     const container = document.querySelector('.reviews-container');
     if (!container) {
@@ -179,40 +125,36 @@ function displayReviews(reviews) {
         return;
     }
 
+    // Check if reviews is array and has items
     if (!Array.isArray(reviews) || reviews.length === 0) {
-        container.innerHTML = `
-            <div class="no-reviews">
-                <p>No reviews yet. Be the first to review!</p>
-            </div>
-        `;
+        container.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review!</p>';
         return;
     }
 
     const reviewsHTML = reviews.map(review => {
-        // Sanitize data
-        const username = (review.username || 'Anonymous User').replace(/[<>]/g, '');
-        const rating = parseInt(review.rating) || 0;
-        const reviewText = (review.review_text || 'No comment').replace(/[<>]/g, '');
+        // Pastikan review memiliki semua properti yang dibutuhkan
+        const username = review.username || 'Anonymous User';
+        const rating = review.rating || 0;
+        const reviewText = review.review_text || 'No comment';
         const profileImage = review.profile_image || '../Image/user.png';
+        const createdAt = review.created_at ? formatDate(review.created_at) : 'Date not available';
 
         return `
             <div class="review-card">
                 <div class="review-header">
                     <div class="reviewer-info">
-                        <img src="${profileImage}" 
-                             alt="Profile" 
-                             class="reviewer-pic" 
-                             onerror="this.src='../Image/user.png'">
+                        <img src="${profileImage}" alt="User Profile" class="reviewer-pic" onerror="this.src='../Image/user.png'">
                         <div class="reviewer-details">
                             <h4>${username}</h4>
-                            <span class="review-date">${formatDate(review.created_at)}</span>
+                            <span class="review-date">${createdAt}</span>
                         </div>
                     </div>
                     <div class="review-rating">
                         <div class="star-rating">
                             ${generateStars(rating)}
                         </div>
-                        <span class="rating-score">${rating}/5</span>
+                        <span class="rating-score">${rating}</span>
+                        <span class="rating-max">/5</span>
                     </div>
                 </div>
                 <p class="review-text">${reviewText}</p>
@@ -221,4 +163,37 @@ function displayReviews(reviews) {
     }).join('');
 
     container.innerHTML = reviewsHTML;
+    console.log('Reviews displayed successfully');
 }
+
+// Helper function untuk generate stars
+function generateStars(rating) {
+    rating = Number(rating) || 0; // Pastikan rating adalah number
+    return Array(5).fill()
+        .map((_, index) => `
+            <i class='bx ${index < rating ? 'bxs-star' : 'bx-star'}'></i>
+        `).join('');
+}
+
+// Helper function untuk format tanggal
+function formatDate(dateString) {
+    try {
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        return new Date(dateString).toLocaleDateString('en-US', options);
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return dateString; // Return original string if formatting fails
+    }
+}
+
+// Call loadReviews when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Document loaded, initializing reviews...');
+    loadReviews();
+});
