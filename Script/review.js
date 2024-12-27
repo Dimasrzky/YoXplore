@@ -90,3 +90,90 @@ function initializeIntersectionObserver(element) {
 
     observer.observe(element);
 }
+
+function loadReviews() {
+    const itemId = new URLSearchParams(window.location.search).get('id');
+    console.log('Loading reviews for item:', itemId);
+
+    if (!itemId) {
+        console.error('No item ID found');
+        return;
+    }
+
+    fetch(`../Controller/get_reviews.php?id=${itemId}`)
+        .then(response => {
+            console.log('Raw response:', response);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Review data:', data);
+            if (data.success && data.data) {
+                displayReviews(data.data);
+            } else {
+                throw new Error(data.message || 'Failed to load reviews');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading reviews:', error);
+            const container = document.querySelector('.reviews-container');
+            if (container) {
+                container.innerHTML = '<p class="no-reviews">Error loading reviews. Please try again later.</p>';
+            }
+        });
+}
+
+function displayReviews(reviews) {
+    const container = document.querySelector('.reviews-container');
+    if (!container) {
+        console.error('Reviews container not found');
+        return;
+    }
+
+    if (!reviews || reviews.length === 0) {
+        container.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review!</p>';
+        return;
+    }
+
+    const reviewsHTML = reviews.map(review => `
+        <div class="review-card">
+            <div class="review-header">
+                <div class="reviewer-info">
+                    <img src="${review.profile_image || '../Image/user.png'}" alt="User Profile" class="reviewer-pic">
+                    <div class="reviewer-details">
+                        <h4>${review.username || 'Anonymous User'}</h4>
+                        <span class="review-date">${formatDate(review.created_at)}</span>
+                    </div>
+                </div>
+                <div class="review-rating">
+                    <div class="star-rating">
+                        ${generateStars(review.rating)}
+                    </div>
+                    <span class="rating-score">${review.rating}</span>
+                    <span class="rating-max">/5</span>
+                </div>
+            </div>
+            <p class="review-text">${review.review_text}</p>
+        </div>
+    `).join('');
+
+    container.innerHTML = reviewsHTML;
+    console.log('Reviews displayed successfully');
+}
+
+function generateStars(rating) {
+    return Array(5).fill()
+        .map((_, index) => `
+            <i class='bx ${index < rating ? 'bxs-star' : 'bx-star'}'></i>
+        `).join('');
+}
+
+function formatDate(dateString) {
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+}
