@@ -9,26 +9,11 @@ try {
     }
 
     $userId = $_SESSION['user_id'];
-    $itemId = filter_input(INPUT_POST, 'item_id', FILTER_VALIDATE_INT);
-    $rating = filter_input(INPUT_POST, 'rating', FILTER_VALIDATE_INT);
-    $comment = $_POST['comment']; // Get raw comment data
+    $itemId = $_POST['item_id'];
+    $rating = $_POST['rating'];
+    $comment = $_POST['comment'];
 
-    // Validate inputs
-    if (!$itemId || !$rating || empty($comment)) {
-        throw new Exception('All fields are required');
-    }
-
-    // Check for existing review
-    $checkStmt = $conn->prepare("
-        SELECT id FROM reviews 
-        WHERE user_id = ? AND item_id = ?
-    ");
-    $checkStmt->execute([$userId, $itemId]);
-    
-    if ($checkStmt->fetch()) {
-        throw new Exception('You have already reviewed this item');
-    }
-
+    // Start transaction
     $conn->beginTransaction();
 
     // Insert review
@@ -36,8 +21,33 @@ try {
         INSERT INTO reviews (user_id, item_id, rating, review_text, created_at)
         VALUES (?, ?, ?, ?, NOW())
     ");
-    
     $stmt->execute([$userId, $itemId, $rating, $comment]);
+    $reviewId = $conn->lastInsertId();
+
+    // Handle image uploads
+    if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+        $uploadDir = '../uploads/reviews/';
+        
+        // Create directory if it doesn't exist
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
+            if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
+                $fileName = uniqid() . '_' . basename($_FILES['images']['name'][$key]);
+                $filePath = $uploadDir . $fileName;
+
+                if (move_uploaded_file($tmpName, $filePath)) {
+                    $stmt = $conn->prepare("
+                        INSERT INTO review_images (review_id, image_url)
+                        VALUES (?, ?)
+                    ");
+                    $stmt->execute([$reviewId, 'uploads/reviews/' . $fileName]);
+                }
+            }
+        }
+    }
 
     // Update item rating
     $stmt = $conn->prepare("
@@ -50,7 +60,6 @@ try {
 
     $conn->commit();
     
-    // Return clean JSON response
     echo json_encode([
         'success' => true,
         'message' => 'Review submitted successfully'
@@ -60,7 +69,6 @@ try {
     if (isset($conn)) {
         $conn->rollBack();
     }
-    // Return clean JSON error response
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()

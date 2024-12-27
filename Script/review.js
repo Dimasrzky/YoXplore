@@ -133,27 +133,25 @@ async function loadReviews() {
 
 function displayReviews(reviews) {
     const container = document.querySelector('.reviews-container');
-    
-    if (!container) {
-        console.error('Reviews container not found');
-        return;
-    }
+    if (!container) return;
 
-    if (!Array.isArray(reviews) || reviews.length === 0) {
-        container.innerHTML = `
-            <div class="no-reviews">
-                <p>No reviews yet. Be the first to review!</p>
-            </div>
-        `;
+    if (!reviews.length) {
+        container.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review!</p>';
         return;
     }
 
     const reviewsHTML = reviews.map(review => {
-        // Sanitize data to prevent XSS
-        const username = (review.username || 'Anonymous').replace(/[<>]/g, '');
-        const rating = parseInt(review.rating) || 0;
-        const reviewText = (review.review_text || '').replace(/[<>]/g, '');
-        
+        // Generate images HTML if exists
+        const imagesHTML = review.images && review.images.length ? `
+            <div class="review-images">
+                ${review.images.map(img => `
+                    <img src="../${img}" alt="Review image" 
+                         onclick="openImageModal('${img}')"
+                         onerror="this.style.display='none'">
+                `).join('')}
+            </div>
+        ` : '';
+
         return `
             <div class="review-card">
                 <div class="review-header">
@@ -163,20 +161,19 @@ function displayReviews(reviews) {
                              class="reviewer-pic"
                              onerror="this.src='../Image/user.png'">
                         <div class="reviewer-details">
-                            <h4>${username}</h4>
-                            <span class="review-date">
-                                ${formatDate(review.created_at)}
-                            </span>
+                            <h4>${review.username || 'Anonymous'}</h4>
+                            <span class="review-date">${formatDate(review.created_at)}</span>
                         </div>
                     </div>
                     <div class="review-rating">
                         <div class="star-rating">
-                            ${generateStars(rating)}
+                            ${generateStars(review.rating)}
                         </div>
-                        <span class="rating-score">${rating}/5</span>
+                        <span class="rating-score">${review.rating}/5</span>
                     </div>
                 </div>
-                <p class="review-text">${reviewText}</p>
+                <p class="review-text">${review.review_text}</p>
+                ${imagesHTML}
             </div>
         `;
     }).join('');
@@ -184,23 +181,22 @@ function displayReviews(reviews) {
     container.innerHTML = reviewsHTML;
 }
 
-function generateStars(rating) {
-    return Array(5).fill()
-        .map((_, i) => `
-            <i class='bx ${i < rating ? 'bxs-star' : 'bx-star'}'></i>
-        `).join('');
-}
-
-function formatDate(dateString) {
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    } catch (e) {
-        console.error('Date format error:', e);
-        return dateString;
+// Add CSS for review images
+const style = document.createElement('style');
+style.textContent = `
+    .review-images {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
     }
-}
+    
+    .review-images img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+`;
+document.head.appendChild(style);

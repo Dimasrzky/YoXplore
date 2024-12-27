@@ -1,12 +1,5 @@
 <?php
-// Prevent any unwanted output
-ob_start();
-
-// Set header
 header('Content-Type: application/json');
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // Prevent PHP errors from breaking JSON
-
 require_once('../Config/db_connect.php');
 
 try {
@@ -16,11 +9,11 @@ try {
         throw new Exception('Item ID is required');
     }
 
+    // Get reviews with user info
     $query = "
         SELECT 
             r.id,
             r.user_id,
-            r.item_id,
             r.rating,
             r.review_text,
             r.created_at,
@@ -36,23 +29,26 @@ try {
     $stmt->execute([$itemId]);
     $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Clean output buffer
-    ob_clean();
+    // Get images for each review
+    foreach ($reviews as &$review) {
+        $imgStmt = $conn->prepare("
+            SELECT image_url 
+            FROM review_images 
+            WHERE review_id = ?
+        ");
+        $imgStmt->execute([$review['id']]);
+        $review['images'] = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
+    }
 
-    // Return clean JSON
     echo json_encode([
         'success' => true,
-        'data' => array_values($reviews)
-    ], JSON_UNESCAPED_UNICODE);
+        'data' => $reviews
+    ]);
 
 } catch (Exception $e) {
-    ob_clean();
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]);
 }
-
-// End output buffering
-ob_end_flush();
 ?>
