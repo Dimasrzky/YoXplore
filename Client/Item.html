@@ -456,312 +456,165 @@
               });
           });
           
-          const openModal = document.getElementById("openModal");
-            const closeModal = document.getElementById("closeModal");
-            const modal = document.getElementById("modal");
-            const allStar = document.querySelectorAll('.rating .star');
-            const ratingValue = document.querySelector('.rating input');
-            const fileInput = document.getElementById("file-input");
-            const imagePreview = document.getElementById("image-preview");
+          // Constants and Selectors
+const modal = document.getElementById('modal');
+const openModalBtn = document.getElementById('openModal');
+const closeModalBtn = document.getElementById('closeModal');
+const submitBtn = document.querySelector('.submit');
+const stars = document.querySelectorAll('.rating .star');
+const ratingInput = document.querySelector('.rating input');
+const reviewTextarea = document.querySelector('textarea');
+const fileInput = document.getElementById('file-input');
+const imagePreview = document.getElementById('image-preview');
 
-            // Fungsi untuk mereset bintang dan nilai rating
-            function resetStars() {
-              ratingValue.value = ""; // Reset input rating
-              allStar.forEach(star => {
-                star.classList.replace('bxs-star', 'bx-star'); // Kembalikan ke warna putih
-                star.classList.remove('active'); // Hapus kelas aktif
-              });
-            }
-
-            // Event untuk membuka modal
-            openModal.addEventListener("click", () => {
-              modal.classList.add("open");
-            });
-
-            // Event untuk menutup modal dengan tombol close
-            closeModal.addEventListener("click", () => {
-              modal.classList.remove("open");
-              resetStars(); // Reset bintang saat modal ditutup
-            });
-
-            // Event untuk menutup modal dengan klik di luar area modal
-            window.addEventListener("click", (event) => {
-              if (event.target === modal) {
-                modal.classList.remove("open");
-                resetStars(); // Reset bintang saat modal ditutup
-              }
-            });
-
-            // Event untuk mengatur rating bintang
-            allStar.forEach((item, idx) => {
-              item.addEventListener('click', function () {
-                let click = 0;
-                ratingValue.value = idx + 1; // Simpan nilai rating ke input
-
-                allStar.forEach(i => {
-                  i.classList.replace('bxs-star', 'bx-star');
-                  i.classList.remove('active');
-                });
-
-                for (let i = 0; i < allStar.length; i++) {
-                  if (i <= idx) {
-                    allStar[i].classList.replace('bx-star', 'bxs-star');
-                    allStar[i].classList.add('active');
-                  } else {
-                    allStar[i].style.setProperty('--i', click);
-                    click++;
-                  }
-                }
-              });
-            });
-
-            document.addEventListener('DOMContentLoaded', function() {
-                // Ambil item_id dari URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const itemId = urlParams.get('id');
-            
-                // Load item data
-                fetch(`../Controller/get_item_detail.php?id=${itemId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const item = data.item;
-                document.querySelector('h1').textContent = item.name;
-                document.querySelector('.rating-score').textContent = item.avg_rating || '0';
-                document.querySelector('.location-info p').textContent = item.address;
-                // ... update elemen lainnya
-                
-                // Update gallery
-                const gallery = document.querySelector('.gallery');
-                item.images.forEach((img, index) => {
-                    // ... tambah gambar ke gallery
-                });
-                
-                // Load reviews
-                loadReviews(itemId);
-            }
-                        
-        )
-        });
-            // Handle submit review
-            document.querySelector('.submit').addEventListener('click', function() {
-                const rating = document.querySelector('[name="rating"]').value;
-                const comment = document.querySelector('textarea').value;
-                const fileInput = document.getElementById('file-input');
-                
-                const formData = new FormData();
-                formData.append('item_id', itemId);
-                formData.append('rating', rating);
-                formData.append('comment', comment);
-                
-                // Append images if any
-                for (let i = 0; i < fileInput.files.length; i++) {
-                    formData.append('images[]', fileInput.files[i]);
-                }
-            
-                fetch('../Controller/save_review.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Review berhasil ditambahkan!');
-                        location.reload();
-                    }
-                });
-            });
-
-            // Initialize review functionality
-document.addEventListener('DOMContentLoaded', function() {
-    initializeReviewSystem();
-    loadReviews();
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    initializeStarRating();
+    initializeModalHandlers();
+    initializeImageUpload();
+    initializeReviewSubmission();
 });
 
-// Main initialization function
-function initializeReviewSystem() {
-    // Star rating functionality
-    initializeStarRating();
-    
-    // Review modal
-    initializeReviewModal();
-    
-    // Image upload preview
-    initializeImageUpload();
-    
-    // Review submission
-    initializeReviewSubmission();
-}
-
-// Star rating initialization
+// Star Rating Handler
 function initializeStarRating() {
-    const stars = document.querySelectorAll('.rating .star');
-    const ratingInput = document.querySelector('.rating input');
-    
     stars.forEach((star, index) => {
         star.addEventListener('click', () => {
-            ratingInput.value = index + 1;
-            updateStars(index);
-        });
-
-        star.addEventListener('mouseover', () => {
-            updateStars(index);
-        });
-
-        star.addEventListener('mouseleave', () => {
-            updateStars(ratingInput.value - 1);
+            setRating(index + 1);
         });
     });
-
-    function updateStars(index) {
-        stars.forEach((star, idx) => {
-            if (idx <= index) {
-                star.classList.replace('bx-star', 'bxs-star');
-            } else {
-                star.classList.replace('bxs-star', 'bx-star');
-            }
-        });
-    }
 }
 
-// Review modal initialization
-function initializeReviewModal() {
-    const modal = document.getElementById('review-modal');
-    const openBtn = document.getElementById('open-review-modal');
-    const closeBtn = document.getElementById('close-review-modal');
-    
-    openBtn.addEventListener('click', () => {
-        if (!isUserLoggedIn()) {
-            alert('Please login to write a review');
-            window.location.href = '../Client/Login.html';
-            return;
-        }
-        modal.classList.add('open');
-    });
-    
-    closeBtn.addEventListener('click', () => {
-        modal.classList.remove('open');
-        resetReviewForm();
-    });
-    
-    // Close on outside click
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.classList.remove('open');
-            resetReviewForm();
+function setRating(rating) {
+    ratingInput.value = rating;
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.replace('bx-star', 'bxs-star');
+            star.classList.add('active');
+        } else {
+            star.classList.replace('bxs-star', 'bx-star');
+            star.classList.remove('active');
         }
     });
 }
 
-// Image upload initialization
+// Modal Handlers
+function initializeModalHandlers() {
+    openModalBtn.addEventListener('click', openModal);
+    closeModalBtn.addEventListener('click', closeModal);
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal();
+    });
+}
+
+function openModal() {
+    modal.classList.add('open');
+}
+
+function closeModal() {
+    modal.classList.remove('open');
+    resetForm();
+}
+
+// Image Upload Handler
 function initializeImageUpload() {
-    const fileInput = document.getElementById('file-input');
-    const preview = document.getElementById('image-preview');
-    const maxFiles = 5;
-    
-    fileInput.addEventListener('change', function() {
-        preview.innerHTML = '';
-        
-        if (this.files.length > maxFiles) {
-            alert(`Maximum ${maxFiles} images allowed`);
-            this.value = '';
-            return;
-        }
-        
-        Array.from(this.files).forEach(file => {
-            if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-                alert('Only JPG, JPEG, and PNG files are allowed');
-                return;
-            }
-            
-            if (file.size > 5 * 1024 * 1024) {
-                alert('File size should not exceed 5MB');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('preview-image');
-                preview.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        });
-    });
+    fileInput.addEventListener('change', handleImageUpload);
 }
 
-// Review submission initialization
-function initializeReviewSubmission() {
-    const form = document.getElementById('review-form');
-    
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const rating = document.querySelector('[name="rating"]').value;
-        const comment = document.querySelector('textarea').value;
-        
-        if (!rating) {
-            alert('Please select a rating');
-            return;
-        }
-        
-        if (!comment.trim()) {
-            alert('Please write a review');
-            return;
-        }
-        
-        const formData = new FormData(form);
-        formData.append('item_id', getItemIdFromUrl());
-        
-        try {
-            const response = await fetch('../Controller/save_review.php', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                alert('Review submitted successfully!');
-                document.getElementById('review-modal').classList.remove('open');
-                resetReviewForm();
-                loadReviews();
-            } else {
-                alert(data.message || 'Error submitting review');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error submitting review');
-        }
-    });
-}
+function handleImageUpload(event) {
+    imagePreview.innerHTML = '';
+    const files = event.target.files;
 
-// Load and display reviews
-async function loadReviews(page = 1) {
-    try {
-        const itemId = getItemIdFromUrl();
-        const response = await fetch(`../Controller/get_reviews.php?item_id=${itemId}&page=${page}`);
-        const data = await response.json();
-        
-        if (data.success) {
-            displayReviews(data.data.reviews);
-            updatePagination(data.data.total_pages, page);
-            updateAverageRating(data.data.average_rating);
-        }
-    } catch (error) {
-        console.error('Error loading reviews:', error);
-    }
-}
-
-// Display reviews in the DOM
-function displayReviews(reviews) {
-    const container = document.querySelector('.reviews-container');
-    
-    if (!reviews.length) {
-        container.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review!</p>';
+    if (files.length > 5) {
+        alert('Maximum 5 images allowed');
+        fileInput.value = '';
         return;
     }
+
+    Array.from(files).forEach(file => {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File size should not exceed 5MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.classList.add('preview-image');
+            imagePreview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
 }
-    </script>
+
+// Review Submission Handler
+function initializeReviewSubmission() {
+    submitBtn.addEventListener('click', handleReviewSubmission);
+}
+
+async function handleReviewSubmission() {
+    // Validate inputs
+    const rating = ratingInput.value;
+    const comment = reviewTextarea.value.trim();
+
+    if (!rating) {
+        alert('Please select a rating');
+        return;
+    }
+
+    if (!comment) {
+        alert('Please write a review');
+        return;
+    }
+
+    // Create form data
+    const formData = new FormData();
+    formData.append('item_id', getItemIdFromUrl());
+    formData.append('rating', rating);
+    formData.append('comment', comment);
+
+    // Append images if any
+    Array.from(fileInput.files).forEach(file => {
+        formData.append('images[]', file);
+    });
+
+    try {
+        const response = await fetch('../Controller/save_review.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Review submitted successfully!');
+            closeModal();
+            location.reload(); // Refresh to show new review
+        } else {
+            alert(data.message || 'Error submitting review');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error submitting review. Please try again.');
+    }
+}
+
+// Utility Functions
+function resetForm() {
+    ratingInput.value = '';
+    reviewTextarea.value = '';
+    fileInput.value = '';
+    imagePreview.innerHTML = '';
+    stars.forEach(star => {
+        star.classList.replace('bxs-star', 'bx-star');
+        star.classList.remove('active');
+    });
+}
+
+function getItemIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
+}
+</script>
     <script>src="../Script/review.js"</script>
 </html>
