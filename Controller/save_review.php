@@ -1,11 +1,24 @@
 <?php
-// Controller/save_review.php
 header('Content-Type: application/json');
 session_start();
 require_once('../Config/db_connect.php');
 
 try {
+    if (!isset($_SESSION['user_id'])) {
+        throw new Exception('Please login first');
+    }
 
+    $userId = $_SESSION['user_id'];
+    $itemId = filter_input(INPUT_POST, 'item_id', FILTER_VALIDATE_INT);
+    $rating = filter_input(INPUT_POST, 'rating', FILTER_VALIDATE_INT);
+    $comment = $_POST['comment']; // Get raw comment data
+
+    // Validate inputs
+    if (!$itemId || !$rating || empty($comment)) {
+        throw new Exception('All fields are required');
+    }
+
+    // Check for existing review
     $checkStmt = $conn->prepare("
         SELECT id FROM reviews 
         WHERE user_id = ? AND item_id = ?
@@ -14,24 +27,6 @@ try {
     
     if ($checkStmt->fetch()) {
         throw new Exception('You have already reviewed this item');
-    }
-    
-    $stmt->execute([$userId, $itemId, $rating, $comment]);
-    // Debug
-    error_log("POST data: " . print_r($_POST, true));
-    error_log("Session data: " . print_r($_SESSION, true));
-
-    if (!isset($_SESSION['user_id'])) {
-        throw new Exception('Please login first');
-    }
-
-    $userId = $_SESSION['user_id'];
-    $itemId = $_POST['item_id'];
-    $rating = $_POST['rating'];
-    $comment = $_POST['comment']; // Changed from review_text to comment
-
-    if (!$itemId || !$rating || !$comment) {
-        throw new Exception('All fields are required');
     }
 
     $conn->beginTransaction();
@@ -42,36 +37,30 @@ try {
         VALUES (?, ?, ?, ?, NOW())
     ");
     
-    $result = $stmt->execute([$userId, $itemId, $rating, $comment]);
-    
-    if (!$result) {
-        throw new Exception('Failed to save review');
-    }
+    $stmt->execute([$userId, $itemId, $rating, $comment]);
 
-    // Update average rating
+    // Update item rating
     $stmt = $conn->prepare("
-        UPDATE items 
-        SET rating = (
-            SELECT AVG(rating) 
-            FROM reviews 
-            WHERE item_id = ?
-        )
+        UPDATE items SET
+        rating = (SELECT AVG(rating) FROM reviews WHERE item_id = ?),
+        total_reviews = (SELECT COUNT(*) FROM reviews WHERE item_id = ?)
         WHERE id = ?
     ");
-    $stmt->execute([$itemId, $itemId]);
+    $stmt->execute([$itemId, $itemId, $itemId]);
 
     $conn->commit();
     
+    // Return clean JSON response
     echo json_encode([
         'success' => true,
-        'message' => 'Review saved successfully'
+        'message' => 'Review submitted successfully'
     ]);
 
 } catch (Exception $e) {
     if (isset($conn)) {
         $conn->rollBack();
     }
-    error_log("Error saving review: " . $e->getMessage());
+    // Return clean JSON error response
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
