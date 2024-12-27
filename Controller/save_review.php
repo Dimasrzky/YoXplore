@@ -5,6 +5,18 @@ session_start();
 require_once('../Config/db_connect.php');
 
 try {
+
+    $checkStmt = $conn->prepare("
+        SELECT id FROM reviews 
+        WHERE user_id = ? AND item_id = ?
+    ");
+    $checkStmt->execute([$userId, $itemId]);
+    
+    if ($checkStmt->fetch()) {
+        throw new Exception('You have already reviewed this item');
+    }
+    
+    $stmt->execute([$userId, $itemId, $rating, $comment]);
     // Debug
     error_log("POST data: " . print_r($_POST, true));
     error_log("Session data: " . print_r($_SESSION, true));
