@@ -538,7 +538,7 @@ nav {
   visibility: hidden;
   /* transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; */
   backdrop-filter: blur(3px);
-  z-index: -1;
+  z-index: 1000;
 }
 
 .modal.open {
