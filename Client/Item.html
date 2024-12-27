@@ -234,9 +234,10 @@
             <div class="wrapper">
               <h3>Leave a Review</h3>
               
+              <form id="review-form" enctype="multipart/form-data">
               <!-- Rating -->
               <div class="rating">
-                <input type="number" name="rating" hidden>
+                <input type="hidden" name="rating" value="">
                 <i class='bx bx-star star' style="--i: 0;"></i>
                 <i class='bx bx-star star' style="--i: 1;"></i>
                 <i class='bx bx-star star' style="--i: 2;"></i>
@@ -245,14 +246,14 @@
               </div>
     
               <!-- Kolom Komentar -->
-              <textarea rows="4" placeholder="Write your comment here..."></textarea>
+              <textarea name="comment" rows="4" placeholder="Write your comment here..." required></textarea>
     
               <!-- Input Upload Gambar -->
               <div class="image-upload">
                 <label for="file-input" class="upload-label">
                   <i class='bx bx-image-add'></i> Upload Image
                 </label>
-                <input type="file" id="file-input" accept="image/*" hidden>
+                <input type="file" id="file-input" name="images[]" accept="image/*" hidden>
                 <div id="image-preview" class="image-preview"></div>
               </div>
     
@@ -261,6 +262,7 @@
                 <button class="btn submit">Submit</button>
                 <button class="btn cancel" id="closeModal">Cancel</button>
               </div>
+              </form>
             </div>
           </div>
         
