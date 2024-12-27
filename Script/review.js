@@ -91,70 +91,89 @@ function initializeIntersectionObserver(element) {
     observer.observe(element);
 }
 
-// Function to load reviews
 async function loadReviews() {
     try {
         const itemId = new URLSearchParams(window.location.search).get('id');
         console.log('Loading reviews for item:', itemId);
 
         const response = await fetch(`../Controller/get_reviews.php?id=${itemId}`);
-        const data = await response.json();
-        console.log('Review data received:', data); // Debug data yang diterima
+        const responseText = await response.text();
         
-        // Pastikan data.data ada dan merupakan array
+        console.log('Raw response:', responseText); // Debug log
+
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.error('JSON parse error:', e);
+            throw new Error('Invalid server response');
+        }
+
+        console.log('Parsed data:', data);
+
         if (data.success && Array.isArray(data.data)) {
             displayReviews(data.data);
         } else {
-            console.log('No reviews found or invalid data structure:', data);
-            displayReviews([]); // Pass empty array jika tidak ada review
+            console.log('No reviews or invalid data structure');
+            displayReviews([]);
         }
     } catch (error) {
         console.error('Error loading reviews:', error);
         const container = document.querySelector('.reviews-container');
         if (container) {
-            container.innerHTML = '<p class="error">Error loading reviews. Please try again later.</p>';
+            container.innerHTML = `
+                <div class="error-message">
+                    <p>Error loading reviews. Please try again later.</p>
+                    <small>${error.message}</small>
+                </div>
+            `;
         }
     }
 }
 
-// Function to display reviews
 function displayReviews(reviews) {
     const container = document.querySelector('.reviews-container');
+    
     if (!container) {
         console.error('Reviews container not found');
         return;
     }
 
-    // Check if reviews is array and has items
     if (!Array.isArray(reviews) || reviews.length === 0) {
-        container.innerHTML = '<p class="no-reviews">No reviews yet. Be the first to review!</p>';
+        container.innerHTML = `
+            <div class="no-reviews">
+                <p>No reviews yet. Be the first to review!</p>
+            </div>
+        `;
         return;
     }
 
     const reviewsHTML = reviews.map(review => {
-        // Pastikan review memiliki semua properti yang dibutuhkan
-        const username = review.username || 'Anonymous User';
-        const rating = review.rating || 0;
-        const reviewText = review.review_text || 'No comment';
-        const profileImage = review.profile_image || '../Image/user.png';
-        const createdAt = review.created_at ? formatDate(review.created_at) : 'Date not available';
-
+        // Sanitize data to prevent XSS
+        const username = (review.username || 'Anonymous').replace(/[<>]/g, '');
+        const rating = parseInt(review.rating) || 0;
+        const reviewText = (review.review_text || '').replace(/[<>]/g, '');
+        
         return `
             <div class="review-card">
                 <div class="review-header">
                     <div class="reviewer-info">
-                        <img src="${profileImage}" alt="User Profile" class="reviewer-pic" onerror="this.src='../Image/user.png'">
+                        <img src="${review.profile_image || '../Image/user.png'}" 
+                             alt="Profile" 
+                             class="reviewer-pic"
+                             onerror="this.src='../Image/user.png'">
                         <div class="reviewer-details">
                             <h4>${username}</h4>
-                            <span class="review-date">${createdAt}</span>
+                            <span class="review-date">
+                                ${formatDate(review.created_at)}
+                            </span>
                         </div>
                     </div>
                     <div class="review-rating">
                         <div class="star-rating">
                             ${generateStars(rating)}
                         </div>
-                        <span class="rating-score">${rating}</span>
-                        <span class="rating-max">/5</span>
+                        <span class="rating-score">${rating}/5</span>
                     </div>
                 </div>
                 <p class="review-text">${reviewText}</p>
@@ -163,37 +182,25 @@ function displayReviews(reviews) {
     }).join('');
 
     container.innerHTML = reviewsHTML;
-    console.log('Reviews displayed successfully');
 }
 
-// Helper function untuk generate stars
 function generateStars(rating) {
-    rating = Number(rating) || 0; // Pastikan rating adalah number
     return Array(5).fill()
-        .map((_, index) => `
-            <i class='bx ${index < rating ? 'bxs-star' : 'bx-star'}'></i>
+        .map((_, i) => `
+            <i class='bx ${i < rating ? 'bxs-star' : 'bx-star'}'></i>
         `).join('');
 }
 
-// Helper function untuk format tanggal
 function formatDate(dateString) {
     try {
-        const options = { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        };
-        return new Date(dateString).toLocaleDateString('en-US', options);
-    } catch (error) {
-        console.error('Error formatting date:', error);
-        return dateString; // Return original string if formatting fails
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    } catch (e) {
+        console.error('Date format error:', e);
+        return dateString;
     }
 }
-
-// Call loadReviews when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Document loaded, initializing reviews...');
-    loadReviews();
-});

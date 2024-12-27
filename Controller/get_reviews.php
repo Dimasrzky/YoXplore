@@ -1,15 +1,15 @@
 <?php
-// Controller/get_reviews.php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Prevent any unwanted output
+ob_start();
+
+// Set header
 header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // Prevent PHP errors from breaking JSON
 
 require_once('../Config/db_connect.php');
 
 try {
-    // Debug log untuk melihat parameter yang diterima
-    error_log("Received request with parameters: " . print_r($_GET, true));
-    
     $itemId = isset($_GET['id']) ? $_GET['id'] : null;
     
     if (!$itemId) {
@@ -18,7 +18,12 @@ try {
 
     $query = "
         SELECT 
-            r.*,
+            r.id,
+            r.user_id,
+            r.item_id,
+            r.rating,
+            r.review_text,
+            r.created_at,
             c.username,
             c.profile_image
         FROM reviews r
@@ -31,19 +36,23 @@ try {
     $stmt->execute([$itemId]);
     $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Debug log untuk hasil query
-    error_log("Query results: " . print_r($reviews, true));
+    // Clean output buffer
+    ob_clean();
 
+    // Return clean JSON
     echo json_encode([
         'success' => true,
-        'data' => $reviews
-    ]);
+        'data' => array_values($reviews)
+    ], JSON_UNESCAPED_UNICODE);
 
 } catch (Exception $e) {
-    error_log("Error in get_reviews.php: " . $e->getMessage());
+    ob_clean();
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]);
 }
+
+// End output buffering
+ob_end_flush();
 ?>
