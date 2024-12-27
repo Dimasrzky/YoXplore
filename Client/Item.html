@@ -233,10 +233,10 @@
         <div id="modal" class="modal">
             <div class="wrapper">
               <h3>Leave a Review</h3>
-              <form id="reviewForm">
+              
               <!-- Rating -->
               <div class="rating">
-                <input type="number" name="rating" id="ratingInput" hidden>
+                <input type="number" name="rating" hidden>
                 <i class='bx bx-star star' style="--i: 0;"></i>
                 <i class='bx bx-star star' style="--i: 1;"></i>
                 <i class='bx bx-star star' style="--i: 2;"></i>
@@ -245,22 +245,22 @@
               </div>
     
               <!-- Kolom Komentar -->
-              <textarea name="review_text" rows="4" placeholder="Write your comment here..."></textarea>
+              <textarea rows="4" placeholder="Write your comment here..."></textarea>
     
               <!-- Input Upload Gambar -->
               <div class="image-upload">
                 <label for="file-input" class="upload-label">
                   <i class='bx bx-image-add'></i> Upload Image
                 </label>
-                <input type="file" id="file-input" accept="image/*" multiple>
+                <input type="file" id="file-input" accept="image/*" hidden>
                 <div id="image-preview" class="image-preview"></div>
-            </div>
+              </div>
     
-            <div class="btn-group">
-                <button type="submit" class="btn submit">Submit</button>
-                <button type="button" class="btn cancel" id="closeModal">Cancel</button>
-            </div>
-        </form>
+              <!-- Button Group -->
+              <div class="btn-group">
+                <button class="btn submit">Submit</button>
+                <button class="btn cancel" id="closeModal">Cancel</button>
+              </div>
             </div>
           </div>
         
@@ -306,6 +306,7 @@
         <script src="../Script/item.js"></script>
     </body>
     <script>
+        
         function logout() {
             // Clear semua data
             sessionStorage.clear();
@@ -350,317 +351,54 @@
                 }
             }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const popularGrid = document.querySelector('.popular-grid');
+            // Script pada Item.html
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ambil ID dari URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const itemId = urlParams.get('id');
         
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1 // Trigger when 10% of the element is visible
-            };
-        
-            const observerCallback = (entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        popularGrid.classList.add('items-visible');
-                        // Stop observing once animation is triggered
-                        observer.unobserve(entry.target);
-                    }
-                });
-            };
-        
-            const observer = new IntersectionObserver(observerCallback, observerOptions);
-            observer.observe(popularGrid);
-        });
-
-        function toggleDropdown() {
-            const dropdown = document.getElementById('dropdown-menu');
-            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-        }     
-    
-        // Menutup dropdown jika klik di luar area
-        window.onclick = function (event) {
-            if (!event.target.closest('.profile-dropdown')) {
-                const dropdown = document.getElementById('dropdown-menu');
-                if (dropdown) {
-                    dropdown.style.display = 'none';
-                }
-            }
-        };
-
-          // Initialize Street View
-            function initStreetView() {
-                // Coordinates for Gudeg Yu Djum (example coordinates)
-                const yuDjumLocation = { lat: -7.765828, lng: 110.377842 };
-                
-                const streetViewOptions = {
-                position: yuDjumLocation,
-                pov: { heading: 165, pitch: 0 },
-                zoom: 1
-                };
-                
-                const streetView = new google.maps.StreetViewPanorama(
-                document.getElementById('street-view'),
-                streetViewOptions
-                );
-            }
-            
-            // Function to open Google Maps directions
-            function openGoogleMaps() {
-                // Coordinates for Gudeg Yu Djum
-                const destination = "-7.765828,110.377842";
-                const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
-                window.open(url, '_blank');
-            }
-            
-            // Load Google Maps API
-            function loadGoogleMapsAPI() {
-                const script = document.createElement('script');
-                script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initStreetView`;
-                script.async = true;
-                script.defer = true;
-                document.head.appendChild(script);
-            }
-
-            function openGallery() {
-              const modal = document.getElementById('gallery-modal');
-              modal.style.display = 'block';
-              document.body.style.overflow = 'hidden'; // Prevent scrolling of background
-          }
-          
-          // Close button functionality
-          document.addEventListener('DOMContentLoaded', function() {
-              const modal = document.getElementById('gallery-modal');
-              const closeBtn = document.querySelector('.close');
-          
-              closeBtn.onclick = function() {
-                  modal.style.display = 'none';
-                  document.body.style.overflow = 'auto'; // Re-enable scrolling
-              }
-          
-              // Close modal when clicking outside of modal content
-              window.onclick = function(event) {
-                  if (event.target === modal) {
-                      modal.style.display = 'none';
-                      document.body.style.overflow = 'auto';
-                  }
-              }
-          
-              // Close modal when pressing ESC key
-              document.addEventListener('keydown', function(event) {
-                  if (event.key === 'Escape' && modal.style.display === 'block') {
-                      modal.style.display = 'none';
-                      document.body.style.overflow = 'auto';
-                  }
-              });
-          });
-          
-          const openModal = document.getElementById("openModal");
-            const closeModal = document.getElementById("closeModal");
-            const modal = document.getElementById("modal");
-            const allStar = document.querySelectorAll('.rating .star');
-            const ratingValue = document.querySelector('.rating input');
-            const fileInput = document.getElementById("file-input");
-            const imagePreview = document.getElementById("image-preview");
-
-            // Fungsi untuk mereset bintang dan nilai rating
-            function resetStars() {
-              ratingValue.value = ""; // Reset input rating
-              allStar.forEach(star => {
-                star.classList.replace('bxs-star', 'bx-star'); // Kembalikan ke warna putih
-                star.classList.remove('active'); // Hapus kelas aktif
-              });
-            }
-
-            // Event untuk membuka modal
-            openModal.addEventListener("click", () => {
-              modal.classList.add("open");
-            });
-
-            // Event untuk menutup modal dengan tombol close
-            closeModal.addEventListener("click", () => {
-              modal.classList.remove("open");
-              resetStars(); // Reset bintang saat modal ditutup
-            });
-
-            // Event untuk menutup modal dengan klik di luar area modal
-            window.addEventListener("click", (event) => {
-              if (event.target === modal) {
-                modal.classList.remove("open");
-                resetStars(); // Reset bintang saat modal ditutup
-              }
-            });
-
-            // Event untuk mengatur rating bintang
-            allStar.forEach((item, idx) => {
-              item.addEventListener('click', function () {
-                let click = 0;
-                ratingValue.value = idx + 1; // Simpan nilai rating ke input
-
-                allStar.forEach(i => {
-                  i.classList.replace('bxs-star', 'bx-star');
-                  i.classList.remove('active');
-                });
-
-                for (let i = 0; i < allStar.length; i++) {
-                  if (i <= idx) {
-                    allStar[i].classList.replace('bx-star', 'bxs-star');
-                    allStar[i].classList.add('active');
-                  } else {
-                    allStar[i].style.setProperty('--i', click);
-                    click++;
-                  }
-                }
-              });
-            });
-
-            document.addEventListener('DOMContentLoaded', function() {
-                // Ambil item_id dari URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const itemId = urlParams.get('id');
-            
-                // Load item data
-                fetch(`../Controller/get_item_detail.php?id=${itemId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const item = data.item;
-                document.querySelector('h1').textContent = item.name;
-                document.querySelector('.rating-score').textContent = item.avg_rating || '0';
-                document.querySelector('.location-info p').textContent = item.address;
-                // ... update elemen lainnya
-                
-                // Update gallery
-                const gallery = document.querySelector('.gallery');
-                item.images.forEach((img, index) => {
-                    // ... tambah gambar ke gallery
-                });
-                
-                // Load reviews
-                loadReviews(itemId);
-            }
-                        
-        )
-        });
-            // Handle submit review
-            document.querySelector('.submit').addEventListener('click', function() {
-                const rating = document.querySelector('[name="rating"]').value;
-                const comment = document.querySelector('textarea').value;
-                const fileInput = document.getElementById('file-input');
-                
-                const formData = new FormData();
-                formData.append('item_id', itemId);
-                formData.append('rating', rating);
-                formData.append('comment', comment);
-                
-                // Append images if any
-                for (let i = 0; i < fileInput.files.length; i++) {
-                    formData.append('images[]', fileInput.files[i]);
-                }
-            
-                fetch('../Controller/save_review.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Review berhasil ditambahkan!');
-                        location.reload();
-                    }
-                });
-            });
-
-            // Review functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('modal');
-    const reviewForm = document.getElementById('reviewForm');
-    const stars = document.querySelectorAll('.rating .star');
-    const ratingInput = document.getElementById('ratingInput');
-    const fileInput = document.getElementById('file-input');
-    const imagePreview = document.getElementById('image-preview');
-
-    // Open modal
-    document.getElementById('openModal').onclick = function() {
-        modal.style.display = 'block';
-    }
-
-    // Close modal
-    document.getElementById('closeModal').onclick = function() {
-        modal.style.display = 'none';
-        resetForm();
-    }
-
-    // Star rating functionality
-    stars.forEach(star => {
-        star.addEventListener('click', function() {
-            const value = this.dataset.value;
-            ratingInput.value = value;
-            
-            stars.forEach(s => {
-                const starValue = s.dataset.value;
-                s.classList.remove('bxs-star');
-                s.classList.add('bx-star');
-                
-                if (starValue <= value) {
-                    s.classList.remove('bx-star');
-                    s.classList.add('bxs-star');
-                }
-            });
-        });
-    });
-
-    // Image preview
-    fileInput.addEventListener('change', function() {
-        imagePreview.innerHTML = '';
-        for (let file of this.files) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                imagePreview.appendChild(img);
-            }
-            reader.readAsDataURL(file);
+        if (!itemId) {
+            showError('ID item tidak ditemukan');
+            return;
         }
+
+        // Load detail item berdasarkan ID
+        fetch(`../Controller/get_item_detail.php?id=${itemId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update konten halaman
+                    document.querySelector('h1').textContent = data.item.name;
+                    document.querySelector('[data-info="address"]').textContent = data.item.address;
+                    document.querySelector('[data-info="hours"]').textContent = data.item.opening_hours;
+                    document.querySelector('[data-info="phone"]').textContent = data.item.phone;
+                    
+                    // Update rating jika ada
+                    if (data.item.rating) {
+                        document.querySelector('.rating-score').textContent = 
+                            parseFloat(data.item.rating).toFixed(1);
+                    }
+
+                    // Update galeri foto jika ada
+                    if (data.images && data.images.length > 0) {
+                        updateGallery(data.images);
+                    }
+
+                    // Update peta
+                    updateMap(data.item);
+                } else {
+                    throw new Error(data.message || 'Gagal memuat detail item');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Gagal memuat detail item');
+            });
     });
 
-    // Handle form submission
-    reviewForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const itemId = new URLSearchParams(window.location.search).get('id');
-        const formData = new FormData(this);
-        formData.append('item_id', itemId);
-
-        fetch('../Controller/add_review.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Review submitted successfully!');
-                modal.style.display = 'none';
-                resetForm();
-                location.reload(); // Reload to show new review
-            } else {
-                alert(data.message || 'Error submitting review');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to submit review');
-        });
-    });
-
-    function resetForm() {
-        reviewForm.reset();
-        imagePreview.innerHTML = '';
-        stars.forEach(s => {
-            s.classList.remove('bxs-star');
-            s.classList.add('bx-star');
-        });
-        ratingInput.value = '';
+    function updateMap(item) {
+        const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.115726227853!2d${item.longitude}!3d${item.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2zM!5e0!3m2!1sen!2sid!4v1624442830000!5m2!1sen!2sid`;
+        document.querySelector('iframe').src = mapUrl;
     }
-});
     </script>
 </html>
