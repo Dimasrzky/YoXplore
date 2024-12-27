@@ -91,35 +91,21 @@ function initializeIntersectionObserver(element) {
     observer.observe(element);
 }
 
-function loadReviews() {
-    const itemId = new URLSearchParams(window.location.search).get('id');
-    console.log('Loading reviews for item:', itemId);
-
-    if (!itemId) {
-        console.error('No item ID found');
-        return;
+// Function to load reviews
+async function loadReviews() {
+    try {
+        const itemId = getItemIdFromUrl();
+        const response = await fetch(`../Controller/get_reviews.php?id=${itemId}`); // Fixed URL
+        const data = await response.json();
+        
+        if (data.success) {
+            displayReviews(data.data);
+        } else {
+            console.error('Failed to load reviews:', data.message);
+        }
+    } catch (error) {
+        console.error('Error loading reviews:', error);
     }
-
-    fetch(`../Controller/get_reviews.php?id=${itemId}`)
-        .then(response => {
-            console.log('Raw response:', response);
-            return response.json();
-        })
-        .then(data => {
-            console.log('Review data:', data);
-            if (data.success && data.data) {
-                displayReviews(data.data);
-            } else {
-                throw new Error(data.message || 'Failed to load reviews');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading reviews:', error);
-            const container = document.querySelector('.reviews-container');
-            if (container) {
-                container.innerHTML = '<p class="no-reviews">Error loading reviews. Please try again later.</p>';
-            }
-        });
 }
 
 function displayReviews(reviews) {
