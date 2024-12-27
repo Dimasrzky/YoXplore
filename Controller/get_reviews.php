@@ -27,7 +27,7 @@ function getReviews($conn, $itemId, $page = 1, $perPage = 5) {
                 u.profile_image,
                 (SELECT COUNT(*) FROM review_images WHERE review_id = r.id) as image_count
             FROM reviews r
-            JOIN users u ON r.user_id = u.id
+            JOIN client u ON r.user_id = u.id
             WHERE r.item_id = ?
             ORDER BY r.created_at DESC
             LIMIT ? OFFSET ?
