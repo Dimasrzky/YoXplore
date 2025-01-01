@@ -1,5 +1,5 @@
 function fetchUsers() {
-    fetch('../var/www/html/Controller/get_users.php')
+    fetch('../Controller/get_users.php')
         .then(async response => {
             const text = await response.text();
             try {

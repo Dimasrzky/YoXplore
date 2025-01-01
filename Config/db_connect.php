@@ -1,7 +1,7 @@
 <?php
 try {
     // Konfigurasi untuk Docker
-    $host = 'db';  // nama service di docker-compose
+    $host = 'localhost';  // nama service di docker-compose
     $dbname = 'yoxplore';
     $username = 'root';
     $password = '';
