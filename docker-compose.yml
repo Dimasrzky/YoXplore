@@ -39,7 +39,7 @@ services:
       - PMA_HOST=db
       - PMA_PORT=3306
     ports:
-      - "8080:80"
+      - "80:80"
     networks:
       - yoxplore-network
     depends_on:
